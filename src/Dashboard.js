@@ -31,9 +31,10 @@ const Dashboard = () => {
     myWallets.map(async (wallet, index) => {
       const userInfo = await getUserInfo(contract, wallet);
       const available = await claimsAvailable(contract, wallet);
+      const valid = !!userInfo;
       setWallets((wallets) => [
         ...wallets,
-        { index, ...userInfo, available, address: wallet },
+        { index, ...userInfo, available, address: wallet, valid },
       ]);
     });
   };
@@ -91,9 +92,8 @@ const Dashboard = () => {
 
   const saveAddresses = () => {
     const arrayOfAddresses = addressList
-      .split(addressList.includes(",") ? "," : "\n")
-      .filter((addr) => addr.trim().length > 1)
-      .map((addr) => addr.replace("\n", ""));
+      .split(/[\n,]+/)
+      .filter((addr) => addr.trim().length === 42);
 
     arrayOfAddresses.length === 0
       ? window.localStorage.clear()
@@ -107,9 +107,15 @@ const Dashboard = () => {
 
   return (
     <div className="container">
-      <nav className="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-        <div className="navbar-brand col-sm-3 col-md-2 mr-0">
-          Multi-Wallet Dashboard
+      <nav className="navbar navbar-dark fixed-top bg-dark p-0 shadow">
+        <div className="navbar-brand col-md-12">
+          Drip Multi-Wallet Dashboard
+        </div>
+        <div className="card-body">
+          <h6 className="card-subtitle text-white">
+            If you find this tool useful, feel free to drop me a little Drip or
+            BNB: 0x645Dc8a64046FD877b82caB077BF929c299D5A7a
+          </h6>
         </div>
       </nav>
       <main role="main">
@@ -130,7 +136,7 @@ const Dashboard = () => {
               .sort((a, b) => a.index - b.index)
               .map((wallet) => (
                 <tr key={wallet.address}>
-                  <td>
+                  <td className={wallet.valid ? "" : "invalid"}>
                     {wallet.address.substr(0, 5)}...
                     {wallet.address.slice(-4)}
                   </td>
@@ -164,21 +170,34 @@ const Dashboard = () => {
             </tr>
           </tbody>
         </table>
-      </main>
 
-      <div>Paste a list of addresses:</div>
-      <div>
-        <textarea
-          id="addressList"
-          rows={10}
-          cols={50}
-          value={addressList}
-          onChange={(e) => setAddressList(e.target.value)}
-        />
-        <button onClick={saveAddresses}>
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={saveAddresses}
+        >
           {addressList.length ? "Save" : "Clear"} List
         </button>
-      </div>
+        <div>Paste a list of addresses:</div>
+        <div>
+          <textarea
+            id="addressList"
+            rows={10}
+            cols={50}
+            value={addressList}
+            onChange={(e) => setAddressList(e.target.value)}
+          />
+        </div>
+      </main>
+
+      <footer className="page-footer font-small blue">
+        <div className="footer-copyright text-center py-3">
+          © 2021 Copyright:
+          <a href="https://t.me/rpearce63" target="_blank no_referrer">
+            Rick Pearce
+          </a>
+        </div>
+      </footer>
     </div>
   );
 };

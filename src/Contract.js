@@ -18,10 +18,18 @@ export const getContract = async (web3) => {
 };
 
 export const claimsAvailable = async (contract, account) => {
-  const available = await contract.methods.claimsAvailable(account).call();
-  return available;
+  try {
+    const available = await contract.methods.claimsAvailable(account).call();
+    return available;
+  } catch (err) {
+    console.log(err.message);
+  }
 };
 
 export const getUserInfo = async (contract, account) => {
-  return await contract.methods.users(account).call();
+  try {
+    return await contract.methods.users(account).call();
+  } catch (err) {
+    console.log(err.message);
+  }
 };
