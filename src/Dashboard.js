@@ -40,39 +40,41 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
+    const validWallets = wallets.filter((wallet) => wallet.valid);
+
     setTotalDeposits((totalDeposits) =>
-      wallets.reduce((total, wallet) => {
+      validWallets.reduce((total, wallet) => {
         return total + parseFloat(wallet.deposits);
       }, 0)
     );
     setTotalAvailable((totalAvailable) =>
-      wallets.reduce((total, wallet) => {
+      validWallets.reduce((total, wallet) => {
         return total + parseFloat(wallet.available);
       }, 0)
     );
     setTotalClaimed((totalClaimed) =>
-      wallets.reduce((total, wallet) => {
+      validWallets.reduce((total, wallet) => {
         return total + parseFloat(wallet.payouts);
       }, 0)
     );
     setTotalDirectBonus((totalDirectBonus) =>
-      wallets.reduce((total, wallet) => {
+      validWallets.reduce((total, wallet) => {
         return total + parseFloat(wallet.direct_bonus);
       }, 0)
     );
     setTotalMatch((totalMatch) =>
-      wallets.reduce((total, wallet) => {
+      validWallets.reduce((total, wallet) => {
         return total + parseFloat(wallet.match_bonus);
       }, 0)
     );
 
     setTotalChildren((totalChildren) =>
-      wallets.reduce((total, wallet) => {
+      validWallets.reduce((total, wallet) => {
         return total + parseInt(wallet.referrals);
       }, 0)
     );
     setTotalTeam((totalTeam) =>
-      wallets.reduce((total, wallet) => {
+      validWallets.reduce((total, wallet) => {
         return total + parseInt(wallet.total_structure);
       }, 0)
     );
