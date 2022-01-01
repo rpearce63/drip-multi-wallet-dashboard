@@ -20,6 +20,7 @@ const Dashboard = () => {
   const [addressList, setAddressList] = useState("");
   const [dripPrice, setDripPrice] = useState(0);
   const [totalDripHeld, setTotalDripHeld] = useState(0);
+  const [newAddress, setNewAddress] = useState("");
   let web3, contract;
 
   const fetchData = async () => {
@@ -119,6 +120,19 @@ const Dashboard = () => {
     fetchData();
   };
 
+  const addNewAddress = (e) => {
+    setNewAddress(e.target.value);
+    const storedAddresses =
+      JSON.parse(window.localStorage.getItem("dripAddresses")) ?? [];
+    storedAddresses.push(e.target.value);
+    window.localStorage.setItem(
+      "dripAddresses",
+      JSON.stringify(storedAddresses)
+    );
+    setNewAddress("");
+    fetchData();
+  };
+
   return (
     <div className="container">
       <nav className="navbar navbar-dark fixed-top bg-dark p-0 shadow">
@@ -134,6 +148,12 @@ const Dashboard = () => {
         </div>
       </nav>
       <main role="main">
+        {!!wallets.length && (
+          <div>
+            Add single wallet:{" "}
+            <input type="text" value={newAddress} onChange={addNewAddress} />
+          </div>
+        )}
         <table className="table">
           <thead>
             <tr>
