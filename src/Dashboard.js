@@ -19,7 +19,7 @@ const Dashboard = () => {
   const [totalTeam, setTotalTeam] = useState(0);
   const [addressList, setAddressList] = useState("");
   const [dripPrice, setDripPrice] = useState(0);
-
+  const [totalDripHeld, setTotalDripHeld] = useState(0);
   let web3, contract;
 
   const fetchData = async () => {
@@ -27,7 +27,6 @@ const Dashboard = () => {
     web3 = web3 ?? (await getConnection());
     contract = contract ?? (await getContract(web3));
     const currentDripPrice = await getDripPrice(web3);
-    //console.log("Drip Price: " + dripPrice / Math.pow(10, 18));
     setDripPrice((dripPrice) => currentDripPrice);
     const storage = JSON.parse(window.localStorage.getItem("dripAddresses"));
 
@@ -38,6 +37,7 @@ const Dashboard = () => {
       const userInfo = await getUserInfo(contract, wallet);
       const available = await claimsAvailable(contract, wallet);
       const dripBalance = await getDripBalance(web3, wallet);
+
       const valid = !!userInfo;
       setWallets((wallets) => [
         ...wallets,
@@ -52,6 +52,11 @@ const Dashboard = () => {
     setTotalDeposits((totalDeposits) =>
       validWallets.reduce((total, wallet) => {
         return total + parseFloat(wallet.deposits);
+      }, 0)
+    );
+    setTotalDripHeld((totalDripHeld) =>
+      validWallets.reduce((total, wallet) => {
+        return total + parseFloat(wallet.dripBalance);
       }, 0)
     );
     setTotalAvailable((totalAvailable) =>
@@ -133,7 +138,7 @@ const Dashboard = () => {
           <thead>
             <tr>
               <th>Address</th>
-              <th>Drip</th>
+              <th>Drip Held</th>
               <th>Available</th>
               <th>Deposits</th>
               <th>Claimed</th>
@@ -168,7 +173,7 @@ const Dashboard = () => {
 
             <tr className="table-success">
               <th>Totals - {wallets.length}</th>
-              <th></th>
+              <th>{convertDrip(totalDripHeld)}</th>
               <th>{convertDrip(totalAvailable)}</th>
               <th>{convertDrip(totalDeposits)}</th>
               <th>{convertDrip(totalClaimed)}</th>
