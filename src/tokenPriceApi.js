@@ -733,7 +733,7 @@ let pancakeSwapContract =
 //   if (!amountOut) return 0;
 //   return amountOut;
 // }
-async function calcBNBPrice() {
+export async function calcBNBPrice() {
   const web3 = new Web3("https://bsc-dataseed1.binance.org");
   const BNBTokenAddress = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"; //BNB
   const USDTokenAddress = "0x55d398326f99059fF775485246999027B3197955"; //USDT
