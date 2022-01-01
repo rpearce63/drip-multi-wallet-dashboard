@@ -4,6 +4,8 @@ import {
   getUserInfo,
   claimsAvailable,
   getContract,
+  getDripBalance,
+  getDripPrice,
 } from "./Contract";
 
 const Dashboard = () => {
@@ -16,6 +18,7 @@ const Dashboard = () => {
   const [totalChildren, setTotalChildren] = useState(0);
   const [totalTeam, setTotalTeam] = useState(0);
   const [addressList, setAddressList] = useState("");
+  const [dripPrice, setDripPrice] = useState(0);
 
   let web3, contract;
 
@@ -23,6 +26,9 @@ const Dashboard = () => {
     setWallets([]);
     web3 = web3 ?? (await getConnection());
     contract = contract ?? (await getContract(web3));
+    const currentDripPrice = await getDripPrice(web3);
+    //console.log("Drip Price: " + dripPrice / Math.pow(10, 18));
+    setDripPrice((dripPrice) => currentDripPrice);
     const storage = JSON.parse(window.localStorage.getItem("dripAddresses"));
 
     const myWallets =
@@ -31,10 +37,11 @@ const Dashboard = () => {
     myWallets.map(async (wallet, index) => {
       const userInfo = await getUserInfo(contract, wallet);
       const available = await claimsAvailable(contract, wallet);
+      const dripBalance = await getDripBalance(web3, wallet);
       const valid = !!userInfo;
       setWallets((wallets) => [
         ...wallets,
-        { index, ...userInfo, available, address: wallet, valid },
+        { index, ...userInfo, available, address: wallet, valid, dripBalance },
       ]);
     });
   };
@@ -111,7 +118,8 @@ const Dashboard = () => {
     <div className="container">
       <nav className="navbar navbar-dark fixed-top bg-dark p-0 shadow">
         <div className="navbar-brand col-md-12">
-          Drip Multi-Wallet Dashboard
+          Drip Multi-Wallet Dashboard - Drip $
+          {Math.round(convertDrip(dripPrice) * 100) / 100}
         </div>
         <div className="card-body">
           <h6 className="card-subtitle text-white">
@@ -125,6 +133,7 @@ const Dashboard = () => {
           <thead>
             <tr>
               <th>Address</th>
+              <th>Drip</th>
               <th>Available</th>
               <th>Deposits</th>
               <th>Claimed</th>
@@ -142,6 +151,7 @@ const Dashboard = () => {
                     {wallet.address.substr(0, 5)}...
                     {wallet.address.slice(-4)}
                   </td>
+                  <td>{convertDrip(wallet.dripBalance)}</td>
                   <td>{convertDrip(wallet.available)}</td>
                   <td>{convertDrip(wallet.deposits)}</td>
                   <td>{convertDrip(wallet.payouts)}</td>
@@ -158,7 +168,7 @@ const Dashboard = () => {
 
             <tr className="table-success">
               <th>Totals - {wallets.length}</th>
-
+              <th></th>
               <th>{convertDrip(totalAvailable)}</th>
               <th>{convertDrip(totalDeposits)}</th>
               <th>{convertDrip(totalClaimed)}</th>
