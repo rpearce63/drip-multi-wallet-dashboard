@@ -146,6 +146,20 @@ const Dashboard = () => {
               <th>Max Payout</th>
               <th>Team</th>
             </tr>
+            <tr className="table-success">
+              <th>Totals - {wallets.length}</th>
+              <th>{convertDrip(totalDripHeld)}</th>
+              <th>{convertDrip(totalAvailable)}</th>
+              <th>{convertDrip(totalDeposits)}</th>
+              <th>{convertDrip(totalClaimed)}</th>
+              <th>
+                {convertDrip(totalDirectBonus)}/{convertDrip(totalMatch)}
+              </th>
+              <th>{convertDrip(totalDeposits * 3.65)}</th>
+              <th>
+                {totalChildren}/{totalTeam}
+              </th>
+            </tr>
           </thead>
           <tbody>
             {wallets
@@ -170,21 +184,6 @@ const Dashboard = () => {
                   </td>
                 </tr>
               ))}
-
-            <tr className="table-success">
-              <th>Totals - {wallets.length}</th>
-              <th>{convertDrip(totalDripHeld)}</th>
-              <th>{convertDrip(totalAvailable)}</th>
-              <th>{convertDrip(totalDeposits)}</th>
-              <th>{convertDrip(totalClaimed)}</th>
-              <th>
-                {convertDrip(totalDirectBonus)}/{convertDrip(totalMatch)}
-              </th>
-              <th>{convertDrip(totalDeposits * 3.65)}</th>
-              <th>
-                {totalChildren}/{totalTeam}
-              </th>
-            </tr>
           </tbody>
         </table>
 
