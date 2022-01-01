@@ -782,5 +782,3 @@ function that was build to retrive the token prices
 //   );
 //   console.log(`SHIT_TOKEN VALUE IN USD: ${priceInBnb * bnbPrice}`); // convert the token price from BNB to USD based on the retrived BNB value
 // })();
-
-module.exports = { calcBNBPrice };
