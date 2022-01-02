@@ -25,7 +25,6 @@ const Dashboard = () => {
   let web3, contract;
 
   const fetchData = async () => {
-    setWallets([]);
     web3 = web3 ?? (await getConnection());
     contract = contract ?? (await getContract(web3));
     const [bnbPrice, dripPriceRaw] = await getDripPrice(web3);
@@ -34,21 +33,25 @@ const Dashboard = () => {
 
     setDripPrice(() => currentDripPrice);
     setBnbPrice(() => bnbPrice);
-    const storage = JSON.parse(window.localStorage.getItem("dripAddresses"));
+    const storedWallets = JSON.parse(
+      window.localStorage.getItem("dripAddresses")
+    );
 
     const myWallets =
-      storage?.map((addr) => addr.trim().replace("\n", "")) ?? [];
-
+      storedWallets?.map((addr) => addr.trim().replace("\n", "")) ?? [];
+    let walletCache = [];
     myWallets.map(async (wallet, index) => {
       const userInfo = await getUserInfo(contract, wallet);
       const available = await claimsAvailable(contract, wallet);
       const dripBalance = await getDripBalance(web3, wallet);
 
       const valid = !!userInfo;
-      setWallets((wallets) => [
-        ...wallets,
+      walletCache = [
+        ...walletCache,
         { index, ...userInfo, available, address: wallet, valid, dripBalance },
-      ]);
+      ];
+
+      setWallets(() => [...walletCache]);
     });
   };
 
@@ -109,7 +112,7 @@ const Dashboard = () => {
   const convertDrip = (drip) => {
     return parseFloat(
       Math.round((drip / Math.pow(10, 18)) * 1000) / 1000
-    ).toFixed(2);
+    ).toFixed(3);
   };
 
   const saveAddresses = () => {
