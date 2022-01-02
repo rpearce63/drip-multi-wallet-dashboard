@@ -19,6 +19,7 @@ const Dashboard = () => {
   const [totalTeam, setTotalTeam] = useState(0);
   const [addressList, setAddressList] = useState("");
   const [dripPrice, setDripPrice] = useState(0);
+  const [bnbPrice, setBnbPrice] = useState(0);
   const [totalDripHeld, setTotalDripHeld] = useState(0);
   const [newAddress, setNewAddress] = useState("");
   let web3, contract;
@@ -27,8 +28,12 @@ const Dashboard = () => {
     setWallets([]);
     web3 = web3 ?? (await getConnection());
     contract = contract ?? (await getContract(web3));
-    const currentDripPrice = await getDripPrice(web3);
-    setDripPrice((dripPrice) => currentDripPrice);
+    const [bnbPrice, dripPriceRaw] = await getDripPrice(web3);
+
+    const currentDripPrice = dripPriceRaw * bnbPrice;
+
+    setDripPrice(() => currentDripPrice);
+    setBnbPrice(() => bnbPrice);
     const storage = JSON.parse(window.localStorage.getItem("dripAddresses"));
 
     const myWallets =
@@ -102,7 +107,9 @@ const Dashboard = () => {
   }, []);
 
   const convertDrip = (drip) => {
-    return Math.round((drip / Math.pow(10, 18)) * 1000) / 1000;
+    return parseFloat(
+      Math.round((drip / Math.pow(10, 18)) * 1000) / 1000
+    ).toFixed(2);
   };
 
   const saveAddresses = () => {
@@ -134,11 +141,15 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="container">
+    <div className="container-fluid">
       <nav className="navbar navbar-dark fixed-top bg-dark p-0 shadow">
         <div className="navbar-brand col-md-12">
-          Drip Multi-Wallet Dashboard - Drip $
-          {Math.round(convertDrip(dripPrice) * 100) / 100}
+          Drip Multi-Wallet Dashboard -{" "}
+          <small>Drip ${Math.round(convertDrip(dripPrice) * 100) / 100}</small>{" "}
+          -{" "}
+          <small>
+            BNB $ {parseFloat(Math.round(bnbPrice * 100) / 100).toFixed(2)}
+          </small>
         </div>
         <div className="card-body">
           <h6 className="card-subtitle text-white">
@@ -151,7 +162,12 @@ const Dashboard = () => {
         {!!wallets.length && (
           <div>
             Add single wallet:{" "}
-            <input type="text" value={newAddress} onChange={addNewAddress} />
+            <input
+              size={45}
+              type="text"
+              value={newAddress}
+              onChange={addNewAddress}
+            />
           </div>
         )}
         <table className="table">

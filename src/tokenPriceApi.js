@@ -747,6 +747,7 @@ export async function calcBNBPrice() {
     amountOut = await router.methods
       .getAmountsOut(bnbToSell, [BNBTokenAddress, USDTokenAddress])
       .call();
+
     amountOut = web3.utils.fromWei(amountOut[1]);
     //console.log(`amountOut=${amountOut}`);
   } catch (error) {

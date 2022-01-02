@@ -58,7 +58,7 @@ export const getDripPrice = async (web3) => {
     const bnbPrice = await calcBNBPrice();
     //console.log("bnb: " + bnbPrice);
 
-    return bnbPrice * dripPrice;
+    return [bnbPrice, dripPrice];
   } catch (err) {
     console.log(err.message);
   }
