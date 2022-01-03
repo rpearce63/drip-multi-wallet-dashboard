@@ -60,11 +60,11 @@ export const getDripPrice = async (web3) => {
 
     const fetchBnbPrice = async () =>
       fetch(
-        "https://api.coingecko.com/api/v3/simple/price?ids=binancecoin&vs_currencies=usd"
+        "https://api.coingecko.com/api/v3/simple/price?ids=wbnb&vs_currencies=usd"
       )
         .then((response) => response.json())
         .then((data) => {
-          return data.binancecoin.usd;
+          return data.wbnb.usd;
         });
     const bnbPrice = await fetchBnbPrice();
 
