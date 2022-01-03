@@ -69,7 +69,6 @@ export const getDripPrice = async (web3) => {
     const bnbPrice = await fetchBnbPrice();
 
     //console.log("coingecko bnb: " + bnbPrice);
-
     return [bnbPrice, dripPrice];
   } catch (err) {
     console.log(err.message);

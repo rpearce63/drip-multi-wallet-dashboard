@@ -30,7 +30,7 @@ const Dashboard = () => {
     const [bnbPrice, dripPriceRaw] = await getDripPrice(web3);
 
     const currentDripPrice = dripPriceRaw * bnbPrice;
-
+    //console.log(web3.utils.fromWei(`${bnbPrice * dripPriceRaw}`, "ether"));
     setDripPrice(() => currentDripPrice);
     setBnbPrice(() => bnbPrice);
     const storedWallets = JSON.parse(
@@ -115,6 +115,10 @@ const Dashboard = () => {
     ).toFixed(3);
   };
 
+  const formatCurrency = (amt) => {
+    return parseFloat(Math.round(amt * 100) / 100).toFixed(2);
+  };
+
   const saveAddresses = () => {
     const arrayOfAddresses = addressList
       .split(/[\n,]+/)
@@ -148,8 +152,8 @@ const Dashboard = () => {
       <nav className="navbar navbar-dark fixed-top bg-dark p-0 shadow">
         <div className="navbar-brand col-md-12">
           Drip Multi-Wallet Dashboard -{" "}
-          <small>Drip ${Math.round(convertDrip(dripPrice) * 100) / 100}</small>{" "}
-          - <small>BNB ${bnbPrice}</small>
+          <small>Drip ${formatCurrency(convertDrip(dripPrice))}</small> -{" "}
+          <small>BNB ${bnbPrice}</small>
         </div>
         <div className="card-body">
           <h6 className="card-subtitle text-white">
