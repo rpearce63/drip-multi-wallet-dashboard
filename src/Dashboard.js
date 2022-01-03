@@ -153,7 +153,7 @@ const Dashboard = () => {
         <div className="navbar-brand col-md-12">
           Drip Multi-Wallet Dashboard -{" "}
           <small>Drip ${formatCurrency(convertDrip(dripPrice))}</small> -{" "}
-          <small>BNB ${bnbPrice}</small>
+          <small>BNB ${formatCurrency(bnbPrice)}</small>
         </div>
         <div className="card-body">
           <h6 className="card-subtitle text-white">
