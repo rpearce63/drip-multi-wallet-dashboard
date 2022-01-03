@@ -7,7 +7,7 @@ import {
   FOUNTAIN_ABI,
   FOUNTAIN_ADDR,
 } from "./dripconfig";
-import { calcBNBPrice } from "./tokenPriceApi";
+//import { calcBNBPrice } from "./tokenPriceApi";
 
 export const getConnection = async () => {
   const web3 = await new Web3(
@@ -54,9 +54,21 @@ export const getDripPrice = async (web3) => {
     const dripPrice = await contract.methods
       .getTokenToBnbInputPrice(1000000000000000000n)
       .call();
+    ///console.log(dripPrice);
+    //let bnbPrice = await calcBNBPrice();
+    //console.log(`pcs bnb: ${bnbPrice}`);
 
-    const bnbPrice = await calcBNBPrice();
-    //console.log("bnb: " + bnbPrice);
+    const fetchBnbPrice = async () =>
+      fetch(
+        "https://api.coingecko.com/api/v3/simple/price?ids=binancecoin&vs_currencies=usd"
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          return data.binancecoin.usd;
+        });
+    const bnbPrice = await fetchBnbPrice();
+
+    //console.log("coingecko bnb: " + bnbPrice);
 
     return [bnbPrice, dripPrice];
   } catch (err) {

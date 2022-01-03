@@ -149,10 +149,7 @@ const Dashboard = () => {
         <div className="navbar-brand col-md-12">
           Drip Multi-Wallet Dashboard -{" "}
           <small>Drip ${Math.round(convertDrip(dripPrice) * 100) / 100}</small>{" "}
-          -{" "}
-          <small>
-            BNB $ {parseFloat(Math.round(bnbPrice * 100) / 100).toFixed(2)}
-          </small>
+          - <small>BNB ${bnbPrice}</small>
         </div>
         <div className="card-body">
           <h6 className="card-subtitle text-white">
@@ -177,6 +174,7 @@ const Dashboard = () => {
           <thead>
             <tr>
               <th>Address</th>
+              <th>Buddy</th>
               <th>Drip Held</th>
               <th>Available</th>
               <th>Deposits</th>
@@ -187,6 +185,7 @@ const Dashboard = () => {
             </tr>
             <tr className="table-success">
               <th>Totals - {wallets.length}</th>
+              <th></th>
               <th>{convertDrip(totalDripHeld)}</th>
               <th>{convertDrip(totalAvailable)}</th>
               <th>{convertDrip(totalDeposits)}</th>
@@ -209,6 +208,7 @@ const Dashboard = () => {
                     {wallet.address.substr(0, 5)}...
                     {wallet.address.slice(-4)}
                   </td>
+                  <td>{wallet.upline.substr(0, 5)}</td>
                   <td>{convertDrip(wallet.dripBalance)}</td>
                   <td>{convertDrip(wallet.available)}</td>
                   <td>{convertDrip(wallet.deposits)}</td>
