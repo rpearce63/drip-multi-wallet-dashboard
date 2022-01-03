@@ -48,3 +48,8 @@ button {
 .invalid {
   color: red;
 }
+
+.hydrate {
+  color: white;
+  background-color: green !important;
+}

@@ -210,7 +210,15 @@ const Dashboard = () => {
                   </td>
                   <td>{wallet.upline.substr(0, 5)}</td>
                   <td>{convertDrip(wallet.dripBalance)}</td>
-                  <td>{convertDrip(wallet.available)}</td>
+                  <td
+                    className={
+                      wallet.available >= wallet.deposits * 0.01
+                        ? "hydrate"
+                        : ""
+                    }
+                  >
+                    {convertDrip(wallet.available)}
+                  </td>
                   <td>{convertDrip(wallet.deposits)}</td>
                   <td>{convertDrip(wallet.payouts)}</td>
                   <td>
