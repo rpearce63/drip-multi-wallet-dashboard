@@ -119,6 +119,10 @@ const Dashboard = () => {
     return parseFloat(Math.round(amt * 100) / 100).toFixed(2);
   };
 
+  const formatPercent = (amt) => {
+    return parseFloat(Math.round(amt * 10000) / 100).toFixed(2);
+  };
+
   const saveAddresses = () => {
     const arrayOfAddresses = addressList
       .split(/[\n,]+/)
@@ -218,10 +222,13 @@ const Dashboard = () => {
                     className={
                       wallet.available >= wallet.deposits * 0.01
                         ? "hydrate"
+                        : wallet.available >= wallet.deposits * 0.009
+                        ? "prepare"
                         : ""
                     }
                   >
-                    {convertDrip(wallet.available)}
+                    {convertDrip(wallet.available)} -{" "}
+                    {formatPercent(wallet.available / wallet.deposits)}%
                   </td>
                   <td>{convertDrip(wallet.deposits)}</td>
                   <td>{convertDrip(wallet.payouts)}</td>
