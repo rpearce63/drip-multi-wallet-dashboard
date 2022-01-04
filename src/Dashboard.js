@@ -220,10 +220,11 @@ const Dashboard = () => {
                   <td>{convertDrip(wallet.dripBalance)}</td>
                   <td
                     className={
-                      wallet.available >= wallet.deposits * 0.01
-                        ? "hydrate"
-                        : wallet.available >= wallet.deposits * 0.009
+                      wallet.available >= wallet.deposits * 0.009 &&
+                      wallet.available < wallet.deposits * 0.01
                         ? "prepare"
+                        : wallet.available >= wallet.deposits * 0.01
+                        ? "hydrate"
                         : ""
                     }
                   >
