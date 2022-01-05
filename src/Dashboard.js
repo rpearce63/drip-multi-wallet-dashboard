@@ -6,6 +6,7 @@ import {
   getContract,
   getDripBalance,
   getDripPrice,
+  getUplineCount,
 } from "./Contract";
 
 const Dashboard = () => {
@@ -22,6 +23,7 @@ const Dashboard = () => {
   const [bnbPrice, setBnbPrice] = useState(0);
   const [totalDripHeld, setTotalDripHeld] = useState(0);
   const [newAddress, setNewAddress] = useState("");
+  const [triggerType, setTriggerType] = useState("percent");
   let web3, contract;
 
   const fetchData = async () => {
@@ -44,11 +46,20 @@ const Dashboard = () => {
       const userInfo = await getUserInfo(contract, wallet);
       const available = await claimsAvailable(contract, wallet);
       const dripBalance = await getDripBalance(web3, wallet);
+      const uplineCount = await getUplineCount(contract, wallet);
 
       const valid = !!userInfo;
       walletCache = [
         ...walletCache,
-        { index, ...userInfo, available, address: wallet, valid, dripBalance },
+        {
+          index,
+          ...userInfo,
+          available,
+          address: wallet,
+          valid,
+          dripBalance,
+          uplineCount,
+        },
       ];
 
       setWallets(() => [...walletCache]);
@@ -106,6 +117,7 @@ const Dashboard = () => {
     const interval = setInterval(() => {
       fetchData();
     }, 60000);
+
     return () => clearInterval(interval);
   }, []);
 
@@ -135,6 +147,7 @@ const Dashboard = () => {
           JSON.stringify(arrayOfAddresses)
         );
     setAddressList("");
+    setWallets([]);
     fetchData();
   };
 
@@ -149,6 +162,30 @@ const Dashboard = () => {
     );
     setNewAddress("");
     fetchData();
+  };
+
+  const highlightStyle = (wallet) => {
+    let style;
+    switch (triggerType) {
+      case "percent":
+        const pct = wallet.available / wallet.deposits;
+        style =
+          pct >= 0.009 && pct < 0.01 ? "prepare" : pct >= 0.01 ? "hydrate" : "";
+        return style;
+
+      case "amount":
+        const amount = convertDrip(wallet.available);
+        style =
+          amount >= 0.5 && amount < 1.0
+            ? "prepare"
+            : amount >= 1.0
+            ? "hydrate"
+            : "";
+        return style;
+
+      default:
+        return "";
+    }
   };
 
   return (
@@ -176,13 +213,42 @@ const Dashboard = () => {
               value={newAddress}
               onChange={addNewAddress}
             />
+            <div>Highlight available when at 1% or 1 Drip</div>
+            <div className="radio">
+              <label>
+                <input
+                  type="radio"
+                  value="percent"
+                  checked={triggerType === "percent"}
+                  onChange={() => setTriggerType("percent")}
+                />
+                Percent - light green = .9%, green = 1%
+              </label>
+            </div>
+            <div className="radio">
+              <label>
+                <input
+                  type="radio"
+                  value="amount"
+                  checked={triggerType === "amount"}
+                  onChange={() => setTriggerType("amount")}
+                />
+                Amount - light green = .5+, green = 1+
+              </label>
+            </div>
           </div>
         )}
+
         <table className="table">
           <thead>
             <tr>
               <th>Address</th>
               <th>Buddy</th>
+              <th>
+                Upline
+                <br />
+                Count
+              </th>
               <th>Drip Held</th>
               <th>Available</th>
               <th>Deposits</th>
@@ -193,6 +259,7 @@ const Dashboard = () => {
             </tr>
             <tr className="table-success">
               <th>Totals - {wallets.length}</th>
+              <th></th>
               <th></th>
               <th>{convertDrip(totalDripHeld)}</th>
               <th>{convertDrip(totalAvailable)}</th>
@@ -217,17 +284,9 @@ const Dashboard = () => {
                     {wallet.address.slice(-4)}
                   </td>
                   <td>{wallet.upline.substr(0, 5)}</td>
+                  <td>{wallet.uplineCount}</td>
                   <td>{convertDrip(wallet.dripBalance)}</td>
-                  <td
-                    className={
-                      wallet.available >= wallet.deposits * 0.009 &&
-                      wallet.available < wallet.deposits * 0.01
-                        ? "prepare"
-                        : wallet.available >= wallet.deposits * 0.01
-                        ? "hydrate"
-                        : ""
-                    }
-                  >
+                  <td className={highlightStyle(wallet)}>
                     {convertDrip(wallet.available)} -{" "}
                     {formatPercent(wallet.available / wallet.deposits)}%
                   </td>

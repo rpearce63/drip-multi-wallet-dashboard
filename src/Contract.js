@@ -74,3 +74,19 @@ export const getDripPrice = async (web3) => {
     console.log(err.message);
   }
 };
+
+export const getUplineCount = async (contract, wallet) => {
+  let upline = wallet,
+    count = 0,
+    stop = false;
+  do {
+    const uplineInfo = await getUserInfo(contract, upline);
+    upline = uplineInfo.upline;
+    if (upline.startsWith("0x000")) {
+      stop = true;
+    }
+    count++;
+  } while (!stop);
+
+  return count;
+};
