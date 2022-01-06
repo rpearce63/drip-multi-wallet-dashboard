@@ -24,18 +24,21 @@ const Dashboard = () => {
   const [totalDripHeld, setTotalDripHeld] = useState(0);
   const [newAddress, setNewAddress] = useState("");
   const [triggerType, setTriggerType] = useState("percent");
+  const [tokenBalance, setTokenBalance] = useState(0);
   //const [autoRefresh, setAutoRefresh] = useState(true);
   let web3, contract;
 
   const fetchData = async () => {
     web3 = web3 ?? (await getConnection());
     contract = contract ?? (await getContract(web3));
-    const [bnbPrice, dripPriceRaw] = await getDripPrice(web3);
+    const [bnbPrice, dripPriceRaw, tokenBalance] = await getDripPrice(web3);
 
     const currentDripPrice = dripPriceRaw * bnbPrice;
     //console.log(web3.utils.fromWei(`${bnbPrice * dripPriceRaw}`, "ether"));
     setDripPrice(() => currentDripPrice);
     setBnbPrice(() => bnbPrice);
+    setTokenBalance(() => tokenBalance);
+
     let storedWallets = JSON.parse(
       window.localStorage.getItem("dripAddresses")
     );
@@ -235,9 +238,14 @@ const Dashboard = () => {
       <nav className="navbar navbar-dark fixed-top bg-dark p-0 shadow">
         <div className="navbar-brand col-md-12">
           <div>
-            Drip Multi-Wallet Dashboard -{" "}
-            <small>Drip ${formatCurrency(convertDrip(dripPrice))}</small> -{" "}
-            <small>BNB ${formatCurrency(bnbPrice)}</small>
+            Drip Multi-Wallet Dashboard
+            <span className="prices">
+              Drip: ${formatCurrency(convertDrip(dripPrice))}
+            </span>
+            {"  "}
+            <span className="prices">BNB: ${formatCurrency(bnbPrice)}</span>
+            {"  "}
+            <span className="prices">Supply: {convertDrip(tokenBalance)}</span>
           </div>
           {/* <div>
             <small className="pause">Auto Refresh</small>

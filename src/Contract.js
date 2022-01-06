@@ -54,9 +54,8 @@ export const getDripPrice = async (web3) => {
     const dripPrice = await contract.methods
       .getTokenToBnbInputPrice(1000000000000000000n)
       .call();
-    ///console.log(dripPrice);
-    //let bnbPrice = await calcBNBPrice();
-    //console.log(`pcs bnb: ${bnbPrice}`);
+
+    const tokenBalance = await contract.methods.tokenBalance().call();
 
     const fetchBnbPrice = async () =>
       fetch(
@@ -68,8 +67,7 @@ export const getDripPrice = async (web3) => {
         });
     const bnbPrice = await fetchBnbPrice();
 
-    //console.log("coingecko bnb: " + bnbPrice);
-    return [bnbPrice, dripPrice];
+    return [bnbPrice, dripPrice, tokenBalance];
   } catch (err) {
     console.log(err.message);
   }
