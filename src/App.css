@@ -1,23 +1,13 @@
-nav {
-  margin-bottom: 50px;
-}
 .navbar-brand {
   padding-left: 20px;
   display: flex;
   justify-content: space-between;
   padding-right: 20px;
 }
-.col-md-12 {
-  width: 100% !important;
-}
-main {
-  margin-top: 130px;
-}
 
-.container-fluid {
-  margin-top: 60px;
+.main {
+  margin-top: 7rem;
 }
-
 .totals {
   border-bottom: 10px;
 }
@@ -75,4 +65,8 @@ button {
   font-size: 14px;
   margin-right: 2rem;
   margin-left: 2rem;
+}
+
+.table-info {
+  margin-top: 2rem;
 }

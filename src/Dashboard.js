@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import {
   getConnection,
   getUserInfo,
   claimsAvailable,
   getContract,
   getDripBalance,
-  getDripPrice,
   getUplineCount,
 } from "./Contract";
+import Header from "./Header";
+
+import { convertDrip, formatPercent, shortenAddress } from "./utils";
 
 const Dashboard = () => {
   const [wallets, setWallets] = useState([]);
@@ -19,25 +22,17 @@ const Dashboard = () => {
   const [totalChildren, setTotalChildren] = useState(0);
   const [totalTeam, setTotalTeam] = useState(0);
   const [addressList, setAddressList] = useState("");
-  const [dripPrice, setDripPrice] = useState(0);
-  const [bnbPrice, setBnbPrice] = useState(0);
+
   const [totalDripHeld, setTotalDripHeld] = useState(0);
   const [newAddress, setNewAddress] = useState("");
   const [triggerType, setTriggerType] = useState("percent");
-  const [tokenBalance, setTokenBalance] = useState(0);
+
   //const [autoRefresh, setAutoRefresh] = useState(true);
   let web3, contract;
 
   const fetchData = async () => {
     web3 = web3 ?? (await getConnection());
     contract = contract ?? (await getContract(web3));
-    const [bnbPrice, dripPriceRaw, tokenBalance] = await getDripPrice(web3);
-
-    const currentDripPrice = dripPriceRaw * bnbPrice;
-    //console.log(web3.utils.fromWei(`${bnbPrice * dripPriceRaw}`, "ether"));
-    setDripPrice(() => currentDripPrice);
-    setBnbPrice(() => bnbPrice);
-    setTokenBalance(() => tokenBalance);
 
     let storedWallets = JSON.parse(
       window.localStorage.getItem("dripAddresses")
@@ -138,20 +133,6 @@ const Dashboard = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const convertDrip = (drip) => {
-    return parseFloat(
-      Math.round((drip / Math.pow(10, 18)) * 1000) / 1000
-    ).toFixed(3);
-  };
-
-  const formatCurrency = (amt) => {
-    return parseFloat(Math.round(amt * 100) / 100).toFixed(2);
-  };
-
-  const formatPercent = (amt) => {
-    return parseFloat(Math.round(amt * 10000) / 100).toFixed(2);
-  };
-
   const saveAddresses = () => {
     const arrayOfAddresses = addressList
       .split(/[\n,]+/)
@@ -235,38 +216,10 @@ const Dashboard = () => {
 
   return (
     <div className="container-fluid">
-      <nav className="navbar navbar-dark fixed-top bg-dark p-0 shadow">
-        <div className="navbar-brand col-md-12">
-          <div>
-            Drip Multi-Wallet Dashboard
-            <span className="prices">
-              Drip: ${formatCurrency(convertDrip(dripPrice))}
-            </span>
-            {"  "}
-            <span className="prices">BNB: ${formatCurrency(bnbPrice)}</span>
-            {"  "}
-            <span className="prices">Supply: {convertDrip(tokenBalance)}</span>
-          </div>
-          {/* <div>
-            <small className="pause">Auto Refresh</small>
-            <input
-              type="checkbox"
-              checked={autoRefresh}
-              onClick={() => setAutoRefresh(!autoRefresh)}
-            />
-          </div> */}
-        </div>
-
-        <div className="card-body">
-          <h6 className="card-subtitle text-white">
-            If you find this tool useful, feel free to drop me a little Drip or
-            BNB: 0x645Dc8a64046FD877b82caB077BF929c299D5A7a
-          </h6>
-        </div>
-      </nav>
-      <main role="main">
+      <Header />
+      <div>
         {!!wallets.length && (
-          <div>
+          <div className="main">
             <form className="row g-3">
               <div className="col">
                 <input
@@ -287,39 +240,45 @@ const Dashboard = () => {
                   Add
                 </button>
               </div>
-
-              <div>Highlight available when at 1% or 1 Drip</div>
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="radio"
-                  value="percent"
-                  checked={triggerType === "percent"}
-                  onChange={() => setTriggerType("percent")}
-                />
-                <label className="form-check-label">
-                  Percent - light green = .9%, green = 1%
-                </label>
-              </div>
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="radio"
-                  value="amount"
-                  checked={triggerType === "amount"}
-                  onChange={() => setTriggerType("amount")}
-                />
-                <label className="form-check-label">
-                  Amount - light green = .5+, green = 1+
-                </label>
+              <div className="alert alert-light">
+                <div>Highlight available when at 1% or 1 Drip</div>
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    value="percent"
+                    checked={triggerType === "percent"}
+                    onChange={() => setTriggerType("percent")}
+                  />
+                  <label className="form-check-label">
+                    Percent - light green = .9%, green = 1%
+                  </label>
+                </div>
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    value="amount"
+                    checked={triggerType === "amount"}
+                    onChange={() => setTriggerType("amount")}
+                  />
+                  <label className="form-check-label">
+                    Amount - light green = .5+, green = 1+
+                  </label>
+                </div>
               </div>
             </form>
           </div>
         )}
 
+        <div className="alert alert-info">
+          Click on a wallet to see upline detail
+        </div>
+
         <table className="table">
           <thead>
             <tr>
+              <th></th>
               <th>Address</th>
               <th>Label</th>
               <th>Buddy</th>
@@ -337,6 +296,7 @@ const Dashboard = () => {
               <th>Team</th>
             </tr>
             <tr className="table-success">
+              <th></th>
               <th>Totals - {wallets.length}</th>
               <th></th>
               <th></th>
@@ -357,16 +317,18 @@ const Dashboard = () => {
           <tbody>
             {wallets
               .sort((a, b) => a.index - b.index)
-              .map((wallet) => (
+              .map((wallet, index) => (
                 <tr key={wallet.address}>
+                  <td>{index + 1}</td>
                   <td
                     className={wallet.valid ? "" : "invalid"}
                     onClick={(e) =>
                       navigator.clipboard.writeText(wallet.address)
                     }
                   >
-                    {wallet.address.substr(0, 5)}...
-                    {wallet.address.slice(-4)}
+                    <Link to={`/upline/${wallet.address}`}>
+                      {shortenAddress(wallet.address)}
+                    </Link>
                   </td>
                   <td>
                     <input
@@ -376,7 +338,7 @@ const Dashboard = () => {
                       onChange={(e) => addLabel(wallet.index, e.target.value)}
                     />
                   </td>
-                  <td>{wallet.upline.substr(0, 5)}</td>
+                  <td>{shortenAddress(wallet.upline)}</td>
                   <td>{wallet.uplineCount}</td>
                   <td>{convertDrip(wallet.dripBalance)}</td>
                   <td className={highlightStyle(wallet)}>
@@ -415,7 +377,7 @@ const Dashboard = () => {
             onChange={(e) => setAddressList(e.target.value)}
           />
         </div>
-      </main>
+      </div>
 
       <footer className="page-footer font-small blue">
         <div className="footer-copyright text-center py-3">

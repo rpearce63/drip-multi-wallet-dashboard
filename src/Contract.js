@@ -86,5 +86,5 @@ export const getUplineCount = async (contract, wallet) => {
     count++;
   } while (!stop);
 
-  return count;
+  return count - 1;
 };
