@@ -24,6 +24,7 @@ const Dashboard = () => {
   const [totalDripHeld, setTotalDripHeld] = useState(0);
   const [newAddress, setNewAddress] = useState("");
   const [triggerType, setTriggerType] = useState("percent");
+  //const [autoRefresh, setAutoRefresh] = useState(true);
   let web3, contract;
 
   const fetchData = async () => {
@@ -35,18 +36,30 @@ const Dashboard = () => {
     //console.log(web3.utils.fromWei(`${bnbPrice * dripPriceRaw}`, "ether"));
     setDripPrice(() => currentDripPrice);
     setBnbPrice(() => bnbPrice);
-    const storedWallets = JSON.parse(
+    let storedWallets = JSON.parse(
       window.localStorage.getItem("dripAddresses")
     );
 
+    if (storedWallets && !storedWallets[0].addr) {
+      console.log("converting addresses");
+      const convertedWallets = storedWallets.map((wallet) => ({
+        addr: wallet,
+        label: "",
+      }));
+      localStorage.setItem("dripAddresses", JSON.stringify(convertedWallets));
+      storedWallets = convertedWallets;
+    }
     const myWallets =
-      storedWallets?.map((addr) => addr.trim().replace("\n", "")) ?? [];
+      storedWallets?.map((wallet) => ({
+        addr: wallet.addr.trim().replace("\n", ""),
+        label: wallet.label,
+      })) ?? [];
     let walletCache = [];
     myWallets.map(async (wallet, index) => {
-      const userInfo = await getUserInfo(contract, wallet);
-      const available = await claimsAvailable(contract, wallet);
-      const dripBalance = await getDripBalance(web3, wallet);
-      const uplineCount = await getUplineCount(contract, wallet);
+      const userInfo = await getUserInfo(contract, wallet.addr);
+      const available = await claimsAvailable(contract, wallet.addr);
+      const dripBalance = await getDripBalance(web3, wallet.addr);
+      const uplineCount = await getUplineCount(contract, wallet.addr);
 
       const valid = !!userInfo;
       walletCache = [
@@ -55,7 +68,8 @@ const Dashboard = () => {
           index,
           ...userInfo,
           available,
-          address: wallet,
+          address: wallet.addr,
+          label: wallet.label,
           valid,
           dripBalance,
           uplineCount,
@@ -144,7 +158,8 @@ const Dashboard = () => {
       ? window.localStorage.clear()
       : window.localStorage.setItem(
           "dripAddresses",
-          JSON.stringify(arrayOfAddresses)
+
+          JSON.stringify(arrayOfAddresses.map((addr) => ({ addr, label: "" })))
         );
     setAddressList("");
     setWallets([]);
@@ -152,16 +167,18 @@ const Dashboard = () => {
   };
 
   const addNewAddress = (e) => {
-    setNewAddress(e.target.value);
     const storedAddresses =
       JSON.parse(window.localStorage.getItem("dripAddresses")) ?? [];
-    storedAddresses.push(e.target.value);
-    window.localStorage.setItem(
-      "dripAddresses",
-      JSON.stringify(storedAddresses)
-    );
-    setNewAddress("");
-    fetchData();
+    if (!storedAddresses.some((sa) => sa.addr === newAddress)) {
+      storedAddresses.push({ addr: newAddress, label: "" });
+      window.localStorage.setItem(
+        "dripAddresses",
+        JSON.stringify(storedAddresses)
+      );
+
+      setNewAddress("");
+      fetchData();
+    }
   };
 
   const highlightStyle = (wallet) => {
@@ -188,14 +205,50 @@ const Dashboard = () => {
     }
   };
 
+  const addLabel = (index, label) => {
+    let walletAddr;
+    const newWallets = wallets.map((wallet) => {
+      if (parseInt(wallet.index) === index) {
+        walletAddr = wallet.address;
+        return { ...wallet, label };
+      } else {
+        return { ...wallet };
+      }
+    });
+
+    let storedWallets = JSON.parse(
+      window.localStorage.getItem("dripAddresses")
+    );
+    storedWallets = storedWallets.map((wallet, index) => {
+      if (walletAddr === wallet.addr) {
+        return { addr: wallet.addr, label };
+      } else {
+        return { ...wallet };
+      }
+    });
+    window.localStorage.setItem("dripAddresses", JSON.stringify(storedWallets));
+    setWallets(newWallets);
+  };
+
   return (
     <div className="container-fluid">
       <nav className="navbar navbar-dark fixed-top bg-dark p-0 shadow">
         <div className="navbar-brand col-md-12">
-          Drip Multi-Wallet Dashboard -{" "}
-          <small>Drip ${formatCurrency(convertDrip(dripPrice))}</small> -{" "}
-          <small>BNB ${formatCurrency(bnbPrice)}</small>
+          <div>
+            Drip Multi-Wallet Dashboard -{" "}
+            <small>Drip ${formatCurrency(convertDrip(dripPrice))}</small> -{" "}
+            <small>BNB ${formatCurrency(bnbPrice)}</small>
+          </div>
+          {/* <div>
+            <small className="pause">Auto Refresh</small>
+            <input
+              type="checkbox"
+              checked={autoRefresh}
+              onClick={() => setAutoRefresh(!autoRefresh)}
+            />
+          </div> */}
         </div>
+
         <div className="card-body">
           <h6 className="card-subtitle text-white">
             If you find this tool useful, feel free to drop me a little Drip or
@@ -206,36 +259,53 @@ const Dashboard = () => {
       <main role="main">
         {!!wallets.length && (
           <div>
-            Add single wallet:{" "}
-            <input
-              size={45}
-              type="text"
-              value={newAddress}
-              onChange={addNewAddress}
-            />
-            <div>Highlight available when at 1% or 1 Drip</div>
-            <div className="radio">
-              <label>
+            <form className="row g-3">
+              <div className="col">
                 <input
+                  className="form-control"
+                  id="newAddressTxt"
+                  type="text"
+                  value={newAddress}
+                  onChange={(e) => setNewAddress(e.target.value)}
+                  placeholder="Add single wallet"
+                />
+              </div>
+              <div className="col">
+                <button
+                  type="submit"
+                  className="btn btn-outline-secondary"
+                  onClick={addNewAddress}
+                >
+                  Add
+                </button>
+              </div>
+
+              <div>Highlight available when at 1% or 1 Drip</div>
+              <div className="form-check">
+                <input
+                  className="form-check-input"
                   type="radio"
                   value="percent"
                   checked={triggerType === "percent"}
                   onChange={() => setTriggerType("percent")}
                 />
-                Percent - light green = .9%, green = 1%
-              </label>
-            </div>
-            <div className="radio">
-              <label>
+                <label className="form-check-label">
+                  Percent - light green = .9%, green = 1%
+                </label>
+              </div>
+              <div className="form-check">
                 <input
+                  className="form-check-input"
                   type="radio"
                   value="amount"
                   checked={triggerType === "amount"}
                   onChange={() => setTriggerType("amount")}
                 />
-                Amount - light green = .5+, green = 1+
-              </label>
-            </div>
+                <label className="form-check-label">
+                  Amount - light green = .5+, green = 1+
+                </label>
+              </div>
+            </form>
           </div>
         )}
 
@@ -243,6 +313,7 @@ const Dashboard = () => {
           <thead>
             <tr>
               <th>Address</th>
+              <th>Label</th>
               <th>Buddy</th>
               <th>
                 Upline
@@ -259,6 +330,7 @@ const Dashboard = () => {
             </tr>
             <tr className="table-success">
               <th>Totals - {wallets.length}</th>
+              <th></th>
               <th></th>
               <th></th>
               <th>{convertDrip(totalDripHeld)}</th>
@@ -279,9 +351,22 @@ const Dashboard = () => {
               .sort((a, b) => a.index - b.index)
               .map((wallet) => (
                 <tr key={wallet.address}>
-                  <td className={wallet.valid ? "" : "invalid"}>
+                  <td
+                    className={wallet.valid ? "" : "invalid"}
+                    onClick={(e) =>
+                      navigator.clipboard.writeText(wallet.address)
+                    }
+                  >
                     {wallet.address.substr(0, 5)}...
                     {wallet.address.slice(-4)}
+                  </td>
+                  <td>
+                    <input
+                      size={8}
+                      type="text"
+                      value={wallet.label}
+                      onChange={(e) => addLabel(wallet.index, e.target.value)}
+                    />
                   </td>
                   <td>{wallet.upline.substr(0, 5)}</td>
                   <td>{wallet.uplineCount}</td>
