@@ -332,8 +332,9 @@ const Dashboard = () => {
                       setEditLabels(!editLabels);
                       setAutoRefresh(!autoRefresh);
                     }}
-                  />{" "}
+                  />
                 </div>
+                {editLabels && <small>autorefresh paused</small>}
               </th>
               <th></th>
               <th></th>
