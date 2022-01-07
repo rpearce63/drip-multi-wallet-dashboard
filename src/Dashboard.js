@@ -28,12 +28,12 @@ const Dashboard = () => {
   const [totalChildren, setTotalChildren] = useState(0);
   const [totalTeam, setTotalTeam] = useState(0);
   const [addressList, setAddressList] = useState("");
-
   const [totalDripHeld, setTotalDripHeld] = useState(0);
   const [newAddress, setNewAddress] = useState("");
   const [triggerType, setTriggerType] = useState("percent");
+  const [editLabels, setEditLabels] = useState(false);
+  const [autoRefresh, setAutoRefresh] = useState(true);
 
-  //const [autoRefresh, setAutoRefresh] = useState(true);
   let web3, contract;
 
   const fetchData = async () => {
@@ -133,11 +133,11 @@ const Dashboard = () => {
   useEffect(() => {
     fetchData();
     const interval = setInterval(() => {
-      fetchData();
+      autoRefresh && fetchData();
     }, 60000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [autoRefresh]);
 
   const saveAddresses = () => {
     const arrayOfAddresses = addressList
@@ -321,7 +321,20 @@ const Dashboard = () => {
             <tr className="table-success">
               <th></th>
               <th>Totals - {wallets.length}</th>
-              <th></th>
+              <th>
+                <div className="form-check form-switch">
+                  <label className="form-check-label">Edit</label>
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    checked={editLabels}
+                    onChange={() => {
+                      setEditLabels(!editLabels);
+                      setAutoRefresh(!autoRefresh);
+                    }}
+                  />{" "}
+                </div>
+              </th>
               <th></th>
               <th></th>
               <th>{convertDrip(totalDripHeld)}</th>
@@ -354,12 +367,16 @@ const Dashboard = () => {
                     </Link>
                   </td>
                   <td>
-                    <input
-                      size={8}
-                      type="text"
-                      value={wallet.label}
-                      onChange={(e) => addLabel(wallet.index, e.target.value)}
-                    />
+                    {editLabels ? (
+                      <input
+                        size={8}
+                        type="text"
+                        value={wallet.label}
+                        onChange={(e) => addLabel(wallet.index, e.target.value)}
+                      />
+                    ) : (
+                      wallet.label
+                    )}
                   </td>
                   <td>{shortenAddress(wallet.upline)}</td>
                   <td>{wallet.uplineCount}</td>
