@@ -17,20 +17,28 @@ const Upline = () => {
       setBuddyInfo(() => ({ ...userInfo, address: buddyId }));
       let atDevWallet = false;
       let uplineAddress = buddyId;
-      let index = 1;
+
       do {
-        let uplineInfo = await getUserInfo(contract, uplineAddress);
+        const uplineInfo = await getUserInfo(contract, uplineAddress);
+        const currentAddress = uplineAddress;
         const isEligible = await contract.methods
-          .isBalanceCovered(uplineAddress, index++)
+          .isNetPositive(uplineAddress)
+          .call();
+        const balanceLevel = await contract.methods
+          .balanceLevel(uplineAddress)
           .call();
 
+        setUplineData((uplineData) => [
+          ...uplineData,
+          {
+            ...uplineInfo,
+            address: currentAddress,
+            isEligible,
+            balanceLevel,
+          },
+        ]);
         uplineAddress = uplineInfo.upline;
-        if (!uplineInfo.upline.startsWith("0x000")) {
-          setUplineData((uplineData) => [
-            ...uplineData,
-            { ...uplineInfo, address: uplineInfo.upline, isEligible },
-          ]);
-        } else {
+        if (uplineInfo.upline.startsWith("0x000")) {
           atDevWallet = true;
         }
       } while (!atDevWallet);
@@ -46,8 +54,9 @@ const Upline = () => {
           <thead>
             <tr>
               <th></th>
-              <th>Upline for {buddyInfo.address}</th>
-              <th>Referral Position</th>
+              <th></th>
+              <th>Referral Coverage Depth</th>
+              <th>Net Positive</th>
               <th>Team</th>
             </tr>
           </thead>
@@ -63,9 +72,8 @@ const Upline = () => {
                     {upline.address}
                   </a>
                 </td>
-                <td>
-                  {upline.ref_claim_pos} - {upline.isEligible ? "Y" : "N"}
-                </td>
+                <td>{upline.balanceLevel}</td>
+                <td>{upline.isEligible ? "Y" : "N"}</td>
                 <td>
                   {upline.referrals}/{upline.total_structure}
                 </td>
