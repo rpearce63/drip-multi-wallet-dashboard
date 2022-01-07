@@ -24,6 +24,24 @@
   background-color: blue;
   color: white;
 }
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  margin-left: 2rem;
+  margin-right: 2rem;
+}
+
+.copyright {
+  width: auto;
+}
+
+.affiliate {
+  width: 30%;
+  background-color: lightblue;
+}
+.affiliate img {
+  width: 100%;
+}
 
 button {
   display: inline-block;
