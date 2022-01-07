@@ -440,8 +440,8 @@ const Dashboard = () => {
           <span className="affiliate">
             <a
               href="https://4dinsingapore.com/amember/aff/go/rpearce63?i=8"
-              rel="nofollow"
               target="_blank"
+              rel="noreferrer"
             >
               <img
                 src="https://4dinsingapore.com/amember/file/get/path/banners.61bbbb50b08be/i/31928"
