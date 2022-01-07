@@ -241,7 +241,7 @@ const Dashboard = () => {
                   type="text"
                   value={newAddress}
                   onChange={(e) => setNewAddress(e.target.value)}
-                  placeholder="Add single wallet"
+                  placeholder="Add additional single wallet"
                 />
               </div>
               <div className="col">
