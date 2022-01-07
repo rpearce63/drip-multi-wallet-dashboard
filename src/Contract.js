@@ -6,6 +6,8 @@ import {
   DRIP_TOKEN_ADDR,
   FOUNTAIN_ABI,
   FOUNTAIN_ADDR,
+  BR34P_ABI,
+  BR34P_ADDRESS,
 } from "./dripconfig";
 //import { calcBNBPrice } from "./tokenPriceApi";
 
@@ -44,6 +46,12 @@ export const getUserInfo = async (contract, account) => {
 
 export const getDripBalance = async (web3, account) => {
   const contract = new web3.eth.Contract(DRIP_TOKEN_ABI, DRIP_TOKEN_ADDR);
+  const tokenBalance = await contract.methods.balanceOf(account).call();
+  return tokenBalance;
+};
+
+export const getBr34pBalance = async (web3, account) => {
+  const contract = new web3.eth.Contract(BR34P_ABI, BR34P_ADDRESS);
   const tokenBalance = await contract.methods.balanceOf(account).call();
   return tokenBalance;
 };

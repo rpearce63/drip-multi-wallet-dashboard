@@ -14,3 +14,13 @@ export const formatPercent = (amt) => {
 
 export const shortenAddress = (address) =>
   `${address.substr(0, 5)}...${address.slice(-4)}`;
+
+export const backupData = () => {
+  const data = localStorage.getItem("dripAddresses");
+  const element = document.createElement("a");
+  const file = new Blob([data], { type: "text/plain" });
+  element.href = URL.createObjectURL(file);
+  element.download = "dashboardAddresses.json";
+  document.body.appendChild(element); // Required for this to work in FireFox
+  element.click();
+};

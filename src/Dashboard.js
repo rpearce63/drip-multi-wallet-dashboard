@@ -7,10 +7,16 @@ import {
   getContract,
   getDripBalance,
   getUplineCount,
+  getBr34pBalance,
 } from "./Contract";
 import Header from "./Header";
 
-import { convertDrip, formatPercent, shortenAddress } from "./utils";
+import {
+  convertDrip,
+  formatPercent,
+  shortenAddress,
+  backupData,
+} from "./utils";
 
 const Dashboard = () => {
   const [wallets, setWallets] = useState([]);
@@ -37,7 +43,6 @@ const Dashboard = () => {
     let storedWallets = JSON.parse(
       window.localStorage.getItem("dripAddresses")
     );
-
     if (storedWallets && !storedWallets[0].addr) {
       console.log("converting addresses");
       const convertedWallets = storedWallets.map((wallet) => ({
@@ -58,7 +63,7 @@ const Dashboard = () => {
       const available = await claimsAvailable(contract, wallet.addr);
       const dripBalance = await getDripBalance(web3, wallet.addr);
       const uplineCount = await getUplineCount(contract, wallet.addr);
-
+      const br34pBalance = await getBr34pBalance(web3, wallet.addr);
       const valid = !!userInfo;
       walletCache = [
         ...walletCache,
@@ -70,6 +75,7 @@ const Dashboard = () => {
           label: wallet.label,
           valid,
           dripBalance,
+          br34pBalance,
           uplineCount,
         },
       ];
@@ -214,12 +220,19 @@ const Dashboard = () => {
     setWallets(newWallets);
   };
 
+  const changeHandler = (event) => {
+    event.target.files[0].text().then((t) => {
+      localStorage.setItem("dripAddresses", t);
+    });
+    window.location.reload(true);
+  };
+
   return (
     <div className="container-fluid">
       <Header />
-      <div>
+      <div className="main">
         {!!wallets.length && (
-          <div className="main">
+          <div className="controls">
             <form className="row g-3">
               <div className="col">
                 <input
@@ -243,37 +256,47 @@ const Dashboard = () => {
               <div className="alert alert-light">
                 <div>Highlight available when at 1% or 1 Drip</div>
                 <div className="form-check">
-                  <input
-                    className="form-check-input"
-                    type="radio"
-                    value="percent"
-                    checked={triggerType === "percent"}
-                    onChange={() => setTriggerType("percent")}
-                  />
                   <label className="form-check-label">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      value="percent"
+                      checked={triggerType === "percent"}
+                      onChange={() => setTriggerType("percent")}
+                    />
                     Percent - light green = .9%, green = 1%
                   </label>
                 </div>
                 <div className="form-check">
-                  <input
-                    className="form-check-input"
-                    type="radio"
-                    value="amount"
-                    checked={triggerType === "amount"}
-                    onChange={() => setTriggerType("amount")}
-                  />
                   <label className="form-check-label">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      value="amount"
+                      checked={triggerType === "amount"}
+                      onChange={() => setTriggerType("amount")}
+                    />
                     Amount - light green = .5+, green = 1+
                   </label>
                 </div>
               </div>
             </form>
+            <div className="alert alert-info">
+              <p>Click on a wallet to see upline detail</p>
+              <div>
+                <div>Back up addresses and labels to a file.</div>
+                <div>
+                  You can then reload the data from the back up file if you
+                  clear the list or clear cache.
+                </div>
+                <p></p>
+                <button className="btn btn-secondary" onClick={backupData}>
+                  Back Up
+                </button>
+              </div>
+            </div>
           </div>
         )}
-
-        <div className="alert alert-info">
-          Click on a wallet to see upline detail
-        </div>
 
         <table className="table">
           <thead>
@@ -285,7 +308,7 @@ const Dashboard = () => {
               <th>
                 Upline
                 <br />
-                Count
+                Depth
               </th>
               <th>Drip Held</th>
               <th>Available</th>
@@ -370,11 +393,20 @@ const Dashboard = () => {
         <div>Paste a list of addresses:</div>
         <div>
           <textarea
+            className="form-control"
             id="addressList"
             rows={10}
             cols={50}
             value={addressList}
             onChange={(e) => setAddressList(e.target.value)}
+          />
+
+          <input
+            className="form-control"
+            type="file"
+            name="file"
+            onChange={changeHandler}
+            placeholder="Load from Backup"
           />
         </div>
       </div>
