@@ -49,7 +49,11 @@ const Upline = () => {
   return (
     <div>
       <Header />
-      <div className="container-fluid main">
+      <div className="page-title">
+        <h1>Wallet Upline</h1>
+      </div>
+
+      <div className="container main">
         <table className="table">
           <thead>
             <tr>
