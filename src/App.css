@@ -1,3 +1,7 @@
+.container {
+  display: flex;
+  max-width: fit-content;
+}
 .navbar-brand {
   padding-left: 20px;
   display: flex;
