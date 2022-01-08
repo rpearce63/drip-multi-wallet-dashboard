@@ -228,7 +228,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="container-fluid">
+    <div className="container">
       <Header />
       <div className="main">
         {!!wallets.length && (
