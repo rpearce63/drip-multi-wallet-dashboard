@@ -2,12 +2,19 @@
   display: flex;
   max-width: fit-content;
 }
+
 .navbar-brand {
   padding-left: 20px;
   display: flex;
   justify-content: space-between;
   padding-right: 20px;
   width: 100%;
+}
+.page-title {
+  padding-top: 7rem;
+  margin-bottom: -6rem;
+  width: 100%;
+  text-align: center;
 }
 
 .main {
