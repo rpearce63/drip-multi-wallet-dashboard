@@ -141,7 +141,10 @@ const Dashboard = () => {
 
   const saveAddresses = (e) => {
     e.preventDefault();
-
+    if (wallets.length) {
+      if (!window.confirm("This will clear your current list. Are you sure?"))
+        return false;
+    }
     const arrayOfAddresses = addressList
       .split(/[\n,]+/)
       .filter((addr) => addr.trim().length === 42);
@@ -158,7 +161,13 @@ const Dashboard = () => {
     fetchData();
   };
 
-  const addNewAddress = (e) => {
+  const addNewAddress = async (e) => {
+    e.preventDefault();
+    const web3 = await getConnection();
+    if (!web3.utils.isAddress(newAddress)) {
+      alert("Invalid Address");
+      return false;
+    }
     const storedAddresses =
       JSON.parse(window.localStorage.getItem("dripAddresses")) ?? [];
     if (!storedAddresses.some((sa) => sa.addr === newAddress)) {
@@ -407,12 +416,7 @@ const Dashboard = () => {
         <button
           type="button"
           className="btn btn-primary"
-          onClick={(e) => {
-            if (
-              window.confirm("This will clear your current list. Are you sure?")
-            )
-              saveAddresses(e);
-          }}
+          onClick={saveAddresses}
         >
           {addressList.length ? "Save" : "Clear"} List
         </button>
