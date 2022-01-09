@@ -96,3 +96,10 @@ export const getUplineCount = async (contract, wallet) => {
 
   return count - 1;
 };
+
+export const roll = async (account) => {
+  console.log(account);
+  const web3 = await getConnection();
+  const contract = await getContract(web3);
+  await contract.methods.roll().send({ from: account });
+};
