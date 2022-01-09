@@ -139,7 +139,9 @@ const Dashboard = () => {
     return () => clearInterval(interval);
   }, [autoRefresh]);
 
-  const saveAddresses = () => {
+  const saveAddresses = (e) => {
+    e.preventDefault();
+
     const arrayOfAddresses = addressList
       .split(/[\n,]+/)
       .filter((addr) => addr.trim().length === 42);
@@ -249,6 +251,7 @@ const Dashboard = () => {
                   type="submit"
                   className="btn btn-outline-secondary"
                   onClick={addNewAddress}
+                  disabled={!!!newAddress || newAddress.length !== 42}
                 >
                   Add
                 </button>
@@ -404,7 +407,12 @@ const Dashboard = () => {
         <button
           type="button"
           className="btn btn-primary"
-          onClick={saveAddresses}
+          onClick={(e) => {
+            if (
+              window.confirm("This will clear your current list. Are you sure?")
+            )
+              saveAddresses(e);
+          }}
         >
           {addressList.length ? "Save" : "Clear"} List
         </button>
