@@ -251,6 +251,7 @@ const Dashboard = () => {
                   type="submit"
                   className="btn btn-outline-secondary"
                   onClick={addNewAddress}
+                  disabled={!!!newAddress || newAddress.length !== 42}
                 >
                   Add
                 </button>
