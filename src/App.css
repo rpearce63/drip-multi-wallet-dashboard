@@ -107,3 +107,19 @@ button {
 .table-info {
   margin-top: 2rem;
 }
+
+.bi-clipboard:hover,
+.bi-clipboard-check:hover {
+  cursor: pointer;
+}
+
+.bi {
+  margin-right: 5px;
+}
+.btn-copy {
+  font-size: 12px;
+}
+
+.warning {
+  background-color: yellow !important;
+}

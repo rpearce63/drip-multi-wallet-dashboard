@@ -8,6 +8,7 @@ import {
   getDripBalance,
   getUplineCount,
   getBr34pBalance,
+  getBnbBalance,
 } from "./Contract";
 import Header from "./Header";
 
@@ -30,10 +31,26 @@ const Dashboard = () => {
   const [addressList, setAddressList] = useState("");
   const [totalDripHeld, setTotalDripHeld] = useState(0);
   const [newAddress, setNewAddress] = useState("");
-  const [triggerType, setTriggerType] = useState("percent");
+  //const [triggerType, setTriggerType] = useState("percent");
   const [editLabels, setEditLabels] = useState(false);
   const [autoRefresh, setAutoRefresh] = useState(true);
-
+  const [dataCopied, setDataCopied] = useState(false);
+  const TABLE_HEADERS = [
+    "#",
+    "Address",
+    "Label",
+    "Buddy",
+    "Upline Depth",
+    "Drip Balance",
+    "BNB Balance",
+    "Available Amt",
+    "Pct",
+    "Deposits",
+    "Claimed",
+    "Rewarded",
+    "Max Payout",
+    "Team",
+  ];
   let web3, contract;
 
   const fetchData = async () => {
@@ -64,6 +81,7 @@ const Dashboard = () => {
       const dripBalance = await getDripBalance(web3, wallet.addr);
       const uplineCount = await getUplineCount(contract, wallet.addr);
       const br34pBalance = await getBr34pBalance(web3, wallet.addr);
+      const bnbBalance = await getBnbBalance(web3, wallet.addr);
       const valid = !!userInfo;
       walletCache = [
         ...walletCache,
@@ -77,10 +95,12 @@ const Dashboard = () => {
           dripBalance,
           br34pBalance,
           uplineCount,
+          bnbBalance,
         },
       ];
 
       setWallets(() => [...walletCache]);
+      setDataCopied(false);
     });
   };
 
@@ -184,28 +204,44 @@ const Dashboard = () => {
     }
   };
 
-  const highlightStyle = (wallet) => {
-    let style;
-    const pct = wallet.available / wallet.deposits;
-    const amount = convertDrip(wallet.available);
+  // const highlightStyle = (wallet) => {
+  //   let style;
+  //   const pct = wallet.available / wallet.deposits;
+  //   const amount = convertDrip(wallet.available);
 
-    switch (triggerType) {
-      case "percent":
-        //const pct = wallet.available / wallet.deposits;
-        style = pct >= 0.01 ? "hydrate" : pct >= 0.009 ? "prepare" : "";
-        return style;
+  //   switch (triggerType) {
+  //     case "percent":
+  //       //const pct = wallet.available / wallet.deposits;
+  //       style = pct >= 0.01 ? "hydrate" : pct >= 0.009 ? "prepare" : "";
+  //       return style;
 
-      case "amount":
-        //const amount = convertDrip(wallet.available);
-        style = amount >= 1 ? "hydrate" : amount >= 0.5 ? "prepare" : "";
+  //     case "amount":
+  //       //const amount = convertDrip(wallet.available);
+  //       style = amount >= 1 ? "hydrate" : amount >= 0.5 ? "prepare" : "";
+  //       return style;
+  //     case "both":
+  //       style =
+  //         pct >= 0.01 && amount >= 1
+  //           ? "hydrate"
+  //           : pct >= 0.01 && amount >= 0.5
+  //           ? "hydrate"
+  //           : "";
+  //       return style;
+  //     default:
+  //       return "";
+  //   }
+  // };
+
+  const highlightStyleFor = (col, wallet) => {
+    let amount, percent, style;
+    switch (col) {
+      case "amt":
+        amount = parseFloat(convertDrip(wallet.available));
+        style = amount >= 1.0 ? "hydrate" : amount >= 0.5 ? "prepare" : "";
         return style;
-      case "both":
-        style =
-          pct >= 0.01 && amount >= 1
-            ? "hydrate"
-            : pct >= 0.01 && amount >= 0.5
-            ? "hydrate"
-            : "";
+      case "pct":
+        percent = parseFloat(wallet.available / wallet.deposits);
+        style = percent >= 0.01 ? "hydrate" : percent >= 0.009 ? "prepare" : "";
         return style;
       default:
         return "";
@@ -244,6 +280,32 @@ const Dashboard = () => {
     window.location.reload(true);
   };
 
+  const copyTableData = () => {
+    const tableData = [
+      [...TABLE_HEADERS],
+      ...wallets.map((w, index) => [
+        index + 1,
+        shortenAddress(w.address),
+        w.label,
+        shortenAddress(w.upline),
+        w.uplineCount,
+        convertDrip(w.dripBalance),
+        parseFloat(w.bnbBalance).toFixed(3),
+        convertDrip(w.available),
+        formatPercent(w.available / w.deposits),
+        convertDrip(w.deposits),
+        convertDrip(w.payouts),
+        `${convertDrip(w.direct_bonus)}/${convertDrip(w.match_bonus)}`,
+        convertDrip(w.deposits * 3.65),
+        `${w.referrals}/${w.total_structure}`,
+      ]),
+    ]
+      .map((e) => e.join(","))
+      .join("\n");
+    navigator.clipboard.writeText(tableData);
+    setDataCopied(true);
+  };
+
   return (
     <div className="container">
       <Header />
@@ -271,47 +333,21 @@ const Dashboard = () => {
                   Add
                 </button>
               </div>
-              <div className="alert alert-light">
-                <div>Highlight available when at 1% or 1 Drip</div>
-                <div className="form-check">
-                  <label className="form-check-label">
-                    <input
-                      className="form-check-input"
-                      type="radio"
-                      value="percent"
-                      checked={triggerType === "percent"}
-                      onChange={() => setTriggerType("percent")}
-                    />
-                    Percent - <span className="prepare">light green = .9%</span>{" "}
-                    , <span className="hydrate">green = 1%</span>
-                  </label>
+              <div className="alert">
+                <div>Available will highlight to indicate when it is</div>
+                <div>ready to claim or hydrate</div>
+
+                <div>
+                  Amount - <span className="prepare">light green = .5+</span>,{" "}
+                  <span className="hydrate">green = 1+</span>
                 </div>
-                <div className="form-check">
-                  <label className="form-check-label">
-                    <input
-                      className="form-check-input"
-                      type="radio"
-                      value="amount"
-                      checked={triggerType === "amount"}
-                      onChange={() => setTriggerType("amount")}
-                    />
-                    Amount - <span className="prepare">light green = .5+</span>,{" "}
-                    <span className="hydrate">green = 1+</span>
-                  </label>
+                <div>
+                  Percent - <span className="prepare">light green = .9%</span> ,{" "}
+                  <span className="hydrate">green = 1%</span>
                 </div>
-                <div className="form-check">
-                  <label className="form-check-label">
-                    <input
-                      className="form-check-input"
-                      type="radio"
-                      value="amount"
-                      checked={triggerType === "both"}
-                      onChange={() => setTriggerType("both")}
-                    />
-                    Both -{" "}
-                    <span className="prepare">light green = .5+ AND 1%</span>,{" "}
-                    <span className="hydrate">green = 1+ AND 1%</span>
-                  </label>
+                <div>
+                  BNB balance low -{" "}
+                  <span className="warning">yellow = &lt; 0.05 bnb</span>
                 </div>
               </div>
             </form>
@@ -331,49 +367,50 @@ const Dashboard = () => {
             </div>
           </div>
         )}
-
+        {!!wallets.length && (
+          <div>
+            <button
+              className="btn-copy btn btn-outline-secondary"
+              onClick={copyTableData}
+            >
+              <i className={`bi bi-clipboard${dataCopied ? "-check" : ""}`}></i>
+              Copy table
+            </button>
+          </div>
+        )}
         <table className="table">
           <thead>
             <tr>
-              <th>#</th>
-              <th>Address</th>
-              <th>Label</th>
-              <th>Buddy</th>
-              <th>
-                Upline
-                <br />
-                Depth
-              </th>
-              <th>Drip Balance</th>
-              <th>Available</th>
-              <th>Deposits</th>
-              <th>Claimed</th>
-              <th>Rewarded</th>
-              <th>Max Payout</th>
-              <th>Team</th>
+              {TABLE_HEADERS.map((h) => (
+                <th key={h}>{h}</th>
+              ))}
             </tr>
             <tr className="table-success">
               <th> </th>
               <th>Totals - {wallets.length}</th>
               <th>
-                <div className="form-check form-switch">
-                  <label className="form-check-label">Edit</label>
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    checked={editLabels}
-                    onChange={() => {
-                      setEditLabels(!editLabels);
-                      setAutoRefresh(!autoRefresh);
-                    }}
-                  />
-                </div>
+                {!!wallets.length && (
+                  <div className="form-check form-switch">
+                    <label className="form-check-label">Edit</label>
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      checked={editLabels}
+                      onChange={() => {
+                        setEditLabels(!editLabels);
+                        setAutoRefresh(!autoRefresh);
+                      }}
+                    />
+                  </div>
+                )}
                 {editLabels && <small>autorefresh paused</small>}
               </th>
               <th> </th>
               <th> </th>
               <th>{convertDrip(totalDripHeld)}</th>
+              <th></th>
               <th>{convertDrip(totalAvailable)}</th>
+              <th></th>
               <th>{convertDrip(totalDeposits)}</th>
               <th>{convertDrip(totalClaimed)}</th>
               <th>
@@ -416,8 +453,15 @@ const Dashboard = () => {
                   <td>{shortenAddress(wallet.upline)}</td>
                   <td>{wallet.uplineCount}</td>
                   <td>{convertDrip(wallet.dripBalance)}</td>
-                  <td className={highlightStyle(wallet)}>
-                    {convertDrip(wallet.available)} -{" "}
+                  <td
+                    className={`${wallet.bnbBalance < 0.05 ? "warning" : ""}`}
+                  >
+                    {parseFloat(wallet.bnbBalance).toFixed(3)}
+                  </td>
+                  <td className={highlightStyleFor("amt", wallet)}>
+                    {convertDrip(wallet.available)}
+                  </td>
+                  <td className={highlightStyleFor("pct", wallet)}>
                     {formatPercent(wallet.available / wallet.deposits)}%
                   </td>
                   <td>{convertDrip(wallet.deposits)}</td>
@@ -439,6 +483,7 @@ const Dashboard = () => {
           type="button"
           className="btn btn-primary"
           onClick={saveAddresses}
+          disabled={!addressList.length && !wallets.length}
         >
           {addressList.length ? "Save" : "Clear"} List
         </button>

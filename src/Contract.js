@@ -56,6 +56,11 @@ export const getBr34pBalance = async (web3, account) => {
   return tokenBalance;
 };
 
+export const getBnbBalance = async (web3, account) => {
+  const balance = await web3.eth.getBalance(account);
+  return web3.utils.fromWei(balance);
+};
+
 export const getDripPrice = async (web3) => {
   const contract = new web3.eth.Contract(FOUNTAIN_ABI, FOUNTAIN_ADDR);
   try {
