@@ -58,7 +58,7 @@ const Dashboard = () => {
         label: wallet.label,
       })) ?? [];
     let walletCache = [];
-    myWallets.map(async (wallet, index) => {
+    myWallets.forEach(async (wallet, index) => {
       const userInfo = await getUserInfo(contract, wallet.addr);
       const available = await claimsAvailable(contract, wallet.addr);
       const dripBalance = await getDripBalance(web3, wallet.addr);
@@ -186,23 +186,27 @@ const Dashboard = () => {
 
   const highlightStyle = (wallet) => {
     let style;
+    const pct = wallet.available / wallet.deposits;
+    const amount = convertDrip(wallet.available);
+
     switch (triggerType) {
       case "percent":
-        const pct = wallet.available / wallet.deposits;
-        style =
-          pct >= 0.009 && pct < 0.01 ? "prepare" : pct >= 0.01 ? "hydrate" : "";
+        //const pct = wallet.available / wallet.deposits;
+        style = pct >= 0.01 ? "hydrate" : pct >= 0.009 ? "prepare" : "";
         return style;
 
       case "amount":
-        const amount = convertDrip(wallet.available);
+        //const amount = convertDrip(wallet.available);
+        style = amount >= 1 ? "hydrate" : amount >= 0.5 ? "prepare" : "";
+        return style;
+      case "both":
         style =
-          amount >= 0.5 && amount < 1.0
-            ? "prepare"
-            : amount >= 1.0
+          pct >= 0.01 && amount >= 1
+            ? "hydrate"
+            : pct >= 0.01 && amount >= 0.5
             ? "hydrate"
             : "";
         return style;
-
       default:
         return "";
     }
@@ -278,7 +282,8 @@ const Dashboard = () => {
                       checked={triggerType === "percent"}
                       onChange={() => setTriggerType("percent")}
                     />
-                    Percent - light green = .9%, green = 1%
+                    Percent - <span className="prepare">light green = .9%</span>{" "}
+                    , <span className="hydrate">green = 1%</span>
                   </label>
                 </div>
                 <div className="form-check">
@@ -290,7 +295,22 @@ const Dashboard = () => {
                       checked={triggerType === "amount"}
                       onChange={() => setTriggerType("amount")}
                     />
-                    Amount - light green = .5+, green = 1+
+                    Amount - <span className="prepare">light green = .5+</span>,{" "}
+                    <span className="hydrate">green = 1+</span>
+                  </label>
+                </div>
+                <div className="form-check">
+                  <label className="form-check-label">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      value="amount"
+                      checked={triggerType === "both"}
+                      onChange={() => setTriggerType("both")}
+                    />
+                    Both -{" "}
+                    <span className="prepare">light green = .5+ AND 1%</span>,{" "}
+                    <span className="hydrate">green = 1+ AND 1%</span>
                   </label>
                 </div>
               </div>
@@ -315,7 +335,7 @@ const Dashboard = () => {
         <table className="table">
           <thead>
             <tr>
-              <th></th>
+              <th>#</th>
               <th>Address</th>
               <th>Label</th>
               <th>Buddy</th>
@@ -333,7 +353,7 @@ const Dashboard = () => {
               <th>Team</th>
             </tr>
             <tr className="table-success">
-              <th></th>
+              <th> </th>
               <th>Totals - {wallets.length}</th>
               <th>
                 <div className="form-check form-switch">
@@ -350,8 +370,8 @@ const Dashboard = () => {
                 </div>
                 {editLabels && <small>autorefresh paused</small>}
               </th>
-              <th></th>
-              <th></th>
+              <th> </th>
+              <th> </th>
               <th>{convertDrip(totalDripHeld)}</th>
               <th>{convertDrip(totalAvailable)}</th>
               <th>{convertDrip(totalDeposits)}</th>
