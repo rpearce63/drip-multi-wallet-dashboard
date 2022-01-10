@@ -326,9 +326,10 @@ const Dashboard = () => {
                   Add
                 </button>
               </div>
-              <div className="alert alert-light">
-                <div>Highlight available when at 1% or 1 Drip</div>
-                <div className="form-check">
+              <div className="alert">
+                <div>Available will highlight to indicate when it is</div>
+                <div>ready to claim or hydrate</div>
+                {/* <div className="form-check">
                   <label className="form-check-label">
                     <input
                       className="form-check-input"
@@ -336,12 +337,14 @@ const Dashboard = () => {
                       value="percent"
                       checked={triggerType === "percent"}
                       onChange={() => setTriggerType("percent")}
-                    />
-                    Percent - <span className="prepare">light green = .9%</span>{" "}
-                    , <span className="hydrate">green = 1%</span>
-                  </label>
+                    /> */}
+                <div>
+                  Percent - <span className="prepare">light green = .9%</span> ,{" "}
+                  <span className="hydrate">green = 1%</span>
                 </div>
-                <div className="form-check">
+                {/* </label>
+                </div> */}
+                {/* <div className="form-check">
                   <label className="form-check-label">
                     <input
                       className="form-check-input"
@@ -349,12 +352,14 @@ const Dashboard = () => {
                       value="amount"
                       checked={triggerType === "amount"}
                       onChange={() => setTriggerType("amount")}
-                    />
-                    Amount - <span className="prepare">light green = .5+</span>,{" "}
-                    <span className="hydrate">green = 1+</span>
-                  </label>
+                    /> */}
+                <div>
+                  Amount - <span className="prepare">light green = .5+</span>,{" "}
+                  <span className="hydrate">green = 1+</span>
                 </div>
-                <div className="form-check">
+                {/* </label>
+                </div> */}
+                {/* <div className="form-check">
                   <label className="form-check-label">
                     <input
                       className="form-check-input"
@@ -367,7 +372,7 @@ const Dashboard = () => {
                     <span className="prepare">light green = .5+ AND 1%</span>,{" "}
                     <span className="hydrate">green = 1+ AND 1%</span>
                   </label>
-                </div>
+                </div> */}
               </div>
             </form>
             <div className="alert alert-info">
