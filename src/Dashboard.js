@@ -33,7 +33,22 @@ const Dashboard = () => {
   const [triggerType, setTriggerType] = useState("percent");
   const [editLabels, setEditLabels] = useState(false);
   const [autoRefresh, setAutoRefresh] = useState(true);
-
+  const [dataCopied, setDataCopied] = useState(false);
+  const TABLE_HEADERS = [
+    "#",
+    "Address",
+    "Label",
+    "Buddy",
+    "Upline Depth",
+    "Drip Balance",
+    "Available Amt",
+    "Pct",
+    "Deposits",
+    "Claimed",
+    "Rewarded",
+    "Max Payout",
+    "Team",
+  ];
   let web3, contract;
 
   const fetchData = async () => {
@@ -81,6 +96,7 @@ const Dashboard = () => {
       ];
 
       setWallets(() => [...walletCache]);
+      setDataCopied(false);
     });
   };
 
@@ -212,6 +228,20 @@ const Dashboard = () => {
     }
   };
 
+  const highlightStyleFor = (col, wallet) => {
+    let amount, percent, style;
+    switch (col) {
+      case "amt":
+        amount = parseFloat(convertDrip(wallet.available));
+        style = amount >= 1.0 ? "hydrate" : amount >= 0.5 ? "prepare" : "";
+        return style;
+      case "pct":
+        percent = parseFloat(wallet.available / wallet.deposits);
+        style = percent >= 0.01 ? "hydrate" : percent >= 0.009 ? "prepare" : "";
+        return style;
+    }
+  };
+
   const addLabel = (index, label) => {
     let walletAddr;
     const newWallets = wallets.map((wallet) => {
@@ -242,6 +272,31 @@ const Dashboard = () => {
       localStorage.setItem("dripAddresses", t);
     });
     window.location.reload(true);
+  };
+
+  const copyTableData = () => {
+    const tableData = [
+      [...TABLE_HEADERS],
+      ...wallets.map((w, index) => [
+        index + 1,
+        shortenAddress(w.address),
+        w.label,
+        shortenAddress(w.upline),
+        w.uplineCount,
+        convertDrip(w.dripBalance),
+        convertDrip(w.available),
+        formatPercent(w.available / w.deposits),
+        convertDrip(w.deposits),
+        convertDrip(w.payouts),
+        `${convertDrip(w.direct_bonus)}/${convertDrip(w.match_bonus)}`,
+        convertDrip(w.deposits * 3.65),
+        `${w.referrals}/${w.total_structure}`,
+      ]),
+    ]
+      .map((e) => e.join(","))
+      .join("\n");
+    navigator.clipboard.writeText(tableData);
+    setDataCopied(true);
   };
 
   return (
@@ -331,26 +386,21 @@ const Dashboard = () => {
             </div>
           </div>
         )}
-
+        <div>
+          <button
+            className="btn-copy btn btn-outline-secondary"
+            onClick={copyTableData}
+          >
+            <i className={`bi bi-clipboard${dataCopied ? "-check" : ""}`}></i>
+            Copy table
+          </button>
+        </div>
         <table className="table">
           <thead>
             <tr>
-              <th>#</th>
-              <th>Address</th>
-              <th>Label</th>
-              <th>Buddy</th>
-              <th>
-                Upline
-                <br />
-                Depth
-              </th>
-              <th>Drip Balance</th>
-              <th>Available</th>
-              <th>Deposits</th>
-              <th>Claimed</th>
-              <th>Rewarded</th>
-              <th>Max Payout</th>
-              <th>Team</th>
+              {TABLE_HEADERS.map((h) => (
+                <th key={h}>{h}</th>
+              ))}
             </tr>
             <tr className="table-success">
               <th> </th>
@@ -374,6 +424,7 @@ const Dashboard = () => {
               <th> </th>
               <th>{convertDrip(totalDripHeld)}</th>
               <th>{convertDrip(totalAvailable)}</th>
+              <th></th>
               <th>{convertDrip(totalDeposits)}</th>
               <th>{convertDrip(totalClaimed)}</th>
               <th>
@@ -416,8 +467,10 @@ const Dashboard = () => {
                   <td>{shortenAddress(wallet.upline)}</td>
                   <td>{wallet.uplineCount}</td>
                   <td>{convertDrip(wallet.dripBalance)}</td>
-                  <td className={highlightStyle(wallet)}>
-                    {convertDrip(wallet.available)} -{" "}
+                  <td className={highlightStyleFor("amt", wallet)}>
+                    {convertDrip(wallet.available)}
+                  </td>
+                  <td className={highlightStyleFor("pct", wallet)}>
                     {formatPercent(wallet.available / wallet.deposits)}%
                   </td>
                   <td>{convertDrip(wallet.deposits)}</td>
