@@ -335,7 +335,7 @@ const Dashboard = () => {
         <table className="table">
           <thead>
             <tr>
-              <th> </th>
+              <th>#</th>
               <th>Address</th>
               <th>Label</th>
               <th>Buddy</th>
