@@ -391,15 +391,17 @@ const Dashboard = () => {
             </div>
           </div>
         )}
-        <div>
-          <button
-            className="btn-copy btn btn-outline-secondary"
-            onClick={copyTableData}
-          >
-            <i className={`bi bi-clipboard${dataCopied ? "-check" : ""}`}></i>
-            Copy table
-          </button>
-        </div>
+        {!!wallets.length && (
+          <div>
+            <button
+              className="btn-copy btn btn-outline-secondary"
+              onClick={copyTableData}
+            >
+              <i className={`bi bi-clipboard${dataCopied ? "-check" : ""}`}></i>
+              Copy table
+            </button>
+          </div>
+        )}
         <table className="table">
           <thead>
             <tr>
@@ -411,19 +413,20 @@ const Dashboard = () => {
               <th> </th>
               <th>Totals - {wallets.length}</th>
               <th>
-                <div className="form-check form-switch">
-                  <label className="form-check-label">Edit</label>
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    checked={editLabels}
-                    onChange={() => {
-                      setEditLabels(!editLabels);
-                      setAutoRefresh(!autoRefresh);
-                    }}
-                    disabled={!wallets.length}
-                  />
-                </div>
+                {!!wallets.length && (
+                  <div className="form-check form-switch">
+                    <label className="form-check-label">Edit</label>
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      checked={editLabels}
+                      onChange={() => {
+                        setEditLabels(!editLabels);
+                        setAutoRefresh(!autoRefresh);
+                      }}
+                    />
+                  </div>
+                )}
                 {editLabels && <small>autorefresh paused</small>}
               </th>
               <th> </th>
@@ -498,6 +501,7 @@ const Dashboard = () => {
           type="button"
           className="btn btn-primary"
           onClick={saveAddresses}
+          disabled={!addressList.length && !wallets.length}
         >
           {addressList.length ? "Save" : "Clear"} List
         </button>
