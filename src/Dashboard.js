@@ -421,6 +421,7 @@ const Dashboard = () => {
                       setEditLabels(!editLabels);
                       setAutoRefresh(!autoRefresh);
                     }}
+                    disabled={!wallets.length}
                   />
                 </div>
                 {editLabels && <small>autorefresh paused</small>}
