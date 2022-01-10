@@ -145,9 +145,11 @@ const Dashboard = () => {
       if (!window.confirm("This will clear your current list. Are you sure?"))
         return false;
     }
-    const arrayOfAddresses = addressList
-      .split(/[\n,]+/)
-      .filter((addr) => addr.trim().length === 42);
+    const arrayOfAddresses = [
+      ...new Set(
+        addressList.split(/[\n,]+/).filter((addr) => addr.trim().length === 42)
+      ),
+    ];
 
     arrayOfAddresses.length === 0
       ? window.localStorage.clear()
