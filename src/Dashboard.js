@@ -290,7 +290,7 @@ const Dashboard = () => {
         shortenAddress(w.upline),
         w.uplineCount,
         convertDrip(w.dripBalance),
-        w.bnbBalance,
+        parseFloat(w.bnbBalance).toFixed(3),
         convertDrip(w.available),
         formatPercent(w.available / w.deposits),
         convertDrip(w.deposits),
