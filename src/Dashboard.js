@@ -344,7 +344,7 @@ const Dashboard = () => {
                 <br />
                 Depth
               </th>
-              <th>Drip Held</th>
+              <th>Drip Balance</th>
               <th>Available</th>
               <th>Deposits</th>
               <th>Claimed</th>
