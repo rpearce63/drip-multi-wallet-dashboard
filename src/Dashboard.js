@@ -8,6 +8,7 @@ import {
   getDripBalance,
   getUplineCount,
   getBr34pBalance,
+  getBnbBalance,
 } from "./Contract";
 import Header from "./Header";
 
@@ -30,7 +31,7 @@ const Dashboard = () => {
   const [addressList, setAddressList] = useState("");
   const [totalDripHeld, setTotalDripHeld] = useState(0);
   const [newAddress, setNewAddress] = useState("");
-  const [triggerType, setTriggerType] = useState("percent");
+  //const [triggerType, setTriggerType] = useState("percent");
   const [editLabels, setEditLabels] = useState(false);
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [dataCopied, setDataCopied] = useState(false);
@@ -41,6 +42,7 @@ const Dashboard = () => {
     "Buddy",
     "Upline Depth",
     "Drip Balance",
+    "BNB Balance",
     "Available Amt",
     "Pct",
     "Deposits",
@@ -79,6 +81,7 @@ const Dashboard = () => {
       const dripBalance = await getDripBalance(web3, wallet.addr);
       const uplineCount = await getUplineCount(contract, wallet.addr);
       const br34pBalance = await getBr34pBalance(web3, wallet.addr);
+      const bnbBalance = await getBnbBalance(web3, wallet.addr);
       const valid = !!userInfo;
       walletCache = [
         ...walletCache,
@@ -92,6 +95,7 @@ const Dashboard = () => {
           dripBalance,
           br34pBalance,
           uplineCount,
+          bnbBalance,
         },
       ];
 
@@ -200,33 +204,33 @@ const Dashboard = () => {
     }
   };
 
-  const highlightStyle = (wallet) => {
-    let style;
-    const pct = wallet.available / wallet.deposits;
-    const amount = convertDrip(wallet.available);
+  // const highlightStyle = (wallet) => {
+  //   let style;
+  //   const pct = wallet.available / wallet.deposits;
+  //   const amount = convertDrip(wallet.available);
 
-    switch (triggerType) {
-      case "percent":
-        //const pct = wallet.available / wallet.deposits;
-        style = pct >= 0.01 ? "hydrate" : pct >= 0.009 ? "prepare" : "";
-        return style;
+  //   switch (triggerType) {
+  //     case "percent":
+  //       //const pct = wallet.available / wallet.deposits;
+  //       style = pct >= 0.01 ? "hydrate" : pct >= 0.009 ? "prepare" : "";
+  //       return style;
 
-      case "amount":
-        //const amount = convertDrip(wallet.available);
-        style = amount >= 1 ? "hydrate" : amount >= 0.5 ? "prepare" : "";
-        return style;
-      case "both":
-        style =
-          pct >= 0.01 && amount >= 1
-            ? "hydrate"
-            : pct >= 0.01 && amount >= 0.5
-            ? "hydrate"
-            : "";
-        return style;
-      default:
-        return "";
-    }
-  };
+  //     case "amount":
+  //       //const amount = convertDrip(wallet.available);
+  //       style = amount >= 1 ? "hydrate" : amount >= 0.5 ? "prepare" : "";
+  //       return style;
+  //     case "both":
+  //       style =
+  //         pct >= 0.01 && amount >= 1
+  //           ? "hydrate"
+  //           : pct >= 0.01 && amount >= 0.5
+  //           ? "hydrate"
+  //           : "";
+  //       return style;
+  //     default:
+  //       return "";
+  //   }
+  // };
 
   const highlightStyleFor = (col, wallet) => {
     let amount, percent, style;
@@ -239,6 +243,8 @@ const Dashboard = () => {
         percent = parseFloat(wallet.available / wallet.deposits);
         style = percent >= 0.01 ? "hydrate" : percent >= 0.009 ? "prepare" : "";
         return style;
+      default:
+        return "";
     }
   };
 
@@ -284,6 +290,7 @@ const Dashboard = () => {
         shortenAddress(w.upline),
         w.uplineCount,
         convertDrip(w.dripBalance),
+        w.bnbBalance,
         convertDrip(w.available),
         formatPercent(w.available / w.deposits),
         convertDrip(w.deposits),
@@ -329,50 +336,19 @@ const Dashboard = () => {
               <div className="alert">
                 <div>Available will highlight to indicate when it is</div>
                 <div>ready to claim or hydrate</div>
-                {/* <div className="form-check">
-                  <label className="form-check-label">
-                    <input
-                      className="form-check-input"
-                      type="radio"
-                      value="percent"
-                      checked={triggerType === "percent"}
-                      onChange={() => setTriggerType("percent")}
-                    /> */}
-                <div>
-                  Percent - <span className="prepare">light green = .9%</span> ,{" "}
-                  <span className="hydrate">green = 1%</span>
-                </div>
-                {/* </label>
-                </div> */}
-                {/* <div className="form-check">
-                  <label className="form-check-label">
-                    <input
-                      className="form-check-input"
-                      type="radio"
-                      value="amount"
-                      checked={triggerType === "amount"}
-                      onChange={() => setTriggerType("amount")}
-                    /> */}
+
                 <div>
                   Amount - <span className="prepare">light green = .5+</span>,{" "}
                   <span className="hydrate">green = 1+</span>
                 </div>
-                {/* </label>
-                </div> */}
-                {/* <div className="form-check">
-                  <label className="form-check-label">
-                    <input
-                      className="form-check-input"
-                      type="radio"
-                      value="amount"
-                      checked={triggerType === "both"}
-                      onChange={() => setTriggerType("both")}
-                    />
-                    Both -{" "}
-                    <span className="prepare">light green = .5+ AND 1%</span>,{" "}
-                    <span className="hydrate">green = 1+ AND 1%</span>
-                  </label>
-                </div> */}
+                <div>
+                  Percent - <span className="prepare">light green = .9%</span> ,{" "}
+                  <span className="hydrate">green = 1%</span>
+                </div>
+                <div>
+                  BNB balance low -{" "}
+                  <span className="warning">yellow = &lt; 0.05 bnb</span>
+                </div>
               </div>
             </form>
             <div className="alert alert-info">
@@ -432,6 +408,7 @@ const Dashboard = () => {
               <th> </th>
               <th> </th>
               <th>{convertDrip(totalDripHeld)}</th>
+              <th></th>
               <th>{convertDrip(totalAvailable)}</th>
               <th></th>
               <th>{convertDrip(totalDeposits)}</th>
@@ -476,6 +453,11 @@ const Dashboard = () => {
                   <td>{shortenAddress(wallet.upline)}</td>
                   <td>{wallet.uplineCount}</td>
                   <td>{convertDrip(wallet.dripBalance)}</td>
+                  <td
+                    className={`${wallet.bnbBalance < 0.05 ? "warning" : ""}`}
+                  >
+                    {parseFloat(wallet.bnbBalance).toFixed(3)}
+                  </td>
                   <td className={highlightStyleFor("amt", wallet)}>
                     {convertDrip(wallet.available)}
                   </td>
