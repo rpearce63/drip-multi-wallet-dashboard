@@ -123,3 +123,19 @@ button {
 .warning {
   background-color: yellow !important;
 }
+
+/* span.spinCtrl {
+  position: relative;
+  outline: 1px solid #00f;
+}
+
+span.spinCtrl:after {
+  content: "";
+
+  height: 100%;
+  left: 0;
+  top: 0;
+  position: absolute;
+  outline: 1px solid red; 
+  width: 60%;
+} */

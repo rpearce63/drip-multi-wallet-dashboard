@@ -33,9 +33,13 @@ const Dashboard = () => {
   const [totalBnbBalance, setTotalBnbBalance] = useState(0);
   const [newAddress, setNewAddress] = useState("");
   //const [triggerType, setTriggerType] = useState("percent");
+  const [flagAmount, setFlagAmount] = useState(false);
+  const [flagPct, setFlagPct] = useState(false);
+  const [flagLowBnb, setFlagLowBnb] = useState(false);
   const [editLabels, setEditLabels] = useState(false);
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [dataCopied, setDataCopied] = useState(false);
+  const [bnbThreshold, setBnbThreshold] = useState(0.05);
   const TABLE_HEADERS = [
     "#",
     "Address",
@@ -44,8 +48,8 @@ const Dashboard = () => {
     "Upline Depth",
     "Drip Balance",
     "BNB Balance",
-    "Available Amt",
-    "Pct",
+    "Available",
+    "Daily ROI",
     "Deposits",
     "Claimed",
     "Rewarded",
@@ -239,16 +243,26 @@ const Dashboard = () => {
   // };
 
   const highlightStyleFor = (col, wallet) => {
-    let amount, percent, style;
+    let amount,
+      percent,
+      style = "";
     switch (col) {
       case "amt":
-        amount = parseFloat(convertDrip(wallet.available));
-        style = amount >= 1.0 ? "hydrate" : amount >= 0.5 ? "prepare" : "";
+        if (flagAmount) {
+          amount = parseFloat(convertDrip(wallet.available));
+          style = amount >= 1.0 ? "hydrate" : amount >= 0.5 ? "prepare" : "";
+        }
         return style;
       case "pct":
-        percent = parseFloat(wallet.available / wallet.deposits);
-        style = percent >= 0.01 ? "hydrate" : percent >= 0.009 ? "prepare" : "";
+        if (flagPct) {
+          percent = parseFloat(wallet.available / wallet.deposits);
+          style =
+            percent >= 0.01 ? "hydrate" : percent >= 0.009 ? "prepare" : "";
+        }
         return style;
+      case "bnb":
+        return flagLowBnb && wallet.bnbBalance < bnbThreshold ? "warning" : "";
+
       default:
         return "";
     }
@@ -312,6 +326,24 @@ const Dashboard = () => {
     setDataCopied(true);
   };
 
+  const incrementBnbFlag = () => {
+    let val = parseFloat(bnbThreshold);
+    if (val < 0.1) {
+      setBnbThreshold(
+        parseFloat(parseFloat(val) + parseFloat(0.01)).toFixed(2)
+      );
+    }
+  };
+
+  const decrementBnbFlag = () => {
+    let val = parseFloat(bnbThreshold);
+    if (val > 0.01) {
+      setBnbThreshold(
+        parseFloat(parseFloat(val) - parseFloat(0.01)).toFixed(2)
+      );
+    }
+  };
+
   return (
     <div className="container">
       <Header />
@@ -343,17 +375,66 @@ const Dashboard = () => {
                 <div>Available will highlight to indicate when it is</div>
                 <div>ready to claim or hydrate</div>
 
-                <div>
-                  Amount - <span className="prepare">light green = .5+</span>,{" "}
-                  <span className="hydrate">green = 1+</span>
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    id="flagAmountChk"
+                    type="checkbox"
+                    checked={flagAmount}
+                    onChange={() => setFlagAmount(!flagAmount)}
+                  />
+                  <label className="form-check-label" htmlFor="flagAmountChk">
+                    Amount - <span className="prepare">light green = .5+</span>,{" "}
+                    <span className="hydrate">green = 1+</span>
+                  </label>
                 </div>
-                <div>
-                  Percent - <span className="prepare">light green = .9%</span> ,{" "}
-                  <span className="hydrate">green = 1%</span>
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    id="flagPctChk"
+                    type="checkbox"
+                    checked={flagPct}
+                    onChange={() => setFlagPct(!flagPct)}
+                  />
+                  <label className="form-check-label" htmlFor="flagPctChk">
+                    Percent - <span className="prepare">light green = .9%</span>{" "}
+                    , <span className="hydrate">green = 1%</span>
+                  </label>
                 </div>
-                <div>
-                  BNB balance low -{" "}
-                  <span className="warning">yellow = &lt; 0.05 bnb</span>
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    id="flagLowBnbChk"
+                    type="checkbox"
+                    checked={flagLowBnb}
+                    onChange={() => setFlagLowBnb(!flagLowBnb)}
+                  />
+                  <label className="form-check-label">
+                    BNB balance low -{" "}
+                    <span className="warning">
+                      yellow = &lt;{" "}
+                      <span className="spinCtrl">
+                        <input
+                          type="number"
+                          min={0.01}
+                          max={0.1}
+                          data-decimals={2}
+                          step={0.01}
+                          value={bnbThreshold}
+                          onChange={(e) => {}}
+                          onKeyDown={(e) => {
+                            e.preventDefault();
+                            return false;
+                          }}
+                          disabled={true}
+                        />
+                        <span onClick={incrementBnbFlag}> + </span>
+
+                        <span onClick={decrementBnbFlag}> - </span>
+                      </span>
+                      bnb
+                    </span>
+                  </label>
                 </div>
               </div>
             </form>
@@ -457,9 +538,7 @@ const Dashboard = () => {
                   <td>{shortenAddress(wallet.upline)}</td>
                   <td>{wallet.uplineCount}</td>
                   <td>{convertDrip(wallet.dripBalance)}</td>
-                  <td
-                    className={`${wallet.bnbBalance < 0.05 ? "warning" : ""}`}
-                  >
+                  <td className={highlightStyleFor("bnb", wallet)}>
                     {parseFloat(wallet.bnbBalance).toFixed(3)}
                   </td>
                   <td className={highlightStyleFor("amt", wallet)}>
