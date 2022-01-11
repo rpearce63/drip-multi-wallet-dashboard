@@ -30,6 +30,7 @@ const Dashboard = () => {
   //const [totalTeam, setTotalTeam] = useState(0);
   const [addressList, setAddressList] = useState("");
   const [totalDripHeld, setTotalDripHeld] = useState(0);
+  const [totalBnbBalance, setTotalBnbBalance] = useState(0);
   const [newAddress, setNewAddress] = useState("");
   //const [triggerType, setTriggerType] = useState("percent");
   const [editLabels, setEditLabels] = useState(false);
@@ -107,32 +108,37 @@ const Dashboard = () => {
   useEffect(() => {
     const validWallets = wallets.filter((wallet) => wallet.valid);
 
-    setTotalDeposits((totalDeposits) =>
+    setTotalDeposits(() =>
       validWallets.reduce((total, wallet) => {
         return total + parseFloat(wallet.deposits);
       }, 0)
     );
-    setTotalDripHeld((totalDripHeld) =>
+    setTotalDripHeld(() =>
       validWallets.reduce((total, wallet) => {
         return total + parseFloat(wallet.dripBalance);
       }, 0)
     );
-    setTotalAvailable((totalAvailable) =>
+    setTotalBnbBalance(() =>
+      validWallets.reduce((total, wallet) => {
+        return total + parseFloat(wallet.bnbBalance);
+      }, 0)
+    );
+    setTotalAvailable(() =>
       validWallets.reduce((total, wallet) => {
         return total + parseFloat(wallet.available);
       }, 0)
     );
-    setTotalClaimed((totalClaimed) =>
+    setTotalClaimed(() =>
       validWallets.reduce((total, wallet) => {
         return total + parseFloat(wallet.payouts);
       }, 0)
     );
-    setTotalDirectBonus((totalDirectBonus) =>
+    setTotalDirectBonus(() =>
       validWallets.reduce((total, wallet) => {
         return total + parseFloat(wallet.direct_bonus);
       }, 0)
     );
-    setTotalMatch((totalMatch) =>
+    setTotalMatch(() =>
       validWallets.reduce((total, wallet) => {
         return total + parseFloat(wallet.match_bonus);
       }, 0)
@@ -408,7 +414,7 @@ const Dashboard = () => {
               <th> </th>
               <th> </th>
               <th>{convertDrip(totalDripHeld)}</th>
-              <th></th>
+              <th>{parseFloat(totalBnbBalance).toFixed(3)}</th>
               <th>{convertDrip(totalAvailable)}</th>
               <th></th>
               <th>{convertDrip(totalDeposits)}</th>
