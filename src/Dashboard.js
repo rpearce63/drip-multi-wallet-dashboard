@@ -26,8 +26,8 @@ const Dashboard = () => {
   const [totalClaimed, setTotalClaimed] = useState(0);
   const [totalDirectBonus, setTotalDirectBonus] = useState(0);
   const [totalMatch, setTotalMatch] = useState(0);
-  const [totalChildren, setTotalChildren] = useState(0);
-  const [totalTeam, setTotalTeam] = useState(0);
+  //const [totalChildren, setTotalChildren] = useState(0);
+  //const [totalTeam, setTotalTeam] = useState(0);
   const [addressList, setAddressList] = useState("");
   const [totalDripHeld, setTotalDripHeld] = useState(0);
   const [newAddress, setNewAddress] = useState("");
@@ -138,16 +138,16 @@ const Dashboard = () => {
       }, 0)
     );
 
-    setTotalChildren((totalChildren) =>
-      validWallets.reduce((total, wallet) => {
-        return total + parseInt(wallet.referrals);
-      }, 0)
-    );
-    setTotalTeam((totalTeam) =>
-      validWallets.reduce((total, wallet) => {
-        return total + parseInt(wallet.total_structure);
-      }, 0)
-    );
+    // setTotalChildren((totalChildren) =>
+    //   validWallets.reduce((total, wallet) => {
+    //     return total + parseInt(wallet.referrals);
+    //   }, 0)
+    // );
+    // setTotalTeam((totalTeam) =>
+    //   validWallets.reduce((total, wallet) => {
+    //     return total + parseInt(wallet.total_structure);
+    //   }, 0)
+    // );
   }, [wallets]);
 
   useEffect(() => {
@@ -417,9 +417,7 @@ const Dashboard = () => {
                 {convertDrip(totalDirectBonus)}/{convertDrip(totalMatch)}
               </th>
               <th>{convertDrip(totalDeposits * 3.65)}</th>
-              <th>
-                {totalChildren}/{totalTeam}
-              </th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
