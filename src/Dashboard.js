@@ -49,7 +49,7 @@ const Dashboard = () => {
     "Drip",
     "BNB",
     "Available",
-    "%",
+    "ROI",
     "Deposits",
     "Claimed",
     "Rewarded",
