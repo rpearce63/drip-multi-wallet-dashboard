@@ -122,6 +122,7 @@ button {
 
 .warning {
   background-color: yellow !important;
+  margin-left: 5px;
 }
 
 /* span.spinCtrl {
@@ -139,3 +140,20 @@ span.spinCtrl:after {
   outline: 1px solid red; 
   width: 60%;
 } */
+
+.inputSpinner {
+  margin-left: 5px;
+}
+.inputSpinner button {
+  line-height: 1;
+  width: 2rem;
+  align-content: center;
+  align-items: center;
+}
+.inputSpinner-control {
+  width: 55px;
+}
+
+.input-spinner-label {
+  display: flex;
+}

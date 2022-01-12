@@ -19,6 +19,8 @@ import {
   backupData,
 } from "./utils";
 
+import InputSpinner from "react-bootstrap-input-spinner";
+
 const Dashboard = () => {
   const [wallets, setWallets] = useState([]);
   const [totalDeposits, setTotalDeposits] = useState(0);
@@ -45,9 +47,9 @@ const Dashboard = () => {
     "Address",
     "Label",
     "Buddy",
-    "Upline Depth",
-    "Drip Balance",
-    "BNB Balance",
+    "Uplines",
+    "Drip",
+    "BNB",
     "Available",
     "Daily ROI",
     "Deposits",
@@ -327,6 +329,7 @@ const Dashboard = () => {
   };
 
   const incrementBnbFlag = () => {
+    setFlagLowBnb(true);
     let val = parseFloat(bnbThreshold);
     if (val < 0.1) {
       setBnbThreshold(
@@ -336,6 +339,7 @@ const Dashboard = () => {
   };
 
   const decrementBnbFlag = () => {
+    setFlagLowBnb(true);
     let val = parseFloat(bnbThreshold);
     if (val > 0.01) {
       setBnbThreshold(
@@ -401,6 +405,7 @@ const Dashboard = () => {
                     , <span className="hydrate">green = 1%</span>
                   </label>
                 </div>
+
                 <div className="form-check">
                   <input
                     className="form-check-input"
@@ -409,31 +414,33 @@ const Dashboard = () => {
                     checked={flagLowBnb}
                     onChange={() => setFlagLowBnb(!flagLowBnb)}
                   />
-                  <label className="form-check-label">
-                    BNB balance low -{" "}
-                    <span className="warning">
-                      yellow = &lt;{" "}
-                      <span className="spinCtrl">
-                        <input
-                          type="number"
-                          min={0.01}
-                          max={0.1}
-                          data-decimals={2}
-                          step={0.01}
-                          value={bnbThreshold}
-                          onChange={(e) => {}}
-                          onKeyDown={(e) => {
-                            e.preventDefault();
-                            return false;
-                          }}
-                          disabled={true}
-                        />
-                        <span onClick={incrementBnbFlag}> + </span>
-
-                        <span onClick={decrementBnbFlag}> - </span>
-                      </span>
-                      bnb
-                    </span>
+                  <label className="form-check-label input-spinner-label">
+                    Low BNB:
+                    <div className="inputSpinner">
+                      <button
+                        type="button"
+                        className="btn btn-outline-secondary"
+                        onClick={decrementBnbFlag}
+                      >
+                        -
+                      </button>
+                      <input
+                        className="inputSpinner-control"
+                        type="number"
+                        value={bnbThreshold}
+                        onChange={() => {}}
+                        size={3}
+                        disabled={true}
+                      />
+                      <button
+                        type="button"
+                        className="btn btn-outline-secondary"
+                        onClick={incrementBnbFlag}
+                      >
+                        +
+                      </button>
+                    </div>
+                    <span className="warning"> - yellow</span>
                   </label>
                 </div>
               </div>
