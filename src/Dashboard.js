@@ -58,6 +58,16 @@ const Dashboard = () => {
   ];
   let web3, contract;
 
+  useEffect(() => {
+    const { flagAmount, flagLowBnb, flagPct, bnbThreshold } = JSON.parse(
+      localStorage.getItem("dripDashboard-config")
+    );
+    setFlagAmount(() => flagAmount);
+    setFlagLowBnb(() => flagLowBnb);
+    setFlagPct(() => flagPct);
+    setBnbThreshold(() => bnbThreshold);
+  }, []);
+
   const fetchData = async () => {
     web3 = web3 ?? (await getConnection());
     contract = contract ?? (await getContract(web3));
@@ -147,17 +157,6 @@ const Dashboard = () => {
         return total + parseFloat(wallet.match_bonus);
       }, 0)
     );
-
-    // setTotalChildren((totalChildren) =>
-    //   validWallets.reduce((total, wallet) => {
-    //     return total + parseInt(wallet.referrals);
-    //   }, 0)
-    // );
-    // setTotalTeam((totalTeam) =>
-    //   validWallets.reduce((total, wallet) => {
-    //     return total + parseInt(wallet.total_structure);
-    //   }, 0)
-    // );
   }, [wallets]);
 
   useEffect(() => {
@@ -213,34 +212,6 @@ const Dashboard = () => {
       fetchData();
     }
   };
-
-  // const highlightStyle = (wallet) => {
-  //   let style;
-  //   const pct = wallet.available / wallet.deposits;
-  //   const amount = convertDrip(wallet.available);
-
-  //   switch (triggerType) {
-  //     case "percent":
-  //       //const pct = wallet.available / wallet.deposits;
-  //       style = pct >= 0.01 ? "hydrate" : pct >= 0.009 ? "prepare" : "";
-  //       return style;
-
-  //     case "amount":
-  //       //const amount = convertDrip(wallet.available);
-  //       style = amount >= 1 ? "hydrate" : amount >= 0.5 ? "prepare" : "";
-  //       return style;
-  //     case "both":
-  //       style =
-  //         pct >= 0.01 && amount >= 1
-  //           ? "hydrate"
-  //           : pct >= 0.01 && amount >= 0.5
-  //           ? "hydrate"
-  //           : "";
-  //       return style;
-  //     default:
-  //       return "";
-  //   }
-  // };
 
   const highlightStyleFor = (col, wallet) => {
     let amount,
@@ -346,6 +317,11 @@ const Dashboard = () => {
     }
   };
 
+  useEffect(() => {
+    const config = { flagAmount, flagLowBnb, flagPct, bnbThreshold };
+    localStorage.setItem("dripDashboard-config", JSON.stringify(config));
+  }, [flagAmount, flagLowBnb, flagPct, bnbThreshold]);
+
   return (
     <div className="container">
       <Header />
@@ -445,6 +421,7 @@ const Dashboard = () => {
             </form>
             <div className="alert alert-info">
               <p>Click on a wallet to see upline detail</p>
+              <p>Click on Team to see downline</p>
               <div>
                 <div>Back up addresses and labels to a file.</div>
                 <div>
