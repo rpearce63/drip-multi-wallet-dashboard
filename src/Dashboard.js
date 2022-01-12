@@ -19,8 +19,6 @@ import {
   backupData,
 } from "./utils";
 
-import InputSpinner from "react-bootstrap-input-spinner";
-
 const Dashboard = () => {
   const [wallets, setWallets] = useState([]);
   const [totalDeposits, setTotalDeposits] = useState(0);
@@ -35,9 +33,9 @@ const Dashboard = () => {
   const [totalBnbBalance, setTotalBnbBalance] = useState(0);
   const [newAddress, setNewAddress] = useState("");
   //const [triggerType, setTriggerType] = useState("percent");
-  const [flagAmount, setFlagAmount] = useState(false);
-  const [flagPct, setFlagPct] = useState(false);
-  const [flagLowBnb, setFlagLowBnb] = useState(false);
+  const [flagAmount, setFlagAmount] = useState(true);
+  const [flagPct, setFlagPct] = useState(true);
+  const [flagLowBnb, setFlagLowBnb] = useState(true);
   const [editLabels, setEditLabels] = useState(false);
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [dataCopied, setDataCopied] = useState(false);
@@ -51,7 +49,7 @@ const Dashboard = () => {
     "Drip",
     "BNB",
     "Available",
-    "Daily ROI",
+    "%",
     "Deposits",
     "Claimed",
     "Rewarded",
@@ -473,11 +471,11 @@ const Dashboard = () => {
           </div>
         )}
         <table className="table">
-          <thead>
+          <thead className="table-light">
             <tr>
-              {TABLE_HEADERS.map((h) => (
-                <th key={h}>{h}</th>
-              ))}
+              {TABLE_HEADERS.map((h) => {
+                return <th key={h}>{h}</th>;
+              })}
             </tr>
             <tr className="table-success">
               <th> </th>
@@ -562,7 +560,15 @@ const Dashboard = () => {
                   </td>
                   <td>{convertDrip(wallet.deposits * 3.65)}</td>
                   <td>
-                    {wallet.referrals} / {wallet.total_structure}
+                    {wallet.referrals > 0 ? (
+                      <Link to={`/downline/${wallet.address}`}>
+                        {wallet.referrals} / {wallet.total_structure}
+                      </Link>
+                    ) : (
+                      <span>
+                        {wallet.referrals} / {wallet.total_structure}
+                      </span>
+                    )}
                   </td>
                 </tr>
               ))}

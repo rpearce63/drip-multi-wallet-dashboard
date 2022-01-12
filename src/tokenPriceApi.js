@@ -740,6 +740,7 @@ export async function calcREVPrice() {
   const BUSDTokenAddress = "0xe9e7cea3dedca5984780bafc599bd69add087d56";
   //const USDTokenAddress = "0x55d398326f99059fF775485246999027B3197955"; //USDT
   //const WBNBTokenAddress = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
+  //const BR34PTokenAddress = "0xa86d305A36cDB815af991834B46aD3d7FbB38523";
   let revToSell = web3.utils.toWei("1", "ether");
   let amountOut;
   try {
@@ -754,6 +755,33 @@ export async function calcREVPrice() {
     //console.log(`amountOut=${amountOut}`);
   } catch (error) {
     console.log(error);
+  }
+  if (!amountOut) return 0;
+  return amountOut;
+}
+
+export async function calcBR34PPrice() {
+  const web3 = new Web3("https://bsc-dataseed1.binance.org");
+  //const BNBTokenAddress = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"; //BNB
+  //const REVTokenAddress = "0x276B440fdB4C54631C882caC9e4317929e751FF8";
+  //const BUSDTokenAddress = "0xe9e7cea3dedca5984780bafc599bd69add087d56";
+  //const USDTokenAddress = "0x55d398326f99059fF775485246999027B3197955"; //USDT
+  const WBNBTokenAddress = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
+  const BR34PTokenAddress = "0xa86d305A36cDB815af991834B46aD3d7FbB38523";
+  let revToSell = web3.utils.toWei("1", "ether");
+  let amountOut;
+  try {
+    let router = await new web3.eth.Contract(
+      pancakeSwapAbi,
+      pancakeSwapContract
+    );
+    amountOut = await router.methods
+      .getAmountsOut(revToSell, [BR34PTokenAddress, WBNBTokenAddress])
+      .call();
+    amountOut = web3.utils.fromWei(amountOut[1]);
+    //console.log(`amountOut=${amountOut}`);
+  } catch (error) {
+    console.log(`error getting br34p price: ${error}`);
   }
   if (!amountOut) return 0;
   return amountOut;

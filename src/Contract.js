@@ -75,9 +75,7 @@ export const getDripPrice = async (web3) => {
         "https://api.coingecko.com/api/v3/simple/price?ids=wbnb&vs_currencies=usd"
       )
         .then((response) => response.json())
-        .then((data) => {
-          return data.wbnb.usd;
-        });
+        .then((data) => data.wbnb.usd);
     const bnbPrice = await fetchBnbPrice();
 
     return [bnbPrice, dripPrice, tokenBalance];
@@ -107,4 +105,25 @@ export const roll = async (account) => {
   const web3 = await getConnection();
   const contract = await getContract(web3);
   await contract.methods.roll().send({ from: account });
+};
+
+export const getDownline = async (account) => {
+  const fetchDownline = async (account) =>
+    fetch(`https://api.drip.community/org/${account}`)
+      .then((response) => response.json())
+      .then((data) => {
+        return data;
+      });
+  const downline = await fetchDownline(account);
+  return downline;
+};
+
+export const getBr34pPrice = async () => {
+  const fetchBr34PPrice = async () =>
+    fetch("https://api.coinpaprika.com/v1/tickers/br34p-br34p/")
+      .then((response) => response.json())
+      .then((data) => data);
+
+  const br34pData = await fetchBr34PPrice();
+  return br34pData.quotes.USD.price;
 };

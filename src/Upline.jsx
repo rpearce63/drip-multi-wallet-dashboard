@@ -6,15 +6,15 @@ import Header from "./Header";
 const Upline = () => {
   let { buddy: buddyId } = useParams();
 
-  const [buddyInfo, setBuddyInfo] = useState({});
+  //const [buddyInfo, setBuddyInfo] = useState({});
   const [uplineData, setUplineData] = useState([]);
 
   useEffect(() => {
     const getUplineData = async () => {
       const web3 = await getConnection();
       const contract = await getContract(web3);
-      const userInfo = await getUserInfo(contract, buddyId);
-      setBuddyInfo(() => ({ ...userInfo, address: buddyId }));
+      //const userInfo = await getUserInfo(contract, buddyId);
+      //setBuddyInfo(() => ({ ...userInfo, address: buddyId }));
       let atDevWallet = false;
       let uplineAddress = buddyId;
 

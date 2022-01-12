@@ -20,6 +20,8 @@
 .main {
   margin-top: 7rem;
   margin-bottom: 5rem;
+  display: flex;
+  flex-direction: column;
 }
 .controls {
   display: flex;
@@ -97,6 +99,7 @@ button {
 
 .prices {
   font-size: 14px;
+  color: white;
   margin-right: 2rem;
   margin-left: 2rem;
   width: 100%;
