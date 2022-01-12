@@ -479,7 +479,7 @@ const Dashboard = () => {
               <th>{convertDrip(totalDripHeld)}</th>
               <th>{parseFloat(totalBnbBalance).toFixed(3)}</th>
               <th>{convertDrip(totalAvailable)}</th>
-              <th></th>
+              <th>{formatPercent(totalAvailable / totalDeposits)}%</th>
               <th>{convertDrip(totalDeposits)}</th>
               <th>{convertDrip(totalClaimed)}</th>
               <th>
