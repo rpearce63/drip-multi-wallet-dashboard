@@ -25,8 +25,11 @@ const Downline = () => {
     ));
 
     return (
-      <li key={child.id}>
-        <span>{child.text}</span>
+      <li
+        key={child.id}
+        onClick={() => navigator.clipboard.writeText(child.id)}
+      >
+        {child.text}
         {subChild}
       </li>
     );
