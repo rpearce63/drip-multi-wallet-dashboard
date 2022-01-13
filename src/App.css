@@ -160,3 +160,7 @@ span.spinCtrl:after {
 .input-spinner-label {
   display: flex;
 }
+
+.downline-wallet {
+  cursor: default;
+}

@@ -59,7 +59,7 @@ const Downline = () => {
 
     return (
       <li key={child.id}>
-        <span onClick={() => getUserData(child.id)}>
+        <span className="downline-wallet" onClick={() => getUserData(child.id)}>
           {child.text} {child.deposits && `(${child.deposits})`}
         </span>
         {subChild}
