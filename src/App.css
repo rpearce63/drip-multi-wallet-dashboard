@@ -18,8 +18,10 @@
 }
 
 .main {
-  margin-top: 7rem;
+  margin-top: 10rem;
   margin-bottom: 5rem;
+  display: flex;
+  flex-direction: column;
 }
 .controls {
   display: flex;
@@ -97,6 +99,7 @@ button {
 
 .prices {
   font-size: 14px;
+  color: white;
   margin-right: 2rem;
   margin-left: 2rem;
   width: 100%;
@@ -122,4 +125,38 @@ button {
 
 .warning {
   background-color: yellow !important;
+  margin-left: 5px;
+}
+
+/* span.spinCtrl {
+  position: relative;
+  outline: 1px solid #00f;
+}
+
+span.spinCtrl:after {
+  content: "";
+
+  height: 100%;
+  left: 0;
+  top: 0;
+  position: absolute;
+  outline: 1px solid red; 
+  width: 60%;
+} */
+
+.inputSpinner {
+  margin-left: 5px;
+}
+.inputSpinner button {
+  line-height: 1;
+  width: 2rem;
+  align-content: center;
+  align-items: center;
+}
+.inputSpinner-control {
+  width: 55px;
+}
+
+.input-spinner-label {
+  display: flex;
 }

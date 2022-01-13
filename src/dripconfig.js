@@ -2009,3 +2009,7 @@ export const BR34P_ABI = [
     type: "function",
   },
 ];
+
+export const BNB_TOKEN_ADDRESS = "0xB8c77482e45F1F44dE1745F52C74426C631bDD52";
+
+export const BNB_ABI = "";
