@@ -77,7 +77,7 @@ const Downline = () => {
 
   return (
     <div>
-      <Header />
+      {/* <Header /> */}
       <div className="page-title">
         <h1>Wallet Downline</h1>
         <h3>for {downline && downline.id}</h3>

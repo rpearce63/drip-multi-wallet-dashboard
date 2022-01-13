@@ -48,7 +48,7 @@ const Upline = () => {
 
   return (
     <div>
-      <Header />
+      {/* <Header /> */}
       <div className="page-title">
         <h1>Wallet Upline</h1>
       </div>
