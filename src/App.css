@@ -164,3 +164,9 @@ span.spinCtrl:after {
 .downline-wallet {
   cursor: default;
 }
+
+.table-options {
+  display: flex;
+  justify-content: space-between;
+  width: 18rem;
+}

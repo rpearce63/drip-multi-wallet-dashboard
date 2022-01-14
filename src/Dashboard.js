@@ -452,7 +452,7 @@ const Dashboard = () => {
           </div>
         )}
         {!!wallets.length && (
-          <div>
+          <div className="table-options">
             <button
               className="btn-copy btn btn-outline-secondary"
               onClick={copyTableData}
@@ -462,12 +462,15 @@ const Dashboard = () => {
             </button>
             <div className="form-check">
               <input
+                id="expandedTable"
                 className="form-check-input"
                 type="checkbox"
                 checked={expandedTable}
                 onChange={() => setExpandedTable(!expandedTable)}
               />
-              <label className="form-check-label">Expanded Table</label>
+              <label htmlFor="expandedTable" className="form-check-label">
+                Expanded Table
+              </label>
             </div>
           </div>
         )}
