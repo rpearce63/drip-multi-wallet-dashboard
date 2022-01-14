@@ -14,6 +14,7 @@ import Header from "./Header";
 
 import {
   convertDrip,
+  formatCurrency,
   formatPercent,
   shortenAddress,
   backupData,
@@ -40,14 +41,28 @@ const Dashboard = () => {
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [dataCopied, setDataCopied] = useState(false);
   const [bnbThreshold, setBnbThreshold] = useState(0.05);
+  const [expandedTable, setExpandedTable] = useState(false);
   const TABLE_HEADERS = [
     "#",
     "Address",
     "Label",
     "Buddy",
     "Uplines",
+    "BR34P",
     "Drip",
     "BNB",
+    "Available",
+    "ROI",
+    "Deposits",
+    "Claimed",
+    "Rewarded",
+    "Max Payout",
+    "Team",
+  ];
+  const BASE_HEADERS = [
+    "#",
+    "Address",
+    "Label",
     "Available",
     "ROI",
     "Deposits",
@@ -445,14 +460,23 @@ const Dashboard = () => {
               <i className={`bi bi-clipboard${dataCopied ? "-check" : ""}`}></i>
               Copy table
             </button>
+            <div className="form-check">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                checked={expandedTable}
+                onChange={() => setExpandedTable(!expandedTable)}
+              />
+              <label className="form-check-label">Expanded Table</label>
+            </div>
           </div>
         )}
         <table className="table">
           <thead className="table-light">
             <tr>
-              {TABLE_HEADERS.map((h) => {
-                return <th key={h}>{h}</th>;
-              })}
+              {expandedTable
+                ? TABLE_HEADERS.map((h) => <th key={h}>{h}</th>)
+                : BASE_HEADERS.map((h) => <th key={h}>{h}</th>)}
             </tr>
             <tr className="table-success">
               <th> </th>
@@ -474,12 +498,17 @@ const Dashboard = () => {
                 )}
                 {editLabels && <small>autorefresh paused</small>}
               </th>
-              <th> </th>
-              <th> </th>
-              <th>{convertDrip(totalDripHeld)}</th>
-              <th>{parseFloat(totalBnbBalance).toFixed(3)}</th>
+              {expandedTable && <th></th>}
+              {expandedTable && <th></th>}
+              {expandedTable && <th></th>}
+              {expandedTable && <th>{convertDrip(totalDripHeld)}</th>}
+              {expandedTable && (
+                <th>{parseFloat(totalBnbBalance).toFixed(3)}</th>
+              )}
               <th>{convertDrip(totalAvailable)}</th>
+
               <th>{formatPercent(totalAvailable / totalDeposits)}%</th>
+
               <th>{convertDrip(totalDeposits)}</th>
               <th>{convertDrip(totalClaimed)}</th>
               <th>
@@ -517,18 +546,25 @@ const Dashboard = () => {
                       wallet.label
                     )}
                   </td>
-                  <td>{shortenAddress(wallet.upline)}</td>
-                  <td>{wallet.uplineCount}</td>
-                  <td>{convertDrip(wallet.dripBalance)}</td>
-                  <td className={highlightStyleFor("bnb", wallet)}>
-                    {parseFloat(wallet.bnbBalance).toFixed(3)}
-                  </td>
+                  {expandedTable && <td>{shortenAddress(wallet.upline)}</td>}
+                  {expandedTable && <td>{wallet.uplineCount}</td>}
+                  {expandedTable && (
+                    <td>{formatCurrency(wallet.br34pBalance)}</td>
+                  )}
+                  {expandedTable && <td>{convertDrip(wallet.dripBalance)}</td>}
+                  {expandedTable && (
+                    <td className={highlightStyleFor("bnb", wallet)}>
+                      {parseFloat(wallet.bnbBalance).toFixed(3)}
+                    </td>
+                  )}
                   <td className={highlightStyleFor("amt", wallet)}>
                     {convertDrip(wallet.available)}
                   </td>
+
                   <td className={highlightStyleFor("pct", wallet)}>
                     {formatPercent(wallet.available / wallet.deposits)}%
                   </td>
+
                   <td>{convertDrip(wallet.deposits)}</td>
                   <td>{convertDrip(wallet.payouts)}</td>
                   <td>

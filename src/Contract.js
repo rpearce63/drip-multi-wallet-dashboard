@@ -53,7 +53,7 @@ export const getDripBalance = async (web3, account) => {
 export const getBr34pBalance = async (web3, account) => {
   const contract = new web3.eth.Contract(BR34P_ABI, BR34P_ADDRESS);
   const tokenBalance = await contract.methods.balanceOf(account).call();
-  return tokenBalance;
+  return tokenBalance / 10e7;
 };
 
 export const getBnbBalance = async (web3, account) => {
