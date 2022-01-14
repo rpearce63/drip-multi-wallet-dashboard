@@ -22,8 +22,10 @@ const Header = () => {
       setTokenBalance(() => tokenBalance);
       setRevPrice(() => currentRevPrice);
       setBr34pPrice(() => br34pPrice);
+      document.title = formatCurrency(convertDrip(currentDripPrice));
     };
     fetchData();
+
     const interval = setInterval(() => {
       fetchData();
     }, 60000);
