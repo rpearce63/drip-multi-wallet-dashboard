@@ -43,11 +43,15 @@
   .main {
     margin-top: 13rem;
   }
+  .controls {
+    display: block !important;
+  }
 }
 
 .controls {
   display: flex;
 }
+
 .totals {
   border-bottom: 10px;
 }
@@ -199,4 +203,12 @@ span.spinCtrl:after {
 
 .nav-wrap {
   flex-wrap: wrap;
+}
+
+.hide {
+  display: none;
+}
+
+.hideControlsBtn {
+  margin-bottom: 1rem;
 }

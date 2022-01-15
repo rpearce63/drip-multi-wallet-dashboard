@@ -42,6 +42,7 @@ const Dashboard = () => {
   const [dataCopied, setDataCopied] = useState(false);
   const [bnbThreshold, setBnbThreshold] = useState(0.05);
   const [expandedTable, setExpandedTable] = useState(false);
+  const [hideTableControls, setHideTableControls] = useState(false);
   const TABLE_HEADERS = [
     "#",
     "Address",
@@ -340,114 +341,141 @@ const Dashboard = () => {
   return (
     <div className="container">
       {/* <Header /> */}
+
       <div className="main">
         {!!wallets.length && (
-          <div className="controls">
-            <form className="row g-3">
-              <div className="col">
-                <input
-                  className="form-control"
-                  id="newAddressTxt"
-                  type="text"
-                  value={newAddress}
-                  onChange={(e) => setNewAddress(e.target.value)}
-                  placeholder="Add additional single wallet"
-                />
-              </div>
-              <div className="col">
-                <button
-                  type="submit"
-                  className="btn btn-outline-secondary"
-                  onClick={addNewAddress}
-                  disabled={!!!newAddress || newAddress.length !== 42}
-                >
-                  Add
-                </button>
-              </div>
-              <div className="alert">
-                <div>Available will highlight to indicate when it is</div>
-                <div>ready to claim or hydrate</div>
-
-                <div className="form-check">
+          <div>
+            <div
+              className="controls"
+              style={{ display: hideTableControls ? "block" : "flex" }}
+            >
+              <form className="row g-3">
+                <div className="col">
                   <input
-                    className="form-check-input"
-                    id="flagAmountChk"
-                    type="checkbox"
-                    checked={flagAmount}
-                    onChange={() => setFlagAmount(!flagAmount)}
+                    className="form-control"
+                    id="newAddressTxt"
+                    type="text"
+                    value={newAddress}
+                    onChange={(e) => setNewAddress(e.target.value)}
+                    placeholder="Add additional single wallet"
                   />
-                  <label className="form-check-label" htmlFor="flagAmountChk">
-                    Amount - <span className="prepare">light green = .5+</span>,{" "}
-                    <span className="hydrate">green = 1+</span>
+                </div>
+                <div className="col">
+                  <button
+                    type="submit"
+                    className="btn btn-outline-secondary"
+                    onClick={addNewAddress}
+                    disabled={!!!newAddress || newAddress.length !== 42}
+                  >
+                    Add
+                  </button>
+                </div>
+                <div className="hideControlsBtn">
+                  <input
+                    id="hideControls"
+                    type="checkbox"
+                    className="btn-check"
+                    autoComplete="off"
+                    onChange={() => setHideTableControls(!hideTableControls)}
+                  ></input>
+                  <label htmlFor="hideControls" className="btn btn-primary">
+                    {hideTableControls ? "Show" : "Hide"} Controls
                   </label>
                 </div>
-                <div className="form-check">
-                  <input
-                    className="form-check-input"
-                    id="flagPctChk"
-                    type="checkbox"
-                    checked={flagPct}
-                    onChange={() => setFlagPct(!flagPct)}
-                  />
-                  <label className="form-check-label" htmlFor="flagPctChk">
-                    Percent - <span className="prepare">light green = .9%</span>{" "}
-                    , <span className="hydrate">green = 1%</span>
-                  </label>
-                </div>
+                {hideTableControls || (
+                  <div className="alert">
+                    <div>Available will highlight to indicate when it is</div>
+                    <div>ready to claim or hydrate</div>
 
-                <div className="form-check">
-                  <input
-                    className="form-check-input"
-                    id="flagLowBnbChk"
-                    type="checkbox"
-                    checked={flagLowBnb}
-                    onChange={() => setFlagLowBnb(!flagLowBnb)}
-                  />
-                  <label className="form-check-label input-spinner-label">
-                    Low BNB:
-                    <div className="inputSpinner">
-                      <button
-                        type="button"
-                        className="btn btn-outline-secondary"
-                        onClick={decrementBnbFlag}
-                      >
-                        -
-                      </button>
+                    <div className="form-check">
                       <input
-                        className="inputSpinner-control"
-                        type="number"
-                        value={bnbThreshold}
-                        onChange={() => {}}
-                        size={3}
-                        disabled={true}
+                        className="form-check-input"
+                        id="flagAmountChk"
+                        type="checkbox"
+                        checked={flagAmount}
+                        onChange={() => setFlagAmount(!flagAmount)}
                       />
-                      <button
-                        type="button"
-                        className="btn btn-outline-secondary"
-                        onClick={incrementBnbFlag}
+                      <label
+                        className="form-check-label"
+                        htmlFor="flagAmountChk"
                       >
-                        +
-                      </button>
+                        Amount -{" "}
+                        <span className="prepare">light green = .5+</span>,{" "}
+                        <span className="hydrate">green = 1+</span>
+                      </label>
                     </div>
-                    <span className="warning"> - yellow</span>
-                  </label>
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        id="flagPctChk"
+                        type="checkbox"
+                        checked={flagPct}
+                        onChange={() => setFlagPct(!flagPct)}
+                      />
+                      <label className="form-check-label" htmlFor="flagPctChk">
+                        Percent -{" "}
+                        <span className="prepare">light green = .9%</span> ,{" "}
+                        <span className="hydrate">green = 1%</span>
+                      </label>
+                    </div>
+
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        id="flagLowBnbChk"
+                        type="checkbox"
+                        checked={flagLowBnb}
+                        onChange={() => setFlagLowBnb(!flagLowBnb)}
+                      />
+                      <label className="form-check-label input-spinner-label">
+                        Low BNB:
+                        <div className="inputSpinner">
+                          <button
+                            type="button"
+                            className="btn btn-outline-secondary"
+                            onClick={decrementBnbFlag}
+                          >
+                            -
+                          </button>
+                          <input
+                            className="inputSpinner-control"
+                            type="number"
+                            value={bnbThreshold}
+                            onChange={() => {}}
+                            size={3}
+                            disabled={true}
+                          />
+                          <button
+                            type="button"
+                            className="btn btn-outline-secondary"
+                            onClick={incrementBnbFlag}
+                          >
+                            +
+                          </button>
+                        </div>
+                        <span className="warning"> - yellow</span>
+                      </label>
+                    </div>
+                  </div>
+                )}
+              </form>
+              {hideTableControls || (
+                <div className="alert alert-info">
+                  <p>Click on a wallet to see upline detail</p>
+                  <p>Click on Team to see downline</p>
+                  <div>
+                    <div>Back up addresses and labels to a file.</div>
+                    <div>
+                      You can then reload the data from the back up file if you
+                      clear the list or clear cache.
+                    </div>
+                    <p></p>
+                    <button className="btn btn-secondary" onClick={backupData}>
+                      Back Up
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </form>
-            <div className="alert alert-info">
-              <p>Click on a wallet to see upline detail</p>
-              <p>Click on Team to see downline</p>
-              <div>
-                <div>Back up addresses and labels to a file.</div>
-                <div>
-                  You can then reload the data from the back up file if you
-                  clear the list or clear cache.
-                </div>
-                <p></p>
-                <button className="btn btn-secondary" onClick={backupData}>
-                  Back Up
-                </button>
-              </div>
+              )}
             </div>
           </div>
         )}
