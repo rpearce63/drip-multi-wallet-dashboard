@@ -212,3 +212,8 @@ span.spinCtrl:after {
 .hideControlsBtn {
   margin-bottom: 1rem;
 }
+
+.form-config {
+  min-width: fit-content;
+  margin-right: 5rem;
+}

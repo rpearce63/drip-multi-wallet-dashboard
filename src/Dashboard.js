@@ -75,13 +75,19 @@ const Dashboard = () => {
   let web3, contract;
 
   useEffect(() => {
-    const { flagAmount, flagLowBnb, flagPct, bnbThreshold } =
-      JSON.parse(localStorage.getItem("dripDashboard-config")) ?? {};
+    const {
+      flagAmount = true,
+      flagLowBnb = true,
+      flagPct = true,
+      bnbThreshold = 0.05,
+      expandedTable = false,
+    } = JSON.parse(localStorage.getItem("dripDashboard-config")) ?? {};
 
     setFlagAmount(() => flagAmount);
     setFlagLowBnb(() => flagLowBnb);
     setFlagPct(() => flagPct);
     setBnbThreshold(() => bnbThreshold);
+    setExpandedTable(() => expandedTable);
   }, []);
 
   const fetchData = async () => {
@@ -334,9 +340,15 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    const config = { flagAmount, flagLowBnb, flagPct, bnbThreshold };
+    const config = {
+      flagAmount,
+      flagLowBnb,
+      flagPct,
+      bnbThreshold,
+      expandedTable,
+    };
     localStorage.setItem("dripDashboard-config", JSON.stringify(config));
-  }, [flagAmount, flagLowBnb, flagPct, bnbThreshold]);
+  }, [flagAmount, flagLowBnb, flagPct, bnbThreshold, expandedTable]);
 
   return (
     <div className="container">
@@ -349,8 +361,16 @@ const Dashboard = () => {
               className="controls"
               style={{ display: hideTableControls ? "block" : "flex" }}
             >
-              <form className="row g-3">
-                <div className="col">
+              <div className="form-config">
+                <div className="input-group mb-3">
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary"
+                    onClick={addNewAddress}
+                    disabled={!!!newAddress || newAddress.length !== 42}
+                  >
+                    Add
+                  </button>
                   <input
                     className="form-control"
                     id="newAddressTxt"
@@ -359,16 +379,8 @@ const Dashboard = () => {
                     onChange={(e) => setNewAddress(e.target.value)}
                     placeholder="Add additional single wallet"
                   />
-                </div>
-                <div className="col">
-                  <button
-                    type="submit"
-                    className="btn btn-outline-secondary"
-                    onClick={addNewAddress}
-                    disabled={!!!newAddress || newAddress.length !== 42}
-                  >
-                    Add
-                  </button>
+                  {/* </div>
+                <div className="col"> */}
                 </div>
                 <div className="hideControlsBtn">
                   <input
@@ -378,8 +390,11 @@ const Dashboard = () => {
                     autoComplete="off"
                     onChange={() => setHideTableControls(!hideTableControls)}
                   ></input>
-                  <label htmlFor="hideControls" className="btn btn-primary">
-                    {hideTableControls ? "Show" : "Hide"} Controls
+                  <label
+                    htmlFor="hideControls"
+                    className="btn btn-primary btn-sm"
+                  >
+                    {hideTableControls ? "Show" : "Hide"} Form Config
                   </label>
                 </div>
                 {hideTableControls || (
@@ -458,7 +473,7 @@ const Dashboard = () => {
                     </div>
                   </div>
                 )}
-              </form>
+              </div>
               {hideTableControls || (
                 <div className="alert alert-info">
                   <p>Click on a wallet to see upline detail</p>
