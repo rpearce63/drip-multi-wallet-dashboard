@@ -652,7 +652,7 @@ const Dashboard = () => {
             value={addressList}
             onChange={(e) => setAddressList(e.target.value)}
           />
-
+          <div>Or load a saved list of wallets and labels:</div>
           <input
             className="form-control"
             type="file"

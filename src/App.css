@@ -214,6 +214,6 @@ span.spinCtrl:after {
 }
 
 .form-config {
-  min-width: fit-content;
-  margin-right: 5rem;
+  min-width: 30rem;
+  margin-right: 2rem;
 }
