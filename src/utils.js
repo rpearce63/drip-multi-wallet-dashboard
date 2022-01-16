@@ -1,5 +1,8 @@
+import Web3 from "web3";
+
 export const convertDrip = (drip) => {
   return parseFloat(
+    //new Web3().utils.fromWei(`${drip}`)
     Math.round((drip / Math.pow(10, 18)) * 1000) / 1000
   ).toFixed(3);
 };

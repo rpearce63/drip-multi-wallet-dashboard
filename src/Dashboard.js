@@ -75,9 +75,9 @@ const Dashboard = () => {
   let web3, contract;
 
   useEffect(() => {
-    const { flagAmount, flagLowBnb, flagPct, bnbThreshold } = JSON.parse(
-      localStorage.getItem("dripDashboard-config")
-    );
+    const { flagAmount, flagLowBnb, flagPct, bnbThreshold } =
+      JSON.parse(localStorage.getItem("dripDashboard-config")) ?? {};
+
     setFlagAmount(() => flagAmount);
     setFlagLowBnb(() => flagLowBnb);
     setFlagPct(() => flagPct);
