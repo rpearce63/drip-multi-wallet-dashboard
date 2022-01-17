@@ -1,10 +1,19 @@
 import Web3 from "web3";
 
-export const convertDrip = (drip) => {
-  return parseFloat(
+export const convertDrip = (drip, dripPrice, showDollarValues) => {
+  const priceOfDrip = dripPrice || 1;
+  const converted = parseFloat(
     //new Web3().utils.fromWei(`${drip}`)
-    Math.round((drip / Math.pow(10, 18)) * 1000) / 1000
+    (Math.round((drip / Math.pow(10, 18)) * 1000) / 1000) *
+      (showDollarValues ? priceOfDrip : 1)
   ).toFixed(3);
+  return showDollarValues ? formatCurrency(converted) : converted;
+};
+
+export const convertBnb = (bnbAmt, bnbPrice, showDollarValues) => {
+  const converted = parseFloat(bnbAmt / 10e17).toFixed(3);
+
+  return showDollarValues ? formatCurrency(converted * bnbPrice) : converted;
 };
 
 export const formatCurrency = (amt) => {

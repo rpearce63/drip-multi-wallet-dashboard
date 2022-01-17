@@ -58,7 +58,7 @@ export const getBr34pBalance = async (web3, account) => {
 
 export const getBnbBalance = async (web3, account) => {
   const balance = await web3.eth.getBalance(account);
-  return web3.utils.fromWei(balance);
+  return balance;
 };
 
 export const getDripPrice = async (web3) => {
@@ -126,4 +126,15 @@ export const getBr34pPrice = async () => {
 
   const br34pData = await fetchBr34PPrice();
   return br34pData.quotes.USD.price;
+};
+
+export const getBnbprice = async () => {
+  const fetchBnbPrice = async () =>
+    fetch(
+      "https://api.coingecko.com/api/v3/simple/price?ids=wbnb&vs_currencies=usd"
+    )
+      .then((response) => response.json())
+      .then((data) => data.wbnb.usd);
+  const bnbPrice = await fetchBnbPrice();
+  return bnbPrice;
 };

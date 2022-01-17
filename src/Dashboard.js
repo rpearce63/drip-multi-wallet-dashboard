@@ -9,6 +9,9 @@ import {
   getUplineCount,
   getBr34pBalance,
   getBnbBalance,
+  getBnbprice,
+  getDripPrice,
+  getBr34pPrice,
 } from "./Contract";
 import Header from "./Header";
 
@@ -18,6 +21,7 @@ import {
   formatPercent,
   shortenAddress,
   backupData,
+  convertBnb,
 } from "./utils";
 
 const Dashboard = () => {
@@ -32,6 +36,7 @@ const Dashboard = () => {
   const [addressList, setAddressList] = useState("");
   const [totalDripHeld, setTotalDripHeld] = useState(0);
   const [totalBnbBalance, setTotalBnbBalance] = useState(0);
+  const [totalBr34p, setTotalBr34p] = useState(0);
   const [newAddress, setNewAddress] = useState("");
   //const [triggerType, setTriggerType] = useState("percent");
   const [flagAmount, setFlagAmount] = useState(true);
@@ -44,6 +49,9 @@ const Dashboard = () => {
   const [expandedTable, setExpandedTable] = useState(false);
   const [hideTableControls, setHideTableControls] = useState(false);
   const [showDollarValues, setShowDollarValues] = useState(false);
+  const [bnbPrice, setBnbPrice] = useState(0);
+  const [dripPrice, setDripPrice] = useState(0);
+  const [br34pPrice, setBr34pPrice] = useState(0);
 
   const TABLE_HEADERS = [
     "#",
@@ -140,6 +148,12 @@ const Dashboard = () => {
 
       setWallets(() => [...walletCache]);
       setDataCopied(false);
+      const [bnbPrice, dripPrice, tokenBalance] = await getDripPrice(web3);
+      const br34pPrice = await getBr34pPrice();
+      setDripPrice(() => (dripPrice * bnbPrice) / 10e17);
+
+      setBnbPrice(() => bnbPrice);
+      setBr34pPrice(() => br34pPrice);
     });
   };
 
@@ -180,6 +194,12 @@ const Dashboard = () => {
       validWallets.reduce((total, wallet) => {
         return total + parseFloat(wallet.match_bonus);
       }, 0)
+    );
+    setTotalBr34p(() =>
+      validWallets.reduce(
+        (total, wallet) => total + parseFloat(wallet.br34pBalance),
+        0
+      )
     );
   }, [wallets]);
 
@@ -518,6 +538,18 @@ const Dashboard = () => {
                 Expanded Table
               </label>
             </div>
+            <div className="form-check form-switch">
+              <input
+                id="showDollarValues"
+                className="form-check-input"
+                type="checkbox"
+                checked={showDollarValues}
+                onChange={() => setShowDollarValues(!showDollarValues)}
+              />
+              <label htmlFor="showDollarValues" className="form-check-label">
+                $
+              </label>
+            </div>
           </div>
         )}
         <table className="table">
@@ -549,21 +581,38 @@ const Dashboard = () => {
               </th>
               {expandedTable && <th></th>}
               {expandedTable && <th></th>}
-              {expandedTable && <th></th>}
-              {expandedTable && <th>{convertDrip(totalDripHeld)}</th>}
               {expandedTable && (
-                <th>{parseFloat(totalBnbBalance).toFixed(3)}</th>
+                <th>
+                  {formatCurrency(
+                    totalBr34p * (showDollarValues ? br34pPrice : 1)
+                  )}
+                </th>
               )}
-              <th>{convertDrip(totalAvailable)}</th>
+              {expandedTable && (
+                <th>
+                  {convertDrip(totalDripHeld, dripPrice, showDollarValues)}
+                </th>
+              )}
+              {expandedTable && (
+                <th>
+                  {convertBnb(totalBnbBalance, bnbPrice, showDollarValues)}
+                </th>
+              )}
+              <th>
+                {convertDrip(totalAvailable, dripPrice, showDollarValues)}
+              </th>
 
               <th>{formatPercent(totalAvailable / totalDeposits)}%</th>
 
-              <th>{convertDrip(totalDeposits)}</th>
-              <th>{convertDrip(totalClaimed)}</th>
+              <th>{convertDrip(totalDeposits, dripPrice, showDollarValues)}</th>
+              <th>{convertDrip(totalClaimed, dripPrice, showDollarValues)}</th>
               <th>
-                {convertDrip(totalDirectBonus)}/{convertDrip(totalMatch)}
+                {convertDrip(totalDirectBonus, dripPrice, showDollarValues)}/
+                {convertDrip(totalMatch, dripPrice, showDollarValues)}
               </th>
-              <th>{convertDrip(totalDeposits * 3.65)}</th>
+              <th>
+                {convertDrip(totalDeposits * 3.65, dripPrice, showDollarValues)}
+              </th>
               <th></th>
             </tr>
           </thead>
@@ -598,29 +647,65 @@ const Dashboard = () => {
                   {expandedTable && <td>{shortenAddress(wallet.upline)}</td>}
                   {expandedTable && <td>{wallet.uplineCount}</td>}
                   {expandedTable && (
-                    <td>{formatCurrency(wallet.br34pBalance)}</td>
+                    <td>
+                      {formatCurrency(
+                        wallet.br34pBalance *
+                          (showDollarValues ? br34pPrice : 1)
+                      )}
+                    </td>
                   )}
-                  {expandedTable && <td>{convertDrip(wallet.dripBalance)}</td>}
+                  {expandedTable && (
+                    <td>
+                      {convertDrip(
+                        wallet.dripBalance,
+                        dripPrice,
+                        showDollarValues
+                      )}
+                    </td>
+                  )}
                   {expandedTable && (
                     <td className={highlightStyleFor("bnb", wallet)}>
-                      {parseFloat(wallet.bnbBalance).toFixed(3)}
+                      {convertBnb(
+                        wallet.bnbBalance,
+                        bnbPrice,
+                        showDollarValues
+                      )}
                     </td>
                   )}
                   <td className={highlightStyleFor("amt", wallet)}>
-                    {convertDrip(wallet.available)}
+                    {convertDrip(wallet.available, dripPrice, showDollarValues)}
                   </td>
 
                   <td className={highlightStyleFor("pct", wallet)}>
                     {formatPercent(wallet.available / wallet.deposits)}%
                   </td>
 
-                  <td>{convertDrip(wallet.deposits)}</td>
-                  <td>{convertDrip(wallet.payouts)}</td>
                   <td>
-                    {convertDrip(wallet.direct_bonus)}/
-                    {convertDrip(wallet.match_bonus)}
+                    {convertDrip(wallet.deposits, dripPrice, showDollarValues)}
                   </td>
-                  <td>{convertDrip(wallet.deposits * 3.65)}</td>
+                  <td>
+                    {convertDrip(wallet.payouts, dripPrice, showDollarValues)}
+                  </td>
+                  <td>
+                    {convertDrip(
+                      wallet.direct_bonus,
+                      dripPrice,
+                      showDollarValues
+                    )}
+                    /
+                    {convertDrip(
+                      wallet.match_bonus,
+                      dripPrice,
+                      showDollarValues
+                    )}
+                  </td>
+                  <td>
+                    {convertDrip(
+                      wallet.deposits * 3.65,
+                      dripPrice,
+                      showDollarValues
+                    )}
+                  </td>
                   <td>
                     {wallet.referrals > 0 ? (
                       <Link to={`/downline/${wallet.address}`}>

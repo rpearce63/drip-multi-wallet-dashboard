@@ -209,7 +209,7 @@ span.spinCtrl:after {
 .table-options {
   display: flex;
   justify-content: space-between;
-  width: 18rem;
+  max-width: 20rem;
 }
 
 .nav-wrap {
@@ -225,6 +225,6 @@ span.spinCtrl:after {
 }
 
 .form-config {
-  min-width: 30rem;
+  min-width: 35rem;
   margin-right: 2rem;
 }
