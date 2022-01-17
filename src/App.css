@@ -137,6 +137,17 @@ button {
   justify-content: space-between;
 }
 
+@media only screen and (max-width: 500px) {
+  .prices {
+    font-size: 16px;
+    margin-right: 0;
+    margin-left: 0;
+  }
+  .beggar {
+    font-size: 12px;
+  }
+}
+
 .table-info {
   margin-top: 2rem;
 }

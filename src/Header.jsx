@@ -50,7 +50,7 @@ const Header = () => {
           <span className="price">REV: {formatCurrency(revPrice)}</span>
         </div>
 
-        <div className="navbar-text text-white">
+        <div className="navbar-text text-white beggar">
           If you find this tool useful, feel free to drop me a little Drip or
           BNB: 0x645Dc8a64046FD877b82caB077BF929c299D5A7a
         </div>
