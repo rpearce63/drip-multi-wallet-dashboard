@@ -43,6 +43,8 @@ const Dashboard = () => {
   const [bnbThreshold, setBnbThreshold] = useState(0.05);
   const [expandedTable, setExpandedTable] = useState(false);
   const [hideTableControls, setHideTableControls] = useState(false);
+  const [showDollarValues, setShowDollarValues] = useState(false);
+
   const TABLE_HEADERS = [
     "#",
     "Address",
@@ -298,10 +300,11 @@ const Dashboard = () => {
       [...TABLE_HEADERS],
       ...wallets.map((w, index) => [
         index + 1,
-        shortenAddress(w.address),
+        w.address,
         w.label,
-        shortenAddress(w.upline),
+        w.upline,
         w.uplineCount,
+        formatCurrency(w.br34pBalance),
         convertDrip(w.dripBalance),
         parseFloat(w.bnbBalance).toFixed(3),
         convertDrip(w.available),
