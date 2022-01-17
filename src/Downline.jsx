@@ -68,11 +68,11 @@ const Downline = () => {
   };
 
   const OrgList = ({ org }) => (
-    <ul>
+    <ol>
       {(org.children || []).map((item, index) => (
         <OrgItem key={index} child={item} />
       ))}
-    </ul>
+    </ol>
   );
 
   return (
