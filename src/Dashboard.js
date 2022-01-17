@@ -326,7 +326,7 @@ const Dashboard = () => {
         w.uplineCount,
         formatCurrency(w.br34pBalance),
         convertDrip(w.dripBalance),
-        parseFloat(w.bnbBalance).toFixed(3),
+        parseFloat(convertBnb(w.bnbBalance)).toFixed(3),
         convertDrip(w.available),
         formatPercent(w.available / w.deposits),
         convertDrip(w.deposits),
