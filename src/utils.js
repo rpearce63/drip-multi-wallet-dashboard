@@ -16,8 +16,20 @@ export const convertBnb = (bnbAmt, bnbPrice, showDollarValues) => {
   return showDollarValues ? formatCurrency(converted * bnbPrice) : converted;
 };
 
+export const convertREV = (revAmt, revPrice, showDollarValues) => {
+  return showDollarValues
+    ? formatCurrency(revAmt * revPrice)
+    : parseFloat(revAmt).toFixed(2);
+};
+
 export const formatCurrency = (amt) => {
-  return parseFloat(Math.round(amt * 100) / 100).toFixed(2);
+  return (
+    "$" +
+    parseFloat(Math.round(amt * 100) / 100)
+      .toFixed(2)
+      .toString()
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+  );
 };
 
 export const formatPercent = (amt) => {

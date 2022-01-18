@@ -12,8 +12,10 @@ import {
   getBnbprice,
   getDripPrice,
   getBr34pPrice,
+  getREVBalance,
 } from "./Contract";
 import Header from "./Header";
+import { calcREVPrice } from "./tokenPriceApi";
 
 import {
   convertDrip,
@@ -22,6 +24,7 @@ import {
   shortenAddress,
   backupData,
   convertBnb,
+  convertREV,
 } from "./utils";
 
 const Dashboard = () => {
@@ -37,6 +40,7 @@ const Dashboard = () => {
   const [totalDripHeld, setTotalDripHeld] = useState(0);
   const [totalBnbBalance, setTotalBnbBalance] = useState(0);
   const [totalBr34p, setTotalBr34p] = useState(0);
+  const [totalRev, setTotalRev] = useState(0);
   const [newAddress, setNewAddress] = useState("");
   //const [triggerType, setTriggerType] = useState("percent");
   const [flagAmount, setFlagAmount] = useState(true);
@@ -52,6 +56,7 @@ const Dashboard = () => {
   const [bnbPrice, setBnbPrice] = useState(0);
   const [dripPrice, setDripPrice] = useState(0);
   const [br34pPrice, setBr34pPrice] = useState(0);
+  const [revPrice, setRevPrice] = useState(0);
 
   const TABLE_HEADERS = [
     "#",
@@ -62,6 +67,7 @@ const Dashboard = () => {
     "BR34P",
     "Drip",
     "BNB",
+    "REV",
     "Available",
     "ROI",
     "Deposits",
@@ -131,6 +137,8 @@ const Dashboard = () => {
       const uplineCount = await getUplineCount(contract, wallet.addr);
       const br34pBalance = await getBr34pBalance(web3, wallet.addr);
       const bnbBalance = await getBnbBalance(web3, wallet.addr);
+      const revBalance = await getREVBalance(web3, wallet.addr);
+
       const valid = !!userInfo;
       walletCache = [
         ...walletCache,
@@ -145,6 +153,7 @@ const Dashboard = () => {
           br34pBalance,
           uplineCount,
           bnbBalance,
+          revBalance: revBalance,
         },
       ];
 
@@ -152,10 +161,12 @@ const Dashboard = () => {
       setDataCopied(false);
       const [bnbPrice, dripPrice, tokenBalance] = await getDripPrice(web3);
       const br34pPrice = await getBr34pPrice();
+      const revPrice = await calcREVPrice();
       setDripPrice(() => (dripPrice * bnbPrice) / 10e17);
 
       setBnbPrice(() => bnbPrice);
       setBr34pPrice(() => br34pPrice);
+      setRevPrice(() => revPrice);
     });
   };
 
@@ -200,6 +211,12 @@ const Dashboard = () => {
     setTotalBr34p(() =>
       validWallets.reduce(
         (total, wallet) => total + parseFloat(wallet.br34pBalance),
+        0
+      )
+    );
+    setTotalRev(() =>
+      validWallets.reduce(
+        (total, wallet) => total + parseFloat(wallet.revBalance),
         0
       )
     );
@@ -329,6 +346,7 @@ const Dashboard = () => {
         formatCurrency(w.br34pBalance),
         convertDrip(w.dripBalance),
         parseFloat(convertBnb(w.bnbBalance)).toFixed(3),
+        convertREV(w.revBalance),
         convertDrip(w.available),
         formatPercent(w.available / w.deposits),
         convertDrip(w.deposits),
@@ -620,6 +638,9 @@ const Dashboard = () => {
                   {convertBnb(totalBnbBalance, bnbPrice, showDollarValues)}
                 </th>
               )}
+              {expandedTable && (
+                <th>{convertREV(totalRev, revPrice, showDollarValues)}</th>
+              )}
               <th>
                 {convertDrip(totalAvailable, dripPrice, showDollarValues)}
               </th>
@@ -691,13 +712,22 @@ const Dashboard = () => {
                     </td>
                   )}
                   {expandedTable && (
-                    <td className={highlightStyleFor("bnb", wallet)}>
-                      {convertBnb(
-                        wallet.bnbBalance,
-                        bnbPrice,
-                        showDollarValues
-                      )}
-                    </td>
+                    <>
+                      <td className={highlightStyleFor("bnb", wallet)}>
+                        {convertBnb(
+                          wallet.bnbBalance,
+                          bnbPrice,
+                          showDollarValues
+                        )}
+                      </td>
+                      <td>
+                        {convertREV(
+                          wallet.revBalance,
+                          revPrice,
+                          showDollarValues
+                        )}
+                      </td>
+                    </>
                   )}
                   <td className={highlightStyleFor("amt", wallet)}>
                     {convertDrip(wallet.available, dripPrice, showDollarValues)}

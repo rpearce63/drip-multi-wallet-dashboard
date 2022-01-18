@@ -8,6 +8,8 @@ import {
   FOUNTAIN_ADDR,
   BR34P_ABI,
   BR34P_ADDRESS,
+  REV_TOKEN_ADDRESS,
+  REV_ABI,
 } from "./dripconfig";
 //import { calcBNBPrice } from "./tokenPriceApi";
 
@@ -54,6 +56,12 @@ export const getBr34pBalance = async (web3, account) => {
   const contract = new web3.eth.Contract(BR34P_ABI, BR34P_ADDRESS);
   const tokenBalance = await contract.methods.balanceOf(account).call();
   return tokenBalance / 10e7;
+};
+
+export const getREVBalance = async (web3, account) => {
+  const contract = new web3.eth.Contract(REV_ABI, REV_TOKEN_ADDRESS);
+  const tokenBalance = await contract.methods.balanceOf(account).call();
+  return tokenBalance / 10e17;
 };
 
 export const getBnbBalance = async (web3, account) => {
