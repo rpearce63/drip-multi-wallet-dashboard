@@ -6,18 +6,34 @@ import {
   getUserInfo,
   getContract,
   getConnection,
-  getDripBalance,
 } from "./Contract";
-import Header from "./Header";
+
+const flatten = require("flat").flatten;
+
+function getObjectDepth(obj) {
+  if (typeof obj !== "object" || obj === null) {
+    return 0;
+  }
+
+  const flat = flatten(obj);
+  const keys = Object.keys(flat);
+  if (keys.length === 0) {
+    return 1;
+  }
+
+  const depthOfKeys = keys.map((key) => (key.match(/children/g) || []).length);
+
+  return Math.max(...depthOfKeys);
+}
 
 const Downline = () => {
   const [downline, setDownline] = useState();
   const { account } = useParams();
-
+  const [depth, setDepth] = useState(0);
   useEffect(() => {
     const fetchDownline = async () => {
       const downline = await getDownline(account);
-      //console.log(downline);
+      setDepth(() => getObjectDepth(downline));
       setDownline(() => downline);
     };
     fetchDownline();
@@ -40,22 +56,18 @@ const Downline = () => {
         ).toFixed(2)}",`
       );
       const updated = JSON.parse(dStr);
-      //console.log(updated);
-      //console.log(getObject(updated.children, childId));
       return updated;
-      //   return downline.map((d) => {
-      //     if (d.id === childId) return { ...d, deposits: userInfo.deposits };
-      //     return { ...d };
-      //   });
     });
   };
 
   const OrgItem = ({ child }) => {
-    const subChild = (child.children || []).map((child) => (
-      <ul key={child.id}>
-        <OrgItem child={child} type="child" />
-      </ul>
-    ));
+    const subChild = (child.children || []).map((child) => {
+      return (
+        <ul key={child.id}>
+          <OrgItem child={child} type="child" />
+        </ul>
+      );
+    });
 
     return (
       <li key={child.id}>
@@ -77,10 +89,10 @@ const Downline = () => {
 
   return (
     <div>
-      {/* <Header /> */}
       <div className="page-title">
         <h1>Wallet Downline</h1>
         <h3>for {downline && downline.id}</h3>
+        <div>Depth: {depth}</div>
         <hr />
         <p>Click wallet address to see Deposits</p>
       </div>
