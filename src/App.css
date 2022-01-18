@@ -229,10 +229,12 @@ span.spinCtrl:after {
   margin-right: 2rem;
 }
 
+.rowIndex:hover {
+  cursor: pointer;
+}
 .rowIndex:hover:before {
   content: "X";
   color: red;
-  cursor: pointer;
 }
 
 .rowIndex:hover span {
