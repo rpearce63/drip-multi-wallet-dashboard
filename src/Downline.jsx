@@ -1,59 +1,103 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
-import { getDownline } from "./Contract";
-import Header from "./Header";
+import {
+  getDownline,
+  getUserInfo,
+  getContract,
+  getConnection,
+} from "./Contract";
+
+const flatten = require("flat").flatten;
+
+function getObjectDepth(obj) {
+  if (typeof obj !== "object" || obj === null) {
+    return 0;
+  }
+
+  const flat = flatten(obj);
+  const keys = Object.keys(flat);
+  if (keys.length === 0) {
+    return 1;
+  }
+
+  const depthOfKeys = keys.map((key) => (key.match(/children/g) || []).length);
+
+  return Math.max(...depthOfKeys);
+}
 
 const Downline = () => {
   const [downline, setDownline] = useState();
   const { account } = useParams();
-
+  const [depth, setDepth] = useState(0);
   useEffect(() => {
     const fetchDownline = async () => {
       const downline = await getDownline(account);
-      //console.log(downline);
+      setDepth(() => getObjectDepth(downline));
       setDownline(() => downline);
     };
     fetchDownline();
   }, [account]);
 
+  const getUserData = async (childId) => {
+    //console.log("getUserData for: " + childId);
+    const connection = await getConnection();
+    const contract = await getContract(connection);
+
+    const userInfo = await getUserInfo(contract, childId);
+    //console.log(connection.utils.fromWei(userInfo.deposits));
+
+    setDownline(() => {
+      let dStr = JSON.stringify(downline);
+      dStr = dStr.replace(
+        `"id":"${childId}",`,
+        `"id":"${childId}","deposits":"${parseFloat(
+          connection.utils.fromWei(userInfo.deposits)
+        ).toFixed(2)}",`
+      );
+      const updated = JSON.parse(dStr);
+      return updated;
+    });
+  };
+
   const OrgItem = ({ child }) => {
-    const subChild = (child.children || []).map((child) => (
-      <ul key={child.id}>
-        <OrgItem child={child} type="child" />
-      </ul>
-    ));
+    const subChild = (child.children || []).map((child) => {
+      return (
+        <ul key={child.id}>
+          <OrgItem child={child} type="child" />
+        </ul>
+      );
+    });
 
     return (
-      <li
-        key={child.id}
-        onClick={() => navigator.clipboard.writeText(child.id)}
-      >
-        {child.text}
+      <li key={child.id}>
+        <span className="downline-wallet" onClick={() => getUserData(child.id)}>
+          {child.text} {child.deposits && `(${child.deposits})`}
+        </span>
         {subChild}
       </li>
     );
   };
 
   const OrgList = ({ org }) => (
-    <ul>
+    <ol>
       {(org.children || []).map((item, index) => (
         <OrgItem key={index} child={item} />
       ))}
-    </ul>
+    </ol>
   );
 
   return (
     <div>
-      <Header />
       <div className="page-title">
         <h1>Wallet Downline</h1>
+        <h3>for {downline && downline.id}</h3>
+        <div>Depth: {depth}</div>
         <hr />
+        <p>Click wallet address to see Deposits</p>
       </div>
       {downline && (
         <div className="container main">
-          <OrgItem child={{ id: downline.id, text: downline.text }} />
-
           <OrgList org={downline} />
         </div>
       )}

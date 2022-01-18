@@ -9,14 +9,19 @@ import {
   getUplineCount,
   getBr34pBalance,
   getBnbBalance,
+  getBnbprice,
+  getDripPrice,
+  getBr34pPrice,
 } from "./Contract";
 import Header from "./Header";
 
 import {
   convertDrip,
+  formatCurrency,
   formatPercent,
   shortenAddress,
   backupData,
+  convertBnb,
 } from "./utils";
 
 const Dashboard = () => {
@@ -31,6 +36,7 @@ const Dashboard = () => {
   const [addressList, setAddressList] = useState("");
   const [totalDripHeld, setTotalDripHeld] = useState(0);
   const [totalBnbBalance, setTotalBnbBalance] = useState(0);
+  const [totalBr34p, setTotalBr34p] = useState(0);
   const [newAddress, setNewAddress] = useState("");
   //const [triggerType, setTriggerType] = useState("percent");
   const [flagAmount, setFlagAmount] = useState(true);
@@ -40,14 +46,34 @@ const Dashboard = () => {
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [dataCopied, setDataCopied] = useState(false);
   const [bnbThreshold, setBnbThreshold] = useState(0.05);
+  const [expandedTable, setExpandedTable] = useState(false);
+  const [hideTableControls, setHideTableControls] = useState(false);
+  const [showDollarValues, setShowDollarValues] = useState(false);
+  const [bnbPrice, setBnbPrice] = useState(0);
+  const [dripPrice, setDripPrice] = useState(0);
+  const [br34pPrice, setBr34pPrice] = useState(0);
+
   const TABLE_HEADERS = [
     "#",
     "Address",
     "Label",
     "Buddy",
     "Uplines",
+    "BR34P",
     "Drip",
     "BNB",
+    "Available",
+    "ROI",
+    "Deposits",
+    "Claimed",
+    "Rewarded",
+    "Max Payout",
+    "Team",
+  ];
+  const BASE_HEADERS = [
+    "#",
+    "Address",
+    "Label",
     "Available",
     "ROI",
     "Deposits",
@@ -64,11 +90,14 @@ const Dashboard = () => {
       flagLowBnb = true,
       flagPct = true,
       bnbThreshold = 0.05,
+      expandedTable = false,
     } = JSON.parse(localStorage.getItem("dripDashboard-config")) ?? {};
+
     setFlagAmount(() => flagAmount);
     setFlagLowBnb(() => flagLowBnb);
     setFlagPct(() => flagPct);
     setBnbThreshold(() => bnbThreshold);
+    setExpandedTable(() => expandedTable);
   }, []);
 
   const fetchData = async () => {
@@ -119,6 +148,12 @@ const Dashboard = () => {
 
       setWallets(() => [...walletCache]);
       setDataCopied(false);
+      const [bnbPrice, dripPrice, tokenBalance] = await getDripPrice(web3);
+      const br34pPrice = await getBr34pPrice();
+      setDripPrice(() => (dripPrice * bnbPrice) / 10e17);
+
+      setBnbPrice(() => bnbPrice);
+      setBr34pPrice(() => br34pPrice);
     });
   };
 
@@ -159,6 +194,12 @@ const Dashboard = () => {
       validWallets.reduce((total, wallet) => {
         return total + parseFloat(wallet.match_bonus);
       }, 0)
+    );
+    setTotalBr34p(() =>
+      validWallets.reduce(
+        (total, wallet) => total + parseFloat(wallet.br34pBalance),
+        0
+      )
     );
   }, [wallets]);
 
@@ -279,12 +320,13 @@ const Dashboard = () => {
       [...TABLE_HEADERS],
       ...wallets.map((w, index) => [
         index + 1,
-        shortenAddress(w.address),
+        w.address,
         w.label,
-        shortenAddress(w.upline),
+        w.upline,
         w.uplineCount,
+        formatCurrency(w.br34pBalance),
         convertDrip(w.dripBalance),
-        parseFloat(w.bnbBalance).toFixed(3),
+        parseFloat(convertBnb(w.bnbBalance)).toFixed(3),
         convertDrip(w.available),
         formatPercent(w.available / w.deposits),
         convertDrip(w.deposits),
@@ -321,126 +363,174 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    const config = { flagAmount, flagLowBnb, flagPct, bnbThreshold };
+    const config = {
+      flagAmount,
+      flagLowBnb,
+      flagPct,
+      bnbThreshold,
+      expandedTable,
+    };
     localStorage.setItem("dripDashboard-config", JSON.stringify(config));
-  }, [flagAmount, flagLowBnb, flagPct, bnbThreshold]);
+  }, [flagAmount, flagLowBnb, flagPct, bnbThreshold, expandedTable]);
+
+  const deleteRow = (addr) => {
+    if (!window.confirm("Delete row?")) {
+      return false;
+    }
+    const temp = wallets.filter((wallet) => wallet.address !== addr);
+    setWallets(temp);
+    const stored = temp.map((t) => ({ addr: t.address, label: t.label }));
+    localStorage.setItem("dripAddresses", JSON.stringify(stored));
+  };
 
   return (
     <div className="container">
-      <Header />
+      {/* <Header /> */}
+
       <div className="main">
         {!!wallets.length && (
-          <div className="controls">
-            <form className="row g-3">
-              <div className="col">
-                <input
-                  className="form-control"
-                  id="newAddressTxt"
-                  type="text"
-                  value={newAddress}
-                  onChange={(e) => setNewAddress(e.target.value)}
-                  placeholder="Add additional single wallet"
-                />
-              </div>
-              <div className="col">
-                <button
-                  type="submit"
-                  className="btn btn-outline-secondary"
-                  onClick={addNewAddress}
-                  disabled={!!!newAddress || newAddress.length !== 42}
-                >
-                  Add
-                </button>
-              </div>
-              <div className="alert">
-                <div>Available will highlight to indicate when it is</div>
-                <div>ready to claim or hydrate</div>
-
-                <div className="form-check">
+          <div>
+            <div
+              className="controls"
+              style={{ display: hideTableControls ? "block" : "flex" }}
+            >
+              <div className="form-config">
+                <div className="input-group mb-3">
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary"
+                    onClick={addNewAddress}
+                    disabled={!!!newAddress || newAddress.length !== 42}
+                  >
+                    Add
+                  </button>
                   <input
-                    className="form-check-input"
-                    id="flagAmountChk"
-                    type="checkbox"
-                    checked={flagAmount}
-                    onChange={() => setFlagAmount(!flagAmount)}
+                    className="form-control"
+                    id="newAddressTxt"
+                    type="text"
+                    value={newAddress}
+                    onChange={(e) => setNewAddress(e.target.value)}
+                    placeholder="Add additional single wallet"
                   />
-                  <label className="form-check-label" htmlFor="flagAmountChk">
-                    Amount - <span className="prepare">light green = .5+</span>,{" "}
-                    <span className="hydrate">green = 1+</span>
+                  {/* </div>
+                <div className="col"> */}
+                </div>
+                <div className="hideControlsBtn">
+                  <input
+                    id="hideControls"
+                    type="checkbox"
+                    className="btn-check"
+                    autoComplete="off"
+                    onChange={() => setHideTableControls(!hideTableControls)}
+                  ></input>
+                  <label
+                    htmlFor="hideControls"
+                    className="btn btn-primary btn-sm"
+                  >
+                    {hideTableControls ? "Show" : "Hide"} Form Config
                   </label>
                 </div>
-                <div className="form-check">
-                  <input
-                    className="form-check-input"
-                    id="flagPctChk"
-                    type="checkbox"
-                    checked={flagPct}
-                    onChange={() => setFlagPct(!flagPct)}
-                  />
-                  <label className="form-check-label" htmlFor="flagPctChk">
-                    Percent - <span className="prepare">light green = .9%</span>{" "}
-                    , <span className="hydrate">green = 1%</span>
-                  </label>
-                </div>
+                {hideTableControls || (
+                  <div className="alert">
+                    <div>Available will highlight to indicate when it is</div>
+                    <div>ready to claim or hydrate</div>
 
-                <div className="form-check">
-                  <input
-                    className="form-check-input"
-                    id="flagLowBnbChk"
-                    type="checkbox"
-                    checked={flagLowBnb}
-                    onChange={() => setFlagLowBnb(!flagLowBnb)}
-                  />
-                  <label className="form-check-label input-spinner-label">
-                    Low BNB:
-                    <div className="inputSpinner">
-                      <button
-                        type="button"
-                        className="btn btn-outline-secondary"
-                        onClick={decrementBnbFlag}
-                      >
-                        -
-                      </button>
+                    <div className="form-check">
                       <input
-                        className="inputSpinner-control"
-                        type="number"
-                        value={bnbThreshold}
-                        onChange={() => {}}
-                        size={3}
-                        disabled={true}
+                        className="form-check-input"
+                        id="flagAmountChk"
+                        type="checkbox"
+                        checked={flagAmount}
+                        onChange={() => setFlagAmount(!flagAmount)}
                       />
-                      <button
-                        type="button"
-                        className="btn btn-outline-secondary"
-                        onClick={incrementBnbFlag}
+                      <label
+                        className="form-check-label"
+                        htmlFor="flagAmountChk"
                       >
-                        +
-                      </button>
+                        Amount -{" "}
+                        <span className="prepare">light green = .5+</span>,{" "}
+                        <span className="hydrate">green = 1+</span>
+                      </label>
                     </div>
-                    <span className="warning"> - yellow</span>
-                  </label>
-                </div>
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        id="flagPctChk"
+                        type="checkbox"
+                        checked={flagPct}
+                        onChange={() => setFlagPct(!flagPct)}
+                      />
+                      <label className="form-check-label" htmlFor="flagPctChk">
+                        Percent -{" "}
+                        <span className="prepare">light green = .9%</span> ,{" "}
+                        <span className="hydrate">green = 1%</span>
+                      </label>
+                    </div>
+
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        id="flagLowBnbChk"
+                        type="checkbox"
+                        checked={flagLowBnb}
+                        onChange={() => setFlagLowBnb(!flagLowBnb)}
+                      />
+                      <label className="form-check-label input-spinner-label">
+                        Low BNB:
+                        <div className="inputSpinner">
+                          <button
+                            type="button"
+                            className="btn btn-outline-secondary"
+                            onClick={decrementBnbFlag}
+                          >
+                            -
+                          </button>
+                          <input
+                            className="inputSpinner-control"
+                            type="number"
+                            value={bnbThreshold}
+                            onChange={() => {}}
+                            size={3}
+                            disabled={true}
+                          />
+                          <button
+                            type="button"
+                            className="btn btn-outline-secondary"
+                            onClick={incrementBnbFlag}
+                          >
+                            +
+                          </button>
+                        </div>
+                        <span className="warning"> - yellow</span>
+                      </label>
+                    </div>
+                  </div>
+                )}
               </div>
-            </form>
-            <div className="alert alert-info">
-              <p>Click on a wallet to see upline detail</p>
-              <p>Click on Team to see downline</p>
-              <div>
-                <div>Back up addresses and labels to a file.</div>
-                <div>
-                  You can then reload the data from the back up file if you
-                  clear the list or clear cache.
+              {hideTableControls || (
+                <div className="alert alert-info">
+                  <p>Click on a wallet to see upline detail</p>
+                  <p>Click on Team to see downline</p>
+                  <div>
+                    <div>Back up addresses and labels to a file.</div>
+                    <div>
+                      You can then reload the data from the back up file if you
+                      clear the list or clear cache.
+                    </div>
+                    <p></p>
+                    <button className="btn btn-secondary" onClick={backupData}>
+                      Back Up
+                    </button>
+                    <p></p>
+                    <div>Click on row number to remove a single row</div>
+                  </div>
                 </div>
-                <p></p>
-                <button className="btn btn-secondary" onClick={backupData}>
-                  Back Up
-                </button>
-              </div>
+              )}
             </div>
           </div>
         )}
         {!!wallets.length && (
-          <div>
+          <div className="table-options">
             <button
               className="btn-copy btn btn-outline-secondary"
               onClick={copyTableData}
@@ -448,14 +538,38 @@ const Dashboard = () => {
               <i className={`bi bi-clipboard${dataCopied ? "-check" : ""}`}></i>
               Copy table
             </button>
+            <div className="form-check">
+              <input
+                id="expandedTable"
+                className="form-check-input"
+                type="checkbox"
+                checked={expandedTable}
+                onChange={() => setExpandedTable(!expandedTable)}
+              />
+              <label htmlFor="expandedTable" className="form-check-label">
+                Expanded Table
+              </label>
+            </div>
+            <div className="form-check form-switch">
+              <input
+                id="showDollarValues"
+                className="form-check-input"
+                type="checkbox"
+                checked={showDollarValues}
+                onChange={() => setShowDollarValues(!showDollarValues)}
+              />
+              <label htmlFor="showDollarValues" className="form-check-label">
+                $
+              </label>
+            </div>
           </div>
         )}
         <table className="table">
           <thead className="table-light">
             <tr>
-              {TABLE_HEADERS.map((h) => {
-                return <th key={h}>{h}</th>;
-              })}
+              {expandedTable
+                ? TABLE_HEADERS.map((h) => <th key={h}>{h}</th>)
+                : BASE_HEADERS.map((h) => <th key={h}>{h}</th>)}
             </tr>
             <tr className="table-success">
               <th> </th>
@@ -477,18 +591,40 @@ const Dashboard = () => {
                 )}
                 {editLabels && <small>autorefresh paused</small>}
               </th>
-              <th> </th>
-              <th> </th>
-              <th>{convertDrip(totalDripHeld)}</th>
-              <th>{parseFloat(totalBnbBalance).toFixed(3)}</th>
-              <th>{convertDrip(totalAvailable)}</th>
-              <th>{formatPercent(totalAvailable / totalDeposits)}%</th>
-              <th>{convertDrip(totalDeposits)}</th>
-              <th>{convertDrip(totalClaimed)}</th>
+              {expandedTable && <th></th>}
+              {expandedTable && <th></th>}
+              {expandedTable && (
+                <th>
+                  {formatCurrency(
+                    totalBr34p * (showDollarValues ? br34pPrice : 1)
+                  )}
+                </th>
+              )}
+              {expandedTable && (
+                <th>
+                  {convertDrip(totalDripHeld, dripPrice, showDollarValues)}
+                </th>
+              )}
+              {expandedTable && (
+                <th>
+                  {convertBnb(totalBnbBalance, bnbPrice, showDollarValues)}
+                </th>
+              )}
               <th>
-                {convertDrip(totalDirectBonus)}/{convertDrip(totalMatch)}
+                {convertDrip(totalAvailable, dripPrice, showDollarValues)}
               </th>
-              <th>{convertDrip(totalDeposits * 3.65)}</th>
+
+              <th>{formatPercent(totalAvailable / totalDeposits)}%</th>
+
+              <th>{convertDrip(totalDeposits, dripPrice, showDollarValues)}</th>
+              <th>{convertDrip(totalClaimed, dripPrice, showDollarValues)}</th>
+              <th>
+                {convertDrip(totalDirectBonus, dripPrice, showDollarValues)}/
+                {convertDrip(totalMatch, dripPrice, showDollarValues)}
+              </th>
+              <th>
+                {convertDrip(totalDeposits * 3.65, dripPrice, showDollarValues)}
+              </th>
               <th></th>
             </tr>
           </thead>
@@ -497,7 +633,12 @@ const Dashboard = () => {
               .sort((a, b) => a.index - b.index)
               .map((wallet, index) => (
                 <tr key={wallet.address}>
-                  <td>{index + 1}</td>
+                  <td
+                    className="rowIndex"
+                    onClick={() => deleteRow(wallet.address)}
+                  >
+                    <span>{index + 1}</span>
+                  </td>
                   <td
                     className={wallet.valid ? "" : "invalid"}
                     onClick={(e) =>
@@ -520,25 +661,68 @@ const Dashboard = () => {
                       wallet.label
                     )}
                   </td>
-                  <td>{shortenAddress(wallet.upline)}</td>
-                  <td>{wallet.uplineCount}</td>
-                  <td>{convertDrip(wallet.dripBalance)}</td>
-                  <td className={highlightStyleFor("bnb", wallet)}>
-                    {parseFloat(wallet.bnbBalance).toFixed(3)}
-                  </td>
+                  {expandedTable && <td>{shortenAddress(wallet.upline)}</td>}
+                  {expandedTable && <td>{wallet.uplineCount}</td>}
+                  {expandedTable && (
+                    <td>
+                      {formatCurrency(
+                        wallet.br34pBalance *
+                          (showDollarValues ? br34pPrice : 1)
+                      )}
+                    </td>
+                  )}
+                  {expandedTable && (
+                    <td>
+                      {convertDrip(
+                        wallet.dripBalance,
+                        dripPrice,
+                        showDollarValues
+                      )}
+                    </td>
+                  )}
+                  {expandedTable && (
+                    <td className={highlightStyleFor("bnb", wallet)}>
+                      {convertBnb(
+                        wallet.bnbBalance,
+                        bnbPrice,
+                        showDollarValues
+                      )}
+                    </td>
+                  )}
                   <td className={highlightStyleFor("amt", wallet)}>
-                    {convertDrip(wallet.available)}
+                    {convertDrip(wallet.available, dripPrice, showDollarValues)}
                   </td>
+
                   <td className={highlightStyleFor("pct", wallet)}>
                     {formatPercent(wallet.available / wallet.deposits)}%
                   </td>
-                  <td>{convertDrip(wallet.deposits)}</td>
-                  <td>{convertDrip(wallet.payouts)}</td>
+
                   <td>
-                    {convertDrip(wallet.direct_bonus)}/
-                    {convertDrip(wallet.match_bonus)}
+                    {convertDrip(wallet.deposits, dripPrice, showDollarValues)}
                   </td>
-                  <td>{convertDrip(wallet.deposits * 3.65)}</td>
+                  <td>
+                    {convertDrip(wallet.payouts, dripPrice, showDollarValues)}
+                  </td>
+                  <td>
+                    {convertDrip(
+                      wallet.direct_bonus,
+                      dripPrice,
+                      showDollarValues
+                    )}
+                    /
+                    {convertDrip(
+                      wallet.match_bonus,
+                      dripPrice,
+                      showDollarValues
+                    )}
+                  </td>
+                  <td>
+                    {convertDrip(
+                      wallet.deposits * 3.65,
+                      dripPrice,
+                      showDollarValues
+                    )}
+                  </td>
                   <td>
                     {wallet.referrals > 0 ? (
                       <Link to={`/downline/${wallet.address}`}>
@@ -573,7 +757,7 @@ const Dashboard = () => {
             value={addressList}
             onChange={(e) => setAddressList(e.target.value)}
           />
-
+          <div>Or load a saved list of wallets and labels:</div>
           <input
             className="form-control"
             type="file"
@@ -583,30 +767,6 @@ const Dashboard = () => {
           />
         </div>
       </div>
-
-      <footer id="footer" className="page-footer font-small blue">
-        <div className="footer-content text-center py-3">
-          <span className="copyright">
-            <span>© 2022 - </span>
-            <a href="https://t.me/rpearce63" target="_blank no_referrer">
-              Rick Pearce
-            </a>
-          </span>
-          <span className="affiliate">
-            <a
-              href="https://4dinsingapore.com/amember/aff/go/rpearce63?i=8"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <img
-                src="https://4dinsingapore.com/amember/file/get/path/banners.61bbbb50b08be/i/31928"
-                border={0}
-                alt="DRIP Run Automation banner (version 1)"
-              />
-            </a>
-          </span>
-        </div>
-      </footer>
     </div>
   );
 };
