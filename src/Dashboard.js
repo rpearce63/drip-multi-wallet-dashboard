@@ -373,6 +373,16 @@ const Dashboard = () => {
     localStorage.setItem("dripDashboard-config", JSON.stringify(config));
   }, [flagAmount, flagLowBnb, flagPct, bnbThreshold, expandedTable]);
 
+  const deleteRow = (addr) => {
+    if (!window.confirm("Delete row?")) {
+      return false;
+    }
+    const temp = wallets.filter((wallet) => wallet.address !== addr);
+    setWallets(temp);
+    const stored = temp.map((t) => ({ addr: t.address, label: t.label }));
+    localStorage.setItem("dripAddresses", JSON.stringify(stored));
+  };
+
   return (
     <div className="container">
       {/* <Header /> */}
@@ -511,6 +521,8 @@ const Dashboard = () => {
                     <button className="btn btn-secondary" onClick={backupData}>
                       Back Up
                     </button>
+                    <p></p>
+                    <div>Click on row number to remove a single row</div>
                   </div>
                 </div>
               )}
@@ -621,7 +633,12 @@ const Dashboard = () => {
               .sort((a, b) => a.index - b.index)
               .map((wallet, index) => (
                 <tr key={wallet.address}>
-                  <td>{index + 1}</td>
+                  <td
+                    className="rowIndex"
+                    onClick={() => deleteRow(wallet.address)}
+                  >
+                    <span>{index + 1}</span>
+                  </td>
                   <td
                     className={wallet.valid ? "" : "invalid"}
                     onClick={(e) =>

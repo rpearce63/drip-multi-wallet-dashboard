@@ -228,3 +228,13 @@ span.spinCtrl:after {
   min-width: 35rem;
   margin-right: 2rem;
 }
+
+.rowIndex:hover:before {
+  content: "X";
+  color: red;
+  cursor: pointer;
+}
+
+.rowIndex:hover span {
+  display: none;
+}
