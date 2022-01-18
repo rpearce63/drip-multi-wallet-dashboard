@@ -91,6 +91,7 @@ const Dashboard = () => {
       flagPct = true,
       bnbThreshold = 0.05,
       expandedTable = false,
+      hideTableControls = false,
     } = JSON.parse(localStorage.getItem("dripDashboard-config")) ?? {};
 
     setFlagAmount(() => flagAmount);
@@ -98,6 +99,7 @@ const Dashboard = () => {
     setFlagPct(() => flagPct);
     setBnbThreshold(() => bnbThreshold);
     setExpandedTable(() => expandedTable);
+    setHideTableControls(() => hideTableControls);
   }, []);
 
   const fetchData = async () => {
@@ -369,9 +371,17 @@ const Dashboard = () => {
       flagPct,
       bnbThreshold,
       expandedTable,
+      hideTableControls,
     };
     localStorage.setItem("dripDashboard-config", JSON.stringify(config));
-  }, [flagAmount, flagLowBnb, flagPct, bnbThreshold, expandedTable]);
+  }, [
+    flagAmount,
+    flagLowBnb,
+    flagPct,
+    bnbThreshold,
+    expandedTable,
+    hideTableControls,
+  ]);
 
   const deleteRow = (addr) => {
     if (!window.confirm("Delete row?")) {
