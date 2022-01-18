@@ -343,7 +343,7 @@ const Dashboard = () => {
         w.label,
         w.upline,
         w.uplineCount,
-        formatCurrency(w.br34pBalance),
+        parseFloat(w.br34pBalance).toFixed(2),
         convertDrip(w.dripBalance),
         parseFloat(convertBnb(w.bnbBalance)).toFixed(3),
         convertREV(w.revBalance),
@@ -623,9 +623,9 @@ const Dashboard = () => {
               {expandedTable && <th></th>}
               {expandedTable && (
                 <th>
-                  {formatCurrency(
+                  {parseFloat(
                     totalBr34p * (showDollarValues ? br34pPrice : 1)
-                  )}
+                  ).toFixed(2)}
                 </th>
               )}
               {expandedTable && (
@@ -696,10 +696,10 @@ const Dashboard = () => {
                   {expandedTable && <td>{wallet.uplineCount}</td>}
                   {expandedTable && (
                     <td>
-                      {formatCurrency(
+                      {parseFloat(
                         wallet.br34pBalance *
                           (showDollarValues ? br34pPrice : 1)
-                      )}
+                      ).toFixed(2)}
                     </td>
                   )}
                   {expandedTable && (

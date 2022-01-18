@@ -40,9 +40,9 @@ const Header = () => {
         </div>
         <div className="prices">
           <span className="price">
-            Drip: ${formatCurrency(convertDrip(dripPrice))}
+            Drip: {formatCurrency(convertDrip(dripPrice))}
           </span>
-          <span className="price">BNB: ${formatCurrency(bnbPrice)}</span>
+          <span className="price">BNB: {formatCurrency(bnbPrice)}</span>
           <span className="price">
             DRIP Supply: {convertDrip(tokenBalance)}
           </span>
