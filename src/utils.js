@@ -54,3 +54,12 @@ export const backupData = () => {
   document.body.appendChild(element); // Required for this to work in FireFox
   element.click();
 };
+
+export const findFibIndex = (n) => {
+  if (n === 0) return 0;
+  const num = parseInt(n);
+  const fibo = 2.078087 * parseFloat(Math.log(num)) + 1.672276;
+
+  // Returning rounded off value of index
+  return Math.round(fibo) - 2;
+};

@@ -23,6 +23,7 @@ import {
   formatPercent,
   shortenAddress,
   backupData,
+  findFibIndex,
 } from "./utils";
 
 const Dashboard = () => {
@@ -723,7 +724,8 @@ const Dashboard = () => {
                         wallet.br34pBalance,
                         br34pPrice,
                         showDollarValues
-                      )}
+                      )}{" "}
+                      / {findFibIndex(wallet.br34pBalance)}
                     </td>
                   )}
                   {expandedTable && (
