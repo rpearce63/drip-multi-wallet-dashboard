@@ -12,16 +12,17 @@ import {
   getBnbprice,
   getDripPrice,
   getBr34pPrice,
+  getREVBalance,
 } from "./Contract";
 import Header from "./Header";
+import { calcREVPrice } from "./tokenPriceApi";
 
 import {
-  convertDrip,
+  convertTokenToUSD,
   formatCurrency,
   formatPercent,
   shortenAddress,
   backupData,
-  convertBnb,
 } from "./utils";
 
 const Dashboard = () => {
@@ -37,6 +38,7 @@ const Dashboard = () => {
   const [totalDripHeld, setTotalDripHeld] = useState(0);
   const [totalBnbBalance, setTotalBnbBalance] = useState(0);
   const [totalBr34p, setTotalBr34p] = useState(0);
+  const [totalRev, setTotalRev] = useState(0);
   const [newAddress, setNewAddress] = useState("");
   //const [triggerType, setTriggerType] = useState("percent");
   const [flagAmount, setFlagAmount] = useState(true);
@@ -52,6 +54,7 @@ const Dashboard = () => {
   const [bnbPrice, setBnbPrice] = useState(0);
   const [dripPrice, setDripPrice] = useState(0);
   const [br34pPrice, setBr34pPrice] = useState(0);
+  const [revPrice, setRevPrice] = useState(0);
 
   const TABLE_HEADERS = [
     "#",
@@ -62,6 +65,7 @@ const Dashboard = () => {
     "BR34P",
     "Drip",
     "BNB",
+    "REV",
     "Available",
     "ROI",
     "Deposits",
@@ -131,13 +135,19 @@ const Dashboard = () => {
       const uplineCount = await getUplineCount(contract, wallet.addr);
       const br34pBalance = await getBr34pBalance(web3, wallet.addr);
       const bnbBalance = await getBnbBalance(web3, wallet.addr);
+      const revBalance = await getREVBalance(web3, wallet.addr);
+
       const valid = !!userInfo;
       walletCache = [
         ...walletCache,
         {
           index,
           ...userInfo,
-          available,
+          deposits: userInfo.deposits / 10e17,
+          available: available / 10e17,
+          payouts: userInfo.payouts / 10e17,
+          direct_bonus: userInfo.direct_bonus / 10e17,
+          match_bonus: userInfo.match_bonus / 10e17,
           address: wallet.addr,
           label: wallet.label,
           valid,
@@ -145,6 +155,7 @@ const Dashboard = () => {
           br34pBalance,
           uplineCount,
           bnbBalance,
+          revBalance: revBalance,
         },
       ];
 
@@ -152,10 +163,12 @@ const Dashboard = () => {
       setDataCopied(false);
       const [bnbPrice, dripPrice, tokenBalance] = await getDripPrice(web3);
       const br34pPrice = await getBr34pPrice();
+      const revPrice = await calcREVPrice();
       setDripPrice(() => (dripPrice * bnbPrice) / 10e17);
 
       setBnbPrice(() => bnbPrice);
       setBr34pPrice(() => br34pPrice);
+      setRevPrice(() => revPrice);
     });
   };
 
@@ -200,6 +213,12 @@ const Dashboard = () => {
     setTotalBr34p(() =>
       validWallets.reduce(
         (total, wallet) => total + parseFloat(wallet.br34pBalance),
+        0
+      )
+    );
+    setTotalRev(() =>
+      validWallets.reduce(
+        (total, wallet) => total + parseFloat(wallet.revBalance),
         0
       )
     );
@@ -266,7 +285,7 @@ const Dashboard = () => {
     switch (col) {
       case "amt":
         if (flagAmount) {
-          amount = parseFloat(convertDrip(wallet.available));
+          amount = parseFloat(convertTokenToUSD(wallet.available));
           style = amount >= 1.0 ? "hydrate" : amount >= 0.5 ? "prepare" : "";
         }
         return style;
@@ -279,7 +298,6 @@ const Dashboard = () => {
         return style;
       case "bnb":
         return flagLowBnb && wallet.bnbBalance < bnbThreshold ? "warning" : "";
-
       default:
         return "";
     }
@@ -326,15 +344,18 @@ const Dashboard = () => {
         w.label,
         w.upline,
         w.uplineCount,
-        formatCurrency(w.br34pBalance),
-        convertDrip(w.dripBalance),
-        parseFloat(convertBnb(w.bnbBalance)).toFixed(3),
-        convertDrip(w.available),
+        parseFloat(w.br34pBalance).toFixed(2),
+        convertTokenToUSD(w.dripBalance),
+        parseFloat(convertTokenToUSD(w.bnbBalance)).toFixed(3),
+        convertTokenToUSD(w.revBalance),
+        convertTokenToUSD(w.available),
         formatPercent(w.available / w.deposits),
-        convertDrip(w.deposits),
-        convertDrip(w.payouts),
-        `${convertDrip(w.direct_bonus)}/${convertDrip(w.match_bonus)}`,
-        convertDrip(w.deposits * 3.65),
+        convertTokenToUSD(w.deposits),
+        convertTokenToUSD(w.payouts),
+        `${convertTokenToUSD(w.direct_bonus)}/${convertTokenToUSD(
+          w.match_bonus
+        )}`,
+        convertTokenToUSD(w.deposits * 3.65),
         `${w.referrals}/${w.total_structure}`,
       ]),
     ]
@@ -605,35 +626,58 @@ const Dashboard = () => {
               {expandedTable && <th></th>}
               {expandedTable && (
                 <th>
-                  {formatCurrency(
-                    totalBr34p * (showDollarValues ? br34pPrice : 1)
+                  {convertTokenToUSD(totalBr34p, br34pPrice, showDollarValues)}
+                </th>
+              )}
+              {expandedTable && (
+                <th>
+                  {convertTokenToUSD(
+                    totalDripHeld,
+                    dripPrice,
+                    showDollarValues
                   )}
                 </th>
               )}
               {expandedTable && (
                 <th>
-                  {convertDrip(totalDripHeld, dripPrice, showDollarValues)}
+                  {convertTokenToUSD(
+                    totalBnbBalance,
+                    bnbPrice,
+                    showDollarValues
+                  )}
                 </th>
               )}
               {expandedTable && (
                 <th>
-                  {convertBnb(totalBnbBalance, bnbPrice, showDollarValues)}
+                  {convertTokenToUSD(totalRev, revPrice, showDollarValues)}
                 </th>
               )}
               <th>
-                {convertDrip(totalAvailable, dripPrice, showDollarValues)}
+                {convertTokenToUSD(totalAvailable, dripPrice, showDollarValues)}
               </th>
 
               <th>{formatPercent(totalAvailable / totalDeposits)}%</th>
 
-              <th>{convertDrip(totalDeposits, dripPrice, showDollarValues)}</th>
-              <th>{convertDrip(totalClaimed, dripPrice, showDollarValues)}</th>
               <th>
-                {convertDrip(totalDirectBonus, dripPrice, showDollarValues)}/
-                {convertDrip(totalMatch, dripPrice, showDollarValues)}
+                {convertTokenToUSD(totalDeposits, dripPrice, showDollarValues)}
               </th>
               <th>
-                {convertDrip(totalDeposits * 3.65, dripPrice, showDollarValues)}
+                {convertTokenToUSD(totalClaimed, dripPrice, showDollarValues)}
+              </th>
+              <th>
+                {convertTokenToUSD(
+                  totalDirectBonus,
+                  dripPrice,
+                  showDollarValues
+                )}
+                /{convertTokenToUSD(totalMatch, dripPrice, showDollarValues)}
+              </th>
+              <th>
+                {convertTokenToUSD(
+                  totalDeposits * 3.65,
+                  dripPrice,
+                  showDollarValues
+                )}
               </th>
               <th></th>
             </tr>
@@ -675,15 +719,16 @@ const Dashboard = () => {
                   {expandedTable && <td>{wallet.uplineCount}</td>}
                   {expandedTable && (
                     <td>
-                      {formatCurrency(
-                        wallet.br34pBalance *
-                          (showDollarValues ? br34pPrice : 1)
+                      {convertTokenToUSD(
+                        wallet.br34pBalance,
+                        br34pPrice,
+                        showDollarValues
                       )}
                     </td>
                   )}
                   {expandedTable && (
                     <td>
-                      {convertDrip(
+                      {convertTokenToUSD(
                         wallet.dripBalance,
                         dripPrice,
                         showDollarValues
@@ -691,16 +736,29 @@ const Dashboard = () => {
                     </td>
                   )}
                   {expandedTable && (
-                    <td className={highlightStyleFor("bnb", wallet)}>
-                      {convertBnb(
-                        wallet.bnbBalance,
-                        bnbPrice,
-                        showDollarValues
-                      )}
-                    </td>
+                    <>
+                      <td className={highlightStyleFor("bnb", wallet)}>
+                        {convertTokenToUSD(
+                          wallet.bnbBalance,
+                          bnbPrice,
+                          showDollarValues
+                        )}
+                      </td>
+                      <td>
+                        {convertTokenToUSD(
+                          wallet.revBalance,
+                          revPrice,
+                          showDollarValues
+                        )}
+                      </td>
+                    </>
                   )}
                   <td className={highlightStyleFor("amt", wallet)}>
-                    {convertDrip(wallet.available, dripPrice, showDollarValues)}
+                    {convertTokenToUSD(
+                      wallet.available,
+                      dripPrice,
+                      showDollarValues
+                    )}
                   </td>
 
                   <td className={highlightStyleFor("pct", wallet)}>
@@ -708,26 +766,34 @@ const Dashboard = () => {
                   </td>
 
                   <td>
-                    {convertDrip(wallet.deposits, dripPrice, showDollarValues)}
+                    {convertTokenToUSD(
+                      wallet.deposits,
+                      dripPrice,
+                      showDollarValues
+                    )}
                   </td>
                   <td>
-                    {convertDrip(wallet.payouts, dripPrice, showDollarValues)}
+                    {convertTokenToUSD(
+                      wallet.payouts,
+                      dripPrice,
+                      showDollarValues
+                    )}
                   </td>
                   <td>
-                    {convertDrip(
+                    {convertTokenToUSD(
                       wallet.direct_bonus,
                       dripPrice,
                       showDollarValues
                     )}
                     /
-                    {convertDrip(
+                    {convertTokenToUSD(
                       wallet.match_bonus,
                       dripPrice,
                       showDollarValues
                     )}
                   </td>
                   <td>
-                    {convertDrip(
+                    {convertTokenToUSD(
                       wallet.deposits * 3.65,
                       dripPrice,
                       showDollarValues
