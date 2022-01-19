@@ -1,6 +1,6 @@
 {
-  "name": "eth-todo-list-react",
-  "version": "0.1.0",
+  "name": "drip-multi-wallet-dashboard",
+  "version": "1.1.0",
   "private": true,
   "dependencies": {
     "@jpmonette/bscscan": "^0.2.3",

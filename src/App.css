@@ -127,6 +127,10 @@ button {
   display: flex;
   flex-wrap: wrap;
 }
+.price a {
+  margin-right: 1rem;
+}
+
 .prices {
   font-size: 18px;
   color: white;
