@@ -49,7 +49,7 @@ export const getUserInfo = async (contract, account) => {
 export const getDripBalance = async (web3, account) => {
   const contract = new web3.eth.Contract(DRIP_TOKEN_ABI, DRIP_TOKEN_ADDR);
   const tokenBalance = await contract.methods.balanceOf(account).call();
-  return tokenBalance;
+  return tokenBalance / 10e17;
 };
 
 export const getBr34pBalance = async (web3, account) => {
@@ -66,7 +66,7 @@ export const getREVBalance = async (web3, account) => {
 
 export const getBnbBalance = async (web3, account) => {
   const balance = await web3.eth.getBalance(account);
-  return balance;
+  return balance / 10e17;
 };
 
 export const getDripPrice = async (web3) => {

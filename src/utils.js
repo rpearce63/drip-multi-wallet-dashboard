@@ -22,6 +22,12 @@ export const convertREV = (revAmt, revPrice, showDollarValues) => {
     : parseFloat(revAmt).toFixed(2);
 };
 
+export const convertTokenToUSD = (tokenAmt, tokenPrice, showDollarValues) => {
+  return showDollarValues
+    ? formatCurrency(tokenAmt * tokenPrice)
+    : parseFloat(tokenAmt).toFixed(2);
+};
+
 export const formatCurrency = (amt) => {
   return (
     "$" +
