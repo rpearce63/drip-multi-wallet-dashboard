@@ -720,12 +720,13 @@ const Dashboard = () => {
                   {expandedTable && <td>{wallet.uplineCount}</td>}
                   {expandedTable && (
                     <td>
-                      {convertTokenToUSD(
-                        wallet.br34pBalance,
-                        br34pPrice,
-                        showDollarValues
-                      )}{" "}
-                      / {findFibIndex(wallet.br34pBalance)}
+                      {wallet.br34pBalance > 0 &&
+                        `${convertTokenToUSD(
+                          wallet.br34pBalance,
+                          br34pPrice,
+                          showDollarValues
+                        )}
+                      / ${findFibIndex(wallet.br34pBalance)}`}
                     </td>
                   )}
                   {expandedTable && (
@@ -747,11 +748,12 @@ const Dashboard = () => {
                         )}
                       </td>
                       <td>
-                        {convertTokenToUSD(
-                          wallet.revBalance,
-                          revPrice,
-                          showDollarValues
-                        )}
+                        {wallet.revBalance > 0 &&
+                          convertTokenToUSD(
+                            wallet.revBalance,
+                            revPrice,
+                            showDollarValues
+                          )}
                       </td>
                     </>
                   )}
@@ -802,14 +804,10 @@ const Dashboard = () => {
                     )}
                   </td>
                   <td>
-                    {wallet.referrals > 0 ? (
+                    {wallet.referrals > 0 && (
                       <Link to={`/downline/${wallet.address}`}>
                         {wallet.referrals} / {wallet.total_structure}
                       </Link>
-                    ) : (
-                      <span>
-                        {wallet.referrals} / {wallet.total_structure}
-                      </span>
                     )}
                   </td>
                 </tr>
