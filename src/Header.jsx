@@ -40,14 +40,48 @@ const Header = () => {
         </div>
         <div className="prices">
           <span className="price">
-            Drip: {formatCurrency(convertDrip(dripPrice))}
+            <a
+              href="https://bscscan.com/token/0x20f663cea80face82acdfa3aae6862d246ce0333"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Drip:
+            </a>
+            {formatCurrency(convertDrip(dripPrice))}
           </span>
-          <span className="price">BNB: {formatCurrency(bnbPrice)}</span>
+          <span className="price">
+            <a
+              href="https://bscscan.com/token/0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"
+              target="_blank"
+              rel="noreferrer"
+            >
+              BNB:
+            </a>{" "}
+            {formatCurrency(bnbPrice)}
+          </span>
           <span className="price">
             DRIP Supply: {convertDrip(tokenBalance)}
           </span>
-          <span className="price">BR34P: {formatCurrency(br34pPrice)}</span>
-          <span className="price">REV: {formatCurrency(revPrice)}</span>
+          <span className="price">
+            <a
+              href="https://bscscan.com/token/0xa86d305a36cdb815af991834b46ad3d7fbb38523"
+              target="_blank"
+              rel="noreferrer"
+            >
+              BR34P:
+            </a>{" "}
+            {formatCurrency(br34pPrice)}
+          </span>
+          <span className="price">
+            <a
+              href="https://bscscan.com/token/0xc3b613982460ebd50571799ce91623e7ab7c8803"
+              target="_blank"
+              rel="noreferrer"
+            >
+              REV:
+            </a>{" "}
+            {formatCurrency(revPrice)}
+          </span>
         </div>
 
         <div className="navbar-text text-white beggar">
