@@ -550,21 +550,31 @@ const Dashboard = () => {
               </div>
               {hideTableControls || (
                 <div className="alert alert-info">
-                  <p>Click on a wallet to see upline detail</p>
-                  <p>Click on Team to see downline</p>
-                  <div>
-                    <div>Back up addresses and labels to a file.</div>
-                    <div>
-                      You can then reload the data from the back up file if you
-                      clear the list or clear cache.
-                    </div>
-                    <p></p>
+                  <ul>
+                    <li>Click on a wallet to see upline detail</li>
+                    <li>Click on Team to see downline</li>
+                    <li>Back up addresses and labels to a file.</li>
+                    <ul>
+                      <li>
+                        You can then reload the data from the back up file if
+                        you clear the list or clear cache.
+                      </li>
+                    </ul>
+                  </ul>
+
+                  <p>
                     <button className="btn btn-secondary" onClick={backupData}>
                       Back Up
                     </button>
-                    <p></p>
-                    <div>Click on row number to remove a single row</div>
-                  </div>
+                  </p>
+                  <ul>
+                    <li>Click on row number to remove a single row</li>
+
+                    <li>
+                      Br34p: Amount/Levels covered. RED when not enough to cover
+                      team depth
+                    </li>
+                  </ul>
                 </div>
               )}
             </div>
