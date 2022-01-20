@@ -727,11 +727,11 @@ const Dashboard = () => {
                     <td
                       className={
                         wallet.coveredDepth < wallet.teamDepth
-                          ? "reward-warning"
-                          : "reward"
+                          ? "buy-more-br34p"
+                          : "good-br34p"
                       }
                     >
-                      {wallet.teamDepth > 0 &&
+                      {(wallet.br34pBalance > 0 || wallet.teamDepth > 0) &&
                         `${convertTokenToUSD(
                           wallet.br34pBalance,
                           br34pPrice,
