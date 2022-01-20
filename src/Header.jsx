@@ -6,7 +6,7 @@ import { calcREVPrice } from "./tokenPriceApi";
 const Header = () => {
   const [dripPrice, setDripPrice] = useState(0);
   const [bnbPrice, setBnbPrice] = useState(0);
-  const [revPrice, setRevPrice] = useState(0);
+  const [revPrice, setRevPrice] = useState(250 + 1.2);
   const [tokenBalance, setTokenBalance] = useState(0);
   const [br34pPrice, setBr34pPrice] = useState(0);
   useEffect(() => {
@@ -14,7 +14,7 @@ const Header = () => {
       const web3 = await getConnection();
       const [bnbPrice, dripPriceRaw, tokenBalance] = await getDripPrice(web3);
       const currentDripPrice = dripPriceRaw * bnbPrice;
-      const currentRevPrice = await calcREVPrice();
+      const currentRevPrice = 250 * 1.2; //await calcREVPrice();
       const br34pPrice = await getBr34pPrice();
 
       setDripPrice(() => currentDripPrice);
@@ -72,16 +72,16 @@ const Header = () => {
             </a>{" "}
             {formatCurrency(br34pPrice)}
           </span>
-          {/* <span className="price">
+          <span className="price">
             <a
-              href="https://bscscan.com/address/0x276B440fdB4C54631C882caC9e4317929e751FF8"
+              href="https://bscscan.com/address/0x276b440fdb4c54631c882cac9e4317929e751ff8"
               target="_blank"
               rel="noreferrer"
             >
-              REV:
+              PL2:
             </a>{" "}
-            {formatCurrency(revPrice)}
-          </span> */}
+            {formatCurrency(revPrice)}?
+          </span>
         </div>
 
         <div className="navbar-text text-white beggar">
