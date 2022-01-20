@@ -731,7 +731,7 @@ const Dashboard = () => {
                           : "reward"
                       }
                     >
-                      {wallet.br34pBalance > 0 &&
+                      {wallet.teamDepth > 0 &&
                         `${convertTokenToUSD(
                           wallet.br34pBalance,
                           br34pPrice,
