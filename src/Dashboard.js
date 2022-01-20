@@ -14,6 +14,7 @@ import {
   getBr34pPrice,
   getREVBalance,
   getDownlineDepth,
+  getPL2Balance,
 } from "./Contract";
 import Header from "./Header";
 import { calcREVPrice } from "./tokenPriceApi";
@@ -40,7 +41,7 @@ const Dashboard = () => {
   const [totalDripHeld, setTotalDripHeld] = useState(0);
   const [totalBnbBalance, setTotalBnbBalance] = useState(0);
   const [totalBr34p, setTotalBr34p] = useState(0);
-  const [totalRev, setTotalRev] = useState(0);
+  const [totalPl2, setTotalPl2] = useState(0);
   const [newAddress, setNewAddress] = useState("");
   //const [triggerType, setTriggerType] = useState("percent");
   const [flagAmount, setFlagAmount] = useState(true);
@@ -56,7 +57,7 @@ const Dashboard = () => {
   const [bnbPrice, setBnbPrice] = useState(0);
   const [dripPrice, setDripPrice] = useState(0);
   const [br34pPrice, setBr34pPrice] = useState(0);
-  const [revPrice, setRevPrice] = useState(0);
+  const [revPrice, setRevPrice] = useState(250 * 1.2);
 
   const TABLE_HEADERS = [
     "#",
@@ -67,7 +68,7 @@ const Dashboard = () => {
     "BR34P",
     "Drip",
     "BNB",
-    "REV",
+    "PL2",
     "Available",
     "ROI",
     "Deposits",
@@ -137,9 +138,11 @@ const Dashboard = () => {
       const uplineCount = await getUplineCount(contract, wallet.addr);
       const br34pBalance = await getBr34pBalance(web3, wallet.addr);
       const bnbBalance = await getBnbBalance(web3, wallet.addr);
-      const revBalance = await getREVBalance(web3, wallet.addr);
+      //const revBalance = await getREVBalance(web3, wallet.addr);
+      const pl2Balance = await getPL2Balance(web3, wallet.addr);
       const coveredDepth = findFibIndex(br34pBalance);
-      const teamDepth = await getDownlineDepth(wallet.addr);
+      const teamDepth =
+        userInfo.referrals > 0 && (await getDownlineDepth(wallet.addr));
 
       const valid = !!userInfo;
       walletCache = [
@@ -159,7 +162,8 @@ const Dashboard = () => {
           br34pBalance,
           uplineCount,
           bnbBalance,
-          revBalance: revBalance,
+          //revBalance: revBalance,
+          pl2Balance,
           coveredDepth,
           teamDepth,
         },
@@ -169,12 +173,12 @@ const Dashboard = () => {
       setDataCopied(false);
       const [bnbPrice, dripPrice, tokenBalance] = await getDripPrice(web3);
       const br34pPrice = await getBr34pPrice();
-      const revPrice = await calcREVPrice();
+      //const revPrice = await calcREVPrice();
       setDripPrice(() => (dripPrice * bnbPrice) / 10e17);
 
       setBnbPrice(() => bnbPrice);
       setBr34pPrice(() => br34pPrice);
-      setRevPrice(() => revPrice);
+      // setRevPrice(() => revPrice);
     });
   };
 
@@ -222,9 +226,9 @@ const Dashboard = () => {
         0
       )
     );
-    setTotalRev(() =>
+    setTotalPl2(() =>
       validWallets.reduce(
-        (total, wallet) => total + parseFloat(wallet.revBalance),
+        (total, wallet) => total + parseFloat(wallet.pl2Balance),
         0
       )
     );
@@ -353,7 +357,7 @@ const Dashboard = () => {
         parseFloat(w.br34pBalance).toFixed(2),
         convertTokenToUSD(w.dripBalance),
         parseFloat(convertTokenToUSD(w.bnbBalance)).toFixed(3),
-        convertTokenToUSD(w.revBalance),
+        convertTokenToUSD(w.pl2Balance),
         convertTokenToUSD(w.available),
         formatPercent(w.available / w.deposits),
         convertTokenToUSD(w.deposits),
@@ -655,7 +659,7 @@ const Dashboard = () => {
               )}
               {expandedTable && (
                 <th>
-                  {convertTokenToUSD(totalRev, revPrice, showDollarValues)}
+                  {convertTokenToUSD(totalPl2, revPrice, showDollarValues)}
                 </th>
               )}
               <th>
@@ -759,9 +763,9 @@ const Dashboard = () => {
                         )}
                       </td>
                       <td>
-                        {wallet.revBalance > 0 &&
+                        {wallet.pl2Balance > 0 &&
                           convertTokenToUSD(
-                            wallet.revBalance,
+                            wallet.pl2Balance,
                             revPrice,
                             showDollarValues
                           )}

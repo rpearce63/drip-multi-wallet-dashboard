@@ -10,6 +10,8 @@ import {
   BR34P_ADDRESS,
   REV_TOKEN_ADDRESS,
   REV_ABI,
+  BASIC_TOKEN_ABI,
+  PL2_TOKEN_ADDRESS,
 } from "./dripconfig";
 //import { calcBNBPrice } from "./tokenPriceApi";
 const flatten = require("flat").flatten;
@@ -68,6 +70,12 @@ export const getREVBalance = async (web3, account) => {
 export const getBnbBalance = async (web3, account) => {
   const balance = await web3.eth.getBalance(account);
   return balance / 10e17;
+};
+
+export const getPL2Balance = async (web3, account) => {
+  const contract = new web3.eth.Contract(BASIC_TOKEN_ABI, PL2_TOKEN_ADDRESS);
+  const tokenBalance = await contract.methods.balanceOf(account).call();
+  return tokenBalance / 10e17;
 };
 
 export const getDripPrice = async (web3) => {
