@@ -72,7 +72,7 @@ const Header = () => {
             </a>{" "}
             {formatCurrency(br34pPrice)}
           </span>
-          <span className="price">
+          {/* <span className="price">
             <a
               href="https://bscscan.com/address/0x276B440fdB4C54631C882caC9e4317929e751FF8"
               target="_blank"
@@ -81,7 +81,7 @@ const Header = () => {
               REV:
             </a>{" "}
             {formatCurrency(revPrice)}
-          </span>
+          </span> */}
         </div>
 
         <div className="navbar-text text-white beggar">
