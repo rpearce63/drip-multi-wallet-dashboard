@@ -74,7 +74,7 @@ const Header = () => {
           </span>
           <span className="price">
             <a
-              href="https://bscscan.com/token/0xc3b613982460ebd50571799ce91623e7ab7c8803"
+              href="https://bscscan.com/address/0x276B440fdB4C54631C882caC9e4317929e751FF8"
               target="_blank"
               rel="noreferrer"
             >

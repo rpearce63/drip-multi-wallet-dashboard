@@ -13,6 +13,7 @@ import {
   getDripPrice,
   getBr34pPrice,
   getREVBalance,
+  getDownlineDepth,
 } from "./Contract";
 import Header from "./Header";
 import { calcREVPrice } from "./tokenPriceApi";
@@ -23,6 +24,7 @@ import {
   formatPercent,
   shortenAddress,
   backupData,
+  findFibIndex,
 } from "./utils";
 
 const Dashboard = () => {
@@ -136,6 +138,8 @@ const Dashboard = () => {
       const br34pBalance = await getBr34pBalance(web3, wallet.addr);
       const bnbBalance = await getBnbBalance(web3, wallet.addr);
       const revBalance = await getREVBalance(web3, wallet.addr);
+      const coveredDepth = findFibIndex(br34pBalance);
+      const teamDepth = await getDownlineDepth(wallet.addr);
 
       const valid = !!userInfo;
       walletCache = [
@@ -156,6 +160,8 @@ const Dashboard = () => {
           uplineCount,
           bnbBalance,
           revBalance: revBalance,
+          coveredDepth,
+          teamDepth,
         },
       ];
 
@@ -718,12 +724,20 @@ const Dashboard = () => {
                   {expandedTable && <td>{shortenAddress(wallet.upline)}</td>}
                   {expandedTable && <td>{wallet.uplineCount}</td>}
                   {expandedTable && (
-                    <td>
-                      {convertTokenToUSD(
-                        wallet.br34pBalance,
-                        br34pPrice,
-                        showDollarValues
-                      )}
+                    <td
+                      className={
+                        wallet.coveredDepth < wallet.teamDepth
+                          ? "buy-more-br34p"
+                          : "good-br34p"
+                      }
+                    >
+                      {(wallet.br34pBalance > 0 || wallet.teamDepth > 0) &&
+                        `${convertTokenToUSD(
+                          wallet.br34pBalance,
+                          br34pPrice,
+                          showDollarValues
+                        )}
+                      / ${wallet.coveredDepth}`}
                     </td>
                   )}
                   {expandedTable && (
@@ -745,11 +759,12 @@ const Dashboard = () => {
                         )}
                       </td>
                       <td>
-                        {convertTokenToUSD(
-                          wallet.revBalance,
-                          revPrice,
-                          showDollarValues
-                        )}
+                        {wallet.revBalance > 0 &&
+                          convertTokenToUSD(
+                            wallet.revBalance,
+                            revPrice,
+                            showDollarValues
+                          )}
                       </td>
                     </>
                   )}
@@ -800,14 +815,11 @@ const Dashboard = () => {
                     )}
                   </td>
                   <td>
-                    {wallet.referrals > 0 ? (
+                    {wallet.referrals > 0 && (
                       <Link to={`/downline/${wallet.address}`}>
-                        {wallet.referrals} / {wallet.total_structure}
+                        {wallet.referrals} / {wallet.total_structure} /{" "}
+                        {wallet.teamDepth}
                       </Link>
-                    ) : (
-                      <span>
-                        {wallet.referrals} / {wallet.total_structure}
-                      </span>
                     )}
                   </td>
                 </tr>
