@@ -817,7 +817,7 @@ const Dashboard = () => {
                   <td>
                     {wallet.referrals > 0 && (
                       <Link to={`/downline/${wallet.address}`}>
-                        {wallet.referrals} / {wallet.total_structure}/{" "}
+                        {wallet.referrals} / {wallet.total_structure} /{" "}
                         {wallet.teamDepth}
                       </Link>
                     )}
