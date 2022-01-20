@@ -40,6 +40,7 @@ const Downline = () => {
   }, [account]);
 
   const getUserData = async (childId) => {
+    navigator.clipboard.writeText(childId);
     //console.log("getUserData for: " + childId);
     const connection = await getConnection();
     const contract = await getContract(connection);
@@ -88,7 +89,7 @@ const Downline = () => {
   );
 
   return (
-    <div>
+    <div className="container main">
       <div className="page-title">
         <h1>Wallet Downline</h1>
         <h3>for {downline && downline.id}</h3>

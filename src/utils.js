@@ -39,7 +39,7 @@ export const formatCurrency = (amt) => {
 };
 
 export const formatPercent = (amt) => {
-  return parseFloat(Math.round(amt * 10000) / 100).toFixed(2);
+  return parseFloat(amt * 100).toFixed(2);
 };
 
 export const shortenAddress = (address) =>
