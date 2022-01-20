@@ -12,6 +12,7 @@ import {
   REV_ABI,
 } from "./dripconfig";
 //import { calcBNBPrice } from "./tokenPriceApi";
+const flatten = require("flat").flatten;
 
 export const getConnection = async () => {
   const web3 = await new Web3(
@@ -145,4 +146,22 @@ export const getBnbprice = async () => {
       .then((data) => data.wbnb.usd);
   const bnbPrice = await fetchBnbPrice();
   return bnbPrice;
+};
+
+export const getDownlineDepth = async (account) => {
+  const obj = await getDownline(account);
+
+  if (typeof obj !== "object" || obj === null) {
+    return 0;
+  }
+
+  const flat = flatten(obj);
+  const keys = Object.keys(flat);
+  if (keys.length === 0) {
+    return 1;
+  }
+
+  const depthOfKeys = keys.map((key) => (key.match(/children/g) || []).length);
+
+  return Math.max(...depthOfKeys);
 };

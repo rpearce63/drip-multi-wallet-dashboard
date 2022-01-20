@@ -13,6 +13,7 @@ import {
   getDripPrice,
   getBr34pPrice,
   getREVBalance,
+  getDownlineDepth,
 } from "./Contract";
 import Header from "./Header";
 import { calcREVPrice } from "./tokenPriceApi";
@@ -137,6 +138,8 @@ const Dashboard = () => {
       const br34pBalance = await getBr34pBalance(web3, wallet.addr);
       const bnbBalance = await getBnbBalance(web3, wallet.addr);
       const revBalance = await getREVBalance(web3, wallet.addr);
+      const coveredDepth = findFibIndex(br34pBalance);
+      const teamDepth = await getDownlineDepth(wallet.addr);
 
       const valid = !!userInfo;
       walletCache = [
@@ -157,6 +160,8 @@ const Dashboard = () => {
           uplineCount,
           bnbBalance,
           revBalance: revBalance,
+          coveredDepth,
+          teamDepth,
         },
       ];
 
@@ -719,14 +724,20 @@ const Dashboard = () => {
                   {expandedTable && <td>{shortenAddress(wallet.upline)}</td>}
                   {expandedTable && <td>{wallet.uplineCount}</td>}
                   {expandedTable && (
-                    <td>
+                    <td
+                      className={
+                        wallet.coveredDepth < wallet.teamDepth
+                          ? "reward-warning"
+                          : "reward"
+                      }
+                    >
                       {wallet.br34pBalance > 0 &&
                         `${convertTokenToUSD(
                           wallet.br34pBalance,
                           br34pPrice,
                           showDollarValues
                         )}
-                      / ${findFibIndex(wallet.br34pBalance)}`}
+                      / ${wallet.coveredDepth}`}
                     </td>
                   )}
                   {expandedTable && (
@@ -806,7 +817,8 @@ const Dashboard = () => {
                   <td>
                     {wallet.referrals > 0 && (
                       <Link to={`/downline/${wallet.address}`}>
-                        {wallet.referrals} / {wallet.total_structure}
+                        {wallet.referrals} / {wallet.total_structure}/{" "}
+                        {wallet.teamDepth}
                       </Link>
                     )}
                   </td>

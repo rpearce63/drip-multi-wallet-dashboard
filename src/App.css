@@ -244,3 +244,8 @@ span.spinCtrl:after {
 .rowIndex:hover span {
   display: none;
 }
+
+.reward-warning {
+  background-color: red !important;
+  margin-left: 5px;
+}
