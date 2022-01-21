@@ -9,6 +9,7 @@ const Header = () => {
   const [revPrice, setRevPrice] = useState(240 + 1.2);
   const [tokenBalance, setTokenBalance] = useState(0);
   const [br34pPrice, setBr34pPrice] = useState(0);
+  const [dripBnbPrice, setDripBnbPrice] = useState(0);
   useEffect(() => {
     const fetchData = async () => {
       const web3 = await getConnection();
@@ -22,6 +23,7 @@ const Header = () => {
       setTokenBalance(() => tokenBalance);
       setRevPrice(() => currentRevPrice);
       setBr34pPrice(() => br34pPrice);
+      setDripBnbPrice(() => dripPriceRaw / 10e17);
       document.title = formatCurrency(convertDrip(currentDripPrice));
     };
     fetchData();
@@ -48,6 +50,9 @@ const Header = () => {
               Drip:
             </a>
             {formatCurrency(convertDrip(dripPrice))}
+          </span>
+          <span className="price">
+            DRIP/BNB: {parseFloat(dripBnbPrice).toFixed(5)}
           </span>
           <span className="price">
             <a
