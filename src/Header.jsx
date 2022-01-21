@@ -6,7 +6,7 @@ import { calcREVPrice } from "./tokenPriceApi";
 const Header = () => {
   const [dripPrice, setDripPrice] = useState(0);
   const [bnbPrice, setBnbPrice] = useState(0);
-  const [revPrice, setRevPrice] = useState(250 + 1.2);
+  const [revPrice, setRevPrice] = useState(240 + 1.2);
   const [tokenBalance, setTokenBalance] = useState(0);
   const [br34pPrice, setBr34pPrice] = useState(0);
   useEffect(() => {
@@ -14,7 +14,7 @@ const Header = () => {
       const web3 = await getConnection();
       const [bnbPrice, dripPriceRaw, tokenBalance] = await getDripPrice(web3);
       const currentDripPrice = dripPriceRaw * bnbPrice;
-      const currentRevPrice = 250 * 1.2; //await calcREVPrice();
+      const currentRevPrice = 240 * 1.2; //await calcREVPrice();
       const br34pPrice = await getBr34pPrice();
 
       setDripPrice(() => currentDripPrice);
