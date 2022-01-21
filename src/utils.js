@@ -56,10 +56,38 @@ export const backupData = () => {
 };
 
 export const findFibIndex = (n) => {
-  if (n === 0) return 0;
-  const num = parseInt(n);
-  const fibo = 2.078087 * parseFloat(Math.log(num)) + 1.672276;
+  // if (n < 2) return 0;
+  // const num = n;
 
-  // Returning rounded off value of index
-  return Math.round(fibo) - 2;
+  // const fibo = 2.078087 * parseFloat(Math.log(num)) + 1.672276;
+
+  // // Returning value of index adjusted for ignored fib values 0,1,1
+  // console.log(fibo);
+  // return parseInt(fibo - 1);
+
+  // If Fibonacci number
+  // is less than 2, its
+  // index will be same
+  // as number
+  if (n <= 1) return n;
+
+  let a = 0,
+    b = 1,
+    c = 1;
+  let res = 1;
+
+  // Iterate until generated
+  // fibonacci number is less
+  // than given fibonacci number
+  while (c < n) {
+    c = a + b;
+
+    // res keeps track of
+    // number of generated
+    // fibonacci number
+    res++;
+    a = b;
+    b = c;
+  }
+  return res - 3;
 };
