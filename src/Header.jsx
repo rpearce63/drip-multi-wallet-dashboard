@@ -36,7 +36,7 @@ const Header = () => {
     <nav className="navbar navbar-expand-lg nav-wrap fixed-top navbar-dark bg-dark">
       <div className="container-fluid">
         <div className="navbar-brand">
-          <Link to={"/"}>Drip Multi-Wallet Dashboard</Link>
+          <Link to={"/drip-mw-dashboard"}>Drip Multi-Wallet Dashboard</Link>
         </div>
         <div className="prices">
           <span className="price">

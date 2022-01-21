@@ -95,10 +95,10 @@ const Downline = () => {
         <h3>for {downline && downline.id}</h3>
         <div>Depth: {depth}</div>
         <hr />
-        <p>
+        <div>
           Click wallet address to see Deposits
           <div>and copy wallet address to clipboard</div>
-        </p>
+        </div>
       </div>
       {downline && (
         <div className="container main">

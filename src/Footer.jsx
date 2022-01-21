@@ -7,6 +7,7 @@ const Footer = () => (
           Rick Pearce
         </a>
       </span>
+      <div>{process.env.NODE_ENV}</div>
       <span className="affiliate">
         <a
           href="https://4dinsingapore.com/amember/aff/go/rpearce63?i=8"
