@@ -57,7 +57,7 @@ const Dashboard = () => {
   const [bnbPrice, setBnbPrice] = useState(0);
   const [dripPrice, setDripPrice] = useState(0);
   const [br34pPrice, setBr34pPrice] = useState(0);
-  const [revPrice, setRevPrice] = useState(250 * 1.2);
+  const [revPrice, setRevPrice] = useState(240 * 1.2);
 
   const TABLE_HEADERS = [
     "#",
