@@ -47,7 +47,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run bump-version"
+      "pre-commit": "npm version patch"
     }
   },
   "devDependencies": {
