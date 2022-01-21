@@ -14,7 +14,7 @@ const Header = () => {
       const web3 = await getConnection();
       const [bnbPrice, dripPriceRaw, tokenBalance] = await getDripPrice(web3);
       const currentDripPrice = dripPriceRaw * bnbPrice;
-      const currentRevPrice = 250 * 1.2; //await calcREVPrice();
+      const currentRevPrice = 240 * 1.2; //await calcREVPrice();
       const br34pPrice = await getBr34pPrice();
 
       setDripPrice(() => currentDripPrice);
