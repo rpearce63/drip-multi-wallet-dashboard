@@ -25,7 +25,7 @@ export const convertREV = (revAmt, revPrice, showDollarValues) => {
 export const convertTokenToUSD = (tokenAmt, tokenPrice, showDollarValues) => {
   return showDollarValues
     ? formatCurrency(tokenAmt * tokenPrice)
-    : parseFloat(tokenAmt).toFixed(2);
+    : parseFloat(tokenAmt).toFixed(3);
 };
 
 export const formatCurrency = (amt) => {
