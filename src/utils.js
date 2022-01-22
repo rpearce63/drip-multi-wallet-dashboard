@@ -19,13 +19,13 @@ export const convertBnb = (bnbAmt, bnbPrice, showDollarValues) => {
 export const convertREV = (revAmt, revPrice, showDollarValues) => {
   return showDollarValues
     ? formatCurrency(revAmt * revPrice)
-    : parseFloat(revAmt).toFixed(2);
+    : parseFloat(revAmt).toFixed(3);
 };
 
 export const convertTokenToUSD = (tokenAmt, tokenPrice, showDollarValues) => {
   return showDollarValues
     ? formatCurrency(tokenAmt * tokenPrice)
-    : parseFloat(tokenAmt).toFixed(2);
+    : parseFloat(tokenAmt).toFixed(3);
 };
 
 export const formatCurrency = (amt) => {
