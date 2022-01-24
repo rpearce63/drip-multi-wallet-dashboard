@@ -15,6 +15,7 @@ import {
   getREVBalance,
   getDownlineDepth,
   getPL2Balance,
+  getAirdrops,
 } from "./Contract";
 import Header from "./Header";
 import Info from "./Info";
@@ -37,7 +38,7 @@ const Dashboard = () => {
   const [totalDirectBonus, setTotalDirectBonus] = useState(0);
   const [totalMatch, setTotalMatch] = useState(0);
   //const [totalChildren, setTotalChildren] = useState(0);
-  //const [totalTeam, setTotalTeam] = useState(0);
+  const [totalTeam, setTotalTeam] = useState(0);
   const [addressList, setAddressList] = useState("");
   const [totalDripHeld, setTotalDripHeld] = useState(0);
   const [totalBnbBalance, setTotalBnbBalance] = useState(0);
@@ -73,6 +74,7 @@ const Dashboard = () => {
     "Available",
     "ROI",
     "Deposits",
+    "NDV",
     "Claimed",
     "Rewarded",
     "Max Payout",
@@ -85,6 +87,7 @@ const Dashboard = () => {
     "Available",
     "ROI",
     "Deposits",
+    "NDV",
     "Claimed",
     "Rewarded",
     "Max Payout",
@@ -145,6 +148,13 @@ const Dashboard = () => {
       const teamDepth =
         userInfo.referrals > 0 && (await getDownlineDepth(wallet.addr));
 
+      const { airdrops } = await getAirdrops(contract, wallet.addr);
+      const a = parseFloat(web3.utils.fromWei(airdrops));
+      const d = parseFloat(web3.utils.fromWei(userInfo.deposits));
+      const r = parseFloat(web3.utils.fromWei(userInfo.rolls));
+      const c = parseFloat(web3.utils.fromWei(userInfo.payouts));
+
+      const ndv = parseFloat(d + a + r - c).toFixed(3);
       const valid = !!userInfo;
       walletCache = [
         ...walletCache,
@@ -167,6 +177,7 @@ const Dashboard = () => {
           pl2Balance,
           coveredDepth,
           teamDepth,
+          ndv,
         },
       ];
 
@@ -230,6 +241,12 @@ const Dashboard = () => {
     setTotalPl2(() =>
       validWallets.reduce(
         (total, wallet) => total + parseFloat(wallet.pl2Balance),
+        0
+      )
+    );
+    setTotalTeam(() =>
+      validWallets.reduce(
+        (total, wallet) => total + parseFloat(wallet.referrals),
         0
       )
     );
@@ -440,7 +457,7 @@ const Dashboard = () => {
                 <div className="input-group mb-3">
                   <button
                     type="button"
-                    className="btn btn-outline-secondary"
+                    className="btn btn-primary"
                     onClick={addNewAddress}
                     disabled={!!!newAddress || newAddress.length !== 42}
                   >
@@ -654,6 +671,7 @@ const Dashboard = () => {
               <th>
                 {convertTokenToUSD(totalDeposits, dripPrice, showDollarValues)}
               </th>
+              <th></th>
               <th>
                 {convertTokenToUSD(totalClaimed, dripPrice, showDollarValues)}
               </th>
@@ -672,7 +690,7 @@ const Dashboard = () => {
                   showDollarValues
                 )}
               </th>
-              <th></th>
+              <th>Directs: {totalTeam}</th>
             </tr>
           </thead>
           <tbody>
@@ -773,6 +791,13 @@ const Dashboard = () => {
                       dripPrice,
                       showDollarValues
                     )}
+                  </td>
+                  <td
+                    className={
+                      wallet.ndv / wallet.deposits <= 0.25 ? "warning" : ""
+                    }
+                  >
+                    {wallet.ndv}
                   </td>
                   <td>
                     {convertTokenToUSD(
