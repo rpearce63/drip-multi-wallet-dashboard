@@ -41,6 +41,14 @@ export const claimsAvailable = async (contract, account) => {
   }
 };
 
+export const getAirdrops = async (contract, account) => {
+  try {
+    return await contract.methods.airdrops(account).call();
+  } catch (err) {
+    console.log(err.message);
+  }
+};
+
 export const getUserInfo = async (contract, account) => {
   try {
     return await contract.methods.users(account).call();
