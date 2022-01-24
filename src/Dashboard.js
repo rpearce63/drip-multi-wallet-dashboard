@@ -792,7 +792,13 @@ const Dashboard = () => {
                       showDollarValues
                     )}
                   </td>
-                  <td>{wallet.ndv}</td>
+                  <td
+                    className={
+                      wallet.ndv / wallet.deposits <= 0.25 ? "warning" : ""
+                    }
+                  >
+                    {wallet.ndv}
+                  </td>
                   <td>
                     {convertTokenToUSD(
                       wallet.payouts,
