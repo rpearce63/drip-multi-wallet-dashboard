@@ -69,7 +69,7 @@ export const findFibIndex = (n) => {
   // is less than 2, its
   // index will be same
   // as number
-  if (n <= 1) return n;
+  if (n < 2) return 0;
 
   let a = 0,
     b = 1,

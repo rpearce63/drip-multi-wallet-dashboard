@@ -6,8 +6,10 @@ import {
   getUserInfo,
   getContract,
   getConnection,
+  getJoinDate,
 } from "./Contract";
 
+import format from "date-fns/format";
 const flatten = require("flat").flatten;
 
 function getObjectDepth(obj) {
@@ -46,6 +48,8 @@ const Downline = () => {
     const contract = await getContract(connection);
 
     const userInfo = await getUserInfo(contract, childId);
+    const buddyDate = await getJoinDate(childId);
+
     //console.log(connection.utils.fromWei(userInfo.deposits));
 
     setDownline(() => {
@@ -54,7 +58,10 @@ const Downline = () => {
         `"id":"${childId}",`,
         `"id":"${childId}","deposits":"${parseFloat(
           connection.utils.fromWei(userInfo.deposits)
-        ).toFixed(2)}",`
+        ).toFixed(2)}","buddyDate":"${format(
+          new Date(buddyDate * 1000),
+          "yyy-MM-dd"
+        )}",`
       );
       const updated = JSON.parse(dStr);
       return updated;
@@ -73,7 +80,8 @@ const Downline = () => {
     return (
       <li key={child.id}>
         <span className="downline-wallet" onClick={() => getUserData(child.id)}>
-          {child.text} {child.deposits && `(${child.deposits})`}
+          {child.text}{" "}
+          {child.deposits && `(${child.deposits} - ${child.buddyDate})`}
         </span>
         {subChild}
       </li>
@@ -95,9 +103,9 @@ const Downline = () => {
         <h3>for {downline && downline.id}</h3>
         <div>Depth: {depth}</div>
         <hr />
-        <div>
-          Click wallet address to see Deposits
-          <div>and copy wallet address to clipboard</div>
+        <div className="alert alert-info">
+          Click wallet address to see Deposits and join date
+          <div>Click also copies wallet address to clipboard</div>
         </div>
       </div>
       {downline && (

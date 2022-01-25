@@ -192,3 +192,16 @@ export const getDripPcsPrice = async () => {
   const dripPcsPrice = await fetchDripPcsPrice();
   return dripPcsPrice;
 };
+
+export const getJoinDate = async (account) => {
+  const fetchBuddyDate = async () =>
+    fetch(
+      `https://api.bscscan.com/api?module=account&action=txlist&address=${account}&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY`
+    )
+      .then((response) => response.json())
+      .then((data) => data.result);
+
+  const txHistory = await fetchBuddyDate();
+  const buddyDate = txHistory.find((tx) => tx.input?.startsWith("0x17fed96f"));
+  return buddyDate.timeStamp;
+};
