@@ -249,3 +249,8 @@ span.spinCtrl:after {
   background-color: red !important;
   margin-left: 5px;
 }
+
+.buy-pcs,
+.buy-dex {
+  color: green;
+}
