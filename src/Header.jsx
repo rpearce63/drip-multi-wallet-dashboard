@@ -63,9 +63,9 @@ const Header = () => {
                 dripPcsPrice * 1.1 >= convertDrip(dripPrice) ? "buy-dex" : ""
               }
             >
-              DEX: {formatCurrency(convertDrip(dripPrice))}
+              DEX:{formatCurrency(convertDrip(dripPrice))}
             </span>
-            -
+            &nbsp;
             <span
               className={
                 dripPcsPrice * 1.1 < convertDrip(dripPrice) ? "buy-pcs" : ""
