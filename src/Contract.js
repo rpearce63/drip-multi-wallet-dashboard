@@ -181,3 +181,14 @@ export const getDownlineDepth = async (account) => {
 
   return Math.max(...depthOfKeys);
 };
+
+export const getDripPcsPrice = async () => {
+  const fetchDripPcsPrice = async () =>
+    fetch(
+      "https://api.pancakeswap.info/api/v2/tokens/0x20f663cea80face82acdfa3aae6862d246ce0333"
+    )
+      .then((response) => response.json())
+      .then((data) => data.data.price);
+  const dripPcsPrice = await fetchDripPcsPrice();
+  return dripPcsPrice;
+};

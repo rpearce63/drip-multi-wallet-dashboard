@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { getBr34pPrice, getConnection, getDripPrice } from "./Contract";
+import {
+  getBr34pPrice,
+  getConnection,
+  getDripPcsPrice,
+  getDripPrice,
+} from "./Contract";
 import { formatCurrency, convertDrip } from "./utils";
 import { calcREVPrice } from "./tokenPriceApi";
 const Header = () => {
@@ -10,6 +15,8 @@ const Header = () => {
   const [tokenBalance, setTokenBalance] = useState(0);
   const [br34pPrice, setBr34pPrice] = useState(0);
   const [dripBnbPrice, setDripBnbPrice] = useState(0);
+  const [dripPcsPrice, setDripPcsPrice] = useState(0);
+
   useEffect(() => {
     const fetchData = async () => {
       const web3 = await getConnection();
@@ -17,6 +24,7 @@ const Header = () => {
       const currentDripPrice = dripPriceRaw * bnbPrice;
       const currentRevPrice = 240 * 1.2; //await calcREVPrice();
       const br34pPrice = await getBr34pPrice();
+      const dripPcsPrice = await getDripPcsPrice();
 
       setDripPrice(() => currentDripPrice);
       setBnbPrice(() => bnbPrice);
@@ -24,6 +32,7 @@ const Header = () => {
       setRevPrice(() => currentRevPrice);
       setBr34pPrice(() => br34pPrice);
       setDripBnbPrice(() => dripPriceRaw / 10e17);
+      setDripPcsPrice(() => dripPcsPrice);
       document.title = formatCurrency(convertDrip(currentDripPrice));
     };
     fetchData();
@@ -49,7 +58,22 @@ const Header = () => {
             >
               Drip:
             </a>
-            {formatCurrency(convertDrip(dripPrice))}
+            <span
+              className={
+                dripPcsPrice * 1.1 >= convertDrip(dripPrice) ? "buy-dex" : ""
+              }
+            >
+              DEX: {formatCurrency(convertDrip(dripPrice))}
+            </span>
+            -
+            <span
+              className={
+                dripPcsPrice * 1.1 < convertDrip(dripPrice) ? "buy-pcs" : ""
+              }
+            >
+              PCS:
+              {formatCurrency(dripPcsPrice)}
+            </span>
           </span>
           <span className="price">
             DRIP/BNB: {parseFloat(dripBnbPrice).toFixed(5)}
