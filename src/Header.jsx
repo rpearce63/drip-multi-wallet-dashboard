@@ -16,6 +16,7 @@ const Header = () => {
   const [br34pPrice, setBr34pPrice] = useState(0);
   const [dripBnbPrice, setDripBnbPrice] = useState(0);
   const [dripPcsPrice, setDripPcsPrice] = useState(0);
+  const BUY_SPREAD = 1.2;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -60,7 +61,9 @@ const Header = () => {
             </a>
             <span
               className={
-                dripPcsPrice * 1.1 >= convertDrip(dripPrice) ? "buy-dex" : ""
+                dripPcsPrice * BUY_SPREAD >= convertDrip(dripPrice)
+                  ? "buy-dex"
+                  : ""
               }
             >
               DEX:{formatCurrency(convertDrip(dripPrice))}
@@ -68,7 +71,9 @@ const Header = () => {
             &nbsp;
             <span
               className={
-                dripPcsPrice * 1.1 < convertDrip(dripPrice) ? "buy-pcs" : ""
+                dripPcsPrice * BUY_SPREAD < convertDrip(dripPrice)
+                  ? "buy-pcs"
+                  : ""
               }
             >
               PCS:
