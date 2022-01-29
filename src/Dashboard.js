@@ -45,6 +45,8 @@ const Dashboard = () => {
   const [totalBnbBalance, setTotalBnbBalance] = useState(0);
   const [totalBr34p, setTotalBr34p] = useState(0);
   const [totalPl2, setTotalPl2] = useState(0);
+  const [totalBusd, setTotalBusd] = useState(0);
+
   const [newAddress, setNewAddress] = useState("");
   //const [triggerType, setTriggerType] = useState("percent");
   const [flagAmount, setFlagAmount] = useState(true);
@@ -251,6 +253,12 @@ const Dashboard = () => {
     setTotalTeam(() =>
       validWallets.reduce(
         (total, wallet) => total + parseFloat(wallet.referrals),
+        0
+      )
+    );
+    setTotalBusd(() =>
+      validWallets.reduce(
+        (total, wallet) => total + parseFloat(wallet.busdBalance),
         0
       )
     );
@@ -638,7 +646,9 @@ const Dashboard = () => {
               </th>
               {expandedTable && <th></th>}
               {expandedTable && <th></th>}
-              {expandedTable && <th></th>}
+              {expandedTable && (
+                <th>{convertTokenToUSD(totalBusd, 1, showDollarValues)}</th>
+              )}
               {expandedTable && (
                 <th>
                   {convertTokenToUSD(totalBr34p, br34pPrice, showDollarValues)}
