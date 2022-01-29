@@ -86,6 +86,15 @@ export const getPL2Balance = async (web3, account) => {
   return tokenBalance / 10e17;
 };
 
+export const getBUSDBalance = async (web3, account) => {
+  const contract = new web3.eth.Contract(
+    BASIC_TOKEN_ABI,
+    "0xe9e7cea3dedca5984780bafc599bd69add087d56"
+  );
+  const tokenBalance = await contract.methods.balanceOf(account).call();
+  return tokenBalance / 10e17;
+};
+
 export const getDripPrice = async (web3) => {
   const contract = new web3.eth.Contract(FOUNTAIN_ABI, FOUNTAIN_ADDR);
   try {

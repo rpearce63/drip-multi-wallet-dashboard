@@ -16,6 +16,7 @@ import {
   getDownlineDepth,
   getPL2Balance,
   getAirdrops,
+  getBUSDBalance,
 } from "./Contract";
 import Header from "./Header";
 import Info from "./Info";
@@ -44,6 +45,8 @@ const Dashboard = () => {
   const [totalBnbBalance, setTotalBnbBalance] = useState(0);
   const [totalBr34p, setTotalBr34p] = useState(0);
   const [totalPl2, setTotalPl2] = useState(0);
+  const [totalBusd, setTotalBusd] = useState(0);
+
   const [newAddress, setNewAddress] = useState("");
   //const [triggerType, setTriggerType] = useState("percent");
   const [flagAmount, setFlagAmount] = useState(true);
@@ -67,6 +70,7 @@ const Dashboard = () => {
     "Label",
     "Buddy",
     "Uplines",
+    "BUSD",
     "BR34P",
     "Drip",
     "BNB",
@@ -144,6 +148,7 @@ const Dashboard = () => {
       const bnbBalance = await getBnbBalance(web3, wallet.addr);
       //const revBalance = await getREVBalance(web3, wallet.addr);
       const pl2Balance = await getPL2Balance(web3, wallet.addr);
+      const busdBalance = await getBUSDBalance(web3, wallet.addr);
       const coveredDepth = findFibIndex(br34pBalance);
       const teamDepth =
         userInfo.referrals > 0 && (await getDownlineDepth(wallet.addr));
@@ -178,6 +183,7 @@ const Dashboard = () => {
           coveredDepth,
           teamDepth,
           ndv,
+          busdBalance,
         },
       ];
 
@@ -247,6 +253,12 @@ const Dashboard = () => {
     setTotalTeam(() =>
       validWallets.reduce(
         (total, wallet) => total + parseFloat(wallet.referrals),
+        0
+      )
+    );
+    setTotalBusd(() =>
+      validWallets.reduce(
+        (total, wallet) => total + parseFloat(wallet.busdBalance),
         0
       )
     );
@@ -635,6 +647,9 @@ const Dashboard = () => {
               {expandedTable && <th></th>}
               {expandedTable && <th></th>}
               {expandedTable && (
+                <th>{convertTokenToUSD(totalBusd, 1, showDollarValues)}</th>
+              )}
+              {expandedTable && (
                 <th>
                   {convertTokenToUSD(totalBr34p, br34pPrice, showDollarValues)}
                 </th>
@@ -728,6 +743,15 @@ const Dashboard = () => {
                   </td>
                   {expandedTable && <td>{shortenAddress(wallet.upline)}</td>}
                   {expandedTable && <td>{wallet.uplineCount}</td>}
+                  {expandedTable && (
+                    <td>
+                      {convertTokenToUSD(
+                        wallet.busdBalance,
+                        1,
+                        showDollarValues
+                      )}
+                    </td>
+                  )}
                   {expandedTable && (
                     <td
                       className={
