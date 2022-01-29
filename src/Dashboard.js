@@ -16,6 +16,7 @@ import {
   getDownlineDepth,
   getPL2Balance,
   getAirdrops,
+  getBUSDBalance,
 } from "./Contract";
 import Header from "./Header";
 import Info from "./Info";
@@ -29,6 +30,8 @@ import {
   backupData,
   findFibIndex,
 } from "./utils";
+
+import { roll } from "./roll";
 
 const Dashboard = () => {
   const [wallets, setWallets] = useState([]);
@@ -67,6 +70,7 @@ const Dashboard = () => {
     "Label",
     "Buddy",
     "Uplines",
+    "BUSD",
     "BR34P",
     "Drip",
     "BNB",
@@ -144,6 +148,8 @@ const Dashboard = () => {
       const bnbBalance = await getBnbBalance(web3, wallet.addr);
       //const revBalance = await getREVBalance(web3, wallet.addr);
       const pl2Balance = await getPL2Balance(web3, wallet.addr);
+      const busdBalance = await getBUSDBalance(web3, wallet.addr);
+      console.log(`BUSD Balance: ${busdBalance}`);
       const coveredDepth = findFibIndex(br34pBalance);
       const teamDepth =
         userInfo.referrals > 0 && (await getDownlineDepth(wallet.addr));
@@ -178,6 +184,7 @@ const Dashboard = () => {
           coveredDepth,
           teamDepth,
           ndv,
+          busdBalance,
         },
       ];
 
@@ -634,6 +641,7 @@ const Dashboard = () => {
               </th>
               {expandedTable && <th></th>}
               {expandedTable && <th></th>}
+              {expandedTable && <th></th>}
               {expandedTable && (
                 <th>
                   {convertTokenToUSD(totalBr34p, br34pPrice, showDollarValues)}
@@ -729,6 +737,15 @@ const Dashboard = () => {
                   {expandedTable && <td>{shortenAddress(wallet.upline)}</td>}
                   {expandedTable && <td>{wallet.uplineCount}</td>}
                   {expandedTable && (
+                    <td>
+                      {convertTokenToUSD(
+                        wallet.busdBalance,
+                        1,
+                        showDollarValues
+                      )}
+                    </td>
+                  )}
+                  {expandedTable && (
                     <td
                       className={
                         wallet.coveredDepth < wallet.teamDepth
@@ -773,7 +790,10 @@ const Dashboard = () => {
                       </td>
                     </>
                   )}
-                  <td className={highlightStyleFor("amt", wallet)}>
+                  <td
+                    className={highlightStyleFor("amt", wallet)}
+                    onClick={() => roll(wallet.address)}
+                  >
                     {convertTokenToUSD(
                       wallet.available,
                       dripPrice,
