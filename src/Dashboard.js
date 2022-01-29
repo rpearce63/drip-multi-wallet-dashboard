@@ -31,8 +31,6 @@ import {
   findFibIndex,
 } from "./utils";
 
-import { roll } from "./roll";
-
 const Dashboard = () => {
   const [wallets, setWallets] = useState([]);
   const [totalDeposits, setTotalDeposits] = useState(0);
@@ -149,7 +147,6 @@ const Dashboard = () => {
       //const revBalance = await getREVBalance(web3, wallet.addr);
       const pl2Balance = await getPL2Balance(web3, wallet.addr);
       const busdBalance = await getBUSDBalance(web3, wallet.addr);
-      console.log(`BUSD Balance: ${busdBalance}`);
       const coveredDepth = findFibIndex(br34pBalance);
       const teamDepth =
         userInfo.referrals > 0 && (await getDownlineDepth(wallet.addr));
@@ -790,10 +787,7 @@ const Dashboard = () => {
                       </td>
                     </>
                   )}
-                  <td
-                    className={highlightStyleFor("amt", wallet)}
-                    onClick={() => roll(wallet.address)}
-                  >
+                  <td className={highlightStyleFor("amt", wallet)}>
                     {convertTokenToUSD(
                       wallet.available,
                       dripPrice,

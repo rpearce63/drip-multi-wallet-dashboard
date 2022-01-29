@@ -92,7 +92,7 @@ export const getBUSDBalance = async (web3, account) => {
     "0xe9e7cea3dedca5984780bafc599bd69add087d56"
   );
   const tokenBalance = await contract.methods.balanceOf(account).call();
-  return tokenBalance / 10e18;
+  return tokenBalance / 10e17;
 };
 
 export const getDripPrice = async (web3) => {
