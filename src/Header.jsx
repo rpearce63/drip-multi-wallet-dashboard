@@ -11,7 +11,6 @@ import { calcREVPrice } from "./tokenPriceApi";
 const Header = () => {
   const [dripPrice, setDripPrice] = useState(0);
   const [bnbPrice, setBnbPrice] = useState(0);
-  const [revPrice, setRevPrice] = useState(300);
   const [tokenBalance, setTokenBalance] = useState(0);
   const [br34pPrice, setBr34pPrice] = useState(0);
   const [dripBnbPrice, setDripBnbPrice] = useState(0);
@@ -23,14 +22,12 @@ const Header = () => {
       const web3 = await getConnection();
       const [bnbPrice, dripPriceRaw, tokenBalance] = await getDripPrice(web3);
       const currentDripPrice = dripPriceRaw * bnbPrice;
-      const currentRevPrice = 300; //await calcREVPrice();
       const br34pPrice = await getBr34pPrice();
       const dripPcsPrice = await getDripPcsPrice();
 
       setDripPrice(() => currentDripPrice);
       setBnbPrice(() => bnbPrice);
       setTokenBalance(() => tokenBalance);
-      setRevPrice(() => currentRevPrice);
       setBr34pPrice(() => br34pPrice);
       setDripBnbPrice(() => dripPriceRaw / 10e17);
       setDripPcsPrice(() => dripPcsPrice);
@@ -51,7 +48,7 @@ const Header = () => {
           <Link to={"/drip-mw-dashboard"}>Drip Multi-Wallet Dashboard</Link>
         </div>
         <div className="prices">
-          <span className="price">
+          <div className="price">
             <a
               href="https://bscscan.com/token/0x20f663cea80face82acdfa3aae6862d246ce0333"
               target="_blank"
@@ -59,31 +56,33 @@ const Header = () => {
             >
               Drip:
             </a>
-            <span
-              className={
-                dripPcsPrice * BUY_SPREAD >= convertDrip(dripPrice)
-                  ? "buy-dex"
-                  : ""
-              }
-            >
-              DEX:{formatCurrency(convertDrip(dripPrice))}
-            </span>
-            &nbsp;
-            <span
-              className={
-                dripPcsPrice * BUY_SPREAD < convertDrip(dripPrice)
-                  ? "buy-pcs"
-                  : ""
-              }
-            >
-              PCS:
-              {formatCurrency(dripPcsPrice)}
-            </span>
-          </span>
-          <span className="price">
+            <div className="drip-prices">
+              <div
+                className={
+                  dripPcsPrice * BUY_SPREAD >= convertDrip(dripPrice)
+                    ? "buy-dex"
+                    : ""
+                }
+              >
+                DEX:{formatCurrency(convertDrip(dripPrice))}
+              </div>
+              &nbsp;
+              <div
+                className={
+                  dripPcsPrice * BUY_SPREAD < convertDrip(dripPrice)
+                    ? "buy-pcs"
+                    : ""
+                }
+              >
+                PCS:
+                {formatCurrency(dripPcsPrice)}
+              </div>
+            </div>
+          </div>
+          <div className="price">
             DRIP/BNB: {parseFloat(dripBnbPrice).toFixed(5)}
-          </span>
-          <span className="price">
+          </div>
+          <div className="price">
             <a
               href="https://bscscan.com/token/0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"
               target="_blank"
@@ -91,12 +90,10 @@ const Header = () => {
             >
               BNB:
             </a>{" "}
-            {formatCurrency(bnbPrice)}
-          </span>
-          <span className="price">
-            DRIP Supply: {convertDrip(tokenBalance)}
-          </span>
-          <span className="price">
+            <div className="drip-prices">{formatCurrency(bnbPrice)}</div>
+          </div>
+          <div className="price">DRIP Supply: {convertDrip(tokenBalance)}</div>
+          <div className="price">
             <a
               href="https://bscscan.com/token/0xa86d305a36cdb815af991834b46ad3d7fbb38523"
               target="_blank"
@@ -105,17 +102,7 @@ const Header = () => {
               BR34P:
             </a>{" "}
             {formatCurrency(br34pPrice)}
-          </span>
-          <span className="price">
-            <a
-              href="https://bscscan.com/address/0x276b440fdb4c54631c882cac9e4317929e751ff8"
-              target="_blank"
-              rel="noreferrer"
-            >
-              PL2:
-            </a>{" "}
-            {formatCurrency(revPrice)}
-          </span>
+          </div>
         </div>
 
         <div className="navbar-text text-white beggar">

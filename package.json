@@ -12,6 +12,7 @@
     "date-fns": "^2.28.0",
     "flat": "^5.0.2",
     "fs": "0.0.1-security",
+    "prompt-sync": "^4.2.0",
     "react": "^17.0.2",
     "react-bootstrap": "^2.0.3",
     "react-bootstrap-input-spinner": "^1.0.2",
