@@ -5,26 +5,26 @@ import {
   getUserInfo,
   claimsAvailable,
   getContract,
-  getDripBalance,
   getUplineCount,
   getBr34pBalance,
   getBnbBalance,
-  getBnbprice,
   getDripPrice,
   getBr34pPrice,
-  getREVBalance,
   getDownlineDepth,
-  getPL2Balance,
   getAirdrops,
-  getBUSDBalance,
+  getTokenBalance,
+  getBestDripPrice,
 } from "./Contract";
-import Header from "./Header";
+import {
+  BUSD_TOKEN_ADDRESS,
+  DRIP_BUSD_LP_ADDRESS,
+  DRIP_TOKEN_ADDR,
+  PL2_TOKEN_ADDRESS,
+} from "./dripconfig";
 import Info from "./Info";
-import { calcREVPrice } from "./tokenPriceApi";
 
 import {
   convertTokenToUSD,
-  formatCurrency,
   formatPercent,
   shortenAddress,
   backupData,
@@ -62,7 +62,7 @@ const Dashboard = () => {
   const [bnbPrice, setBnbPrice] = useState(0);
   const [dripPrice, setDripPrice] = useState(0);
   const [br34pPrice, setBr34pPrice] = useState(0);
-  const [revPrice, setRevPrice] = useState(300);
+  const [revPrice, setRevPrice] = useState(4.5);
 
   const TABLE_HEADERS = [
     "#",
@@ -74,7 +74,6 @@ const Dashboard = () => {
     "BR34P",
     "Drip",
     "BNB",
-    "PL2",
     "Available",
     "ROI",
     "Deposits",
@@ -142,13 +141,29 @@ const Dashboard = () => {
     myWallets.forEach(async (wallet, index) => {
       const userInfo = await getUserInfo(contract, wallet.addr);
       const available = await claimsAvailable(contract, wallet.addr);
-      const dripBalance = await getDripBalance(web3, wallet.addr);
+      const dripBalance = await getTokenBalance(
+        web3,
+        wallet.addr,
+        DRIP_TOKEN_ADDR
+      );
       const uplineCount = await getUplineCount(contract, wallet.addr);
       const br34pBalance = await getBr34pBalance(web3, wallet.addr);
       const bnbBalance = await getBnbBalance(web3, wallet.addr);
       //const revBalance = await getREVBalance(web3, wallet.addr);
-      const pl2Balance = await getPL2Balance(web3, wallet.addr);
-      const busdBalance = await getBUSDBalance(web3, wallet.addr);
+
+      const busdBalance = await getTokenBalance(
+        web3,
+        wallet.addr,
+        BUSD_TOKEN_ADDRESS
+      );
+      const dripBusdLpBalance = await getTokenBalance(
+        web3,
+        wallet.addr,
+        DRIP_BUSD_LP_ADDRESS
+      );
+      dripBusdLpBalance > 0 &&
+        console.log(`Drip/BUSD for ${wallet.addr}: ${dripBusdLpBalance}`);
+
       const coveredDepth = findFibIndex(br34pBalance);
       const teamDepth =
         userInfo.referrals > 0 && (await getDownlineDepth(wallet.addr));
@@ -178,26 +193,27 @@ const Dashboard = () => {
           br34pBalance,
           uplineCount,
           bnbBalance,
-          //revBalance: revBalance,
-          pl2Balance,
           coveredDepth,
           teamDepth,
           ndv,
           busdBalance,
+          dripBusdLpBalance,
         },
       ];
 
       setWallets(() => [...walletCache]);
       setDataCopied(false);
-      const [bnbPrice, dripPrice, tokenBalance] = await getDripPrice(web3);
-      const br34pPrice = await getBr34pPrice();
-      //const revPrice = await calcREVPrice();
-      setDripPrice(() => (dripPrice * bnbPrice) / 10e17);
 
-      setBnbPrice(() => bnbPrice);
-      setBr34pPrice(() => br34pPrice);
       // setRevPrice(() => revPrice);
     });
+    const [bnbPrice, dripPrice] = await getDripPrice(web3);
+    const br34pPrice = await getBr34pPrice();
+    //const revPrice = await calcREVPrice();
+    setDripPrice(() => (dripPrice * bnbPrice) / 10e17);
+
+    setBnbPrice(() => bnbPrice);
+    setBr34pPrice(() => br34pPrice);
+    await getBestDripPrice(web3);
   };
 
   useEffect(() => {
@@ -241,12 +257,6 @@ const Dashboard = () => {
     setTotalBr34p(() =>
       validWallets.reduce(
         (total, wallet) => total + parseFloat(wallet.br34pBalance),
-        0
-      )
-    );
-    setTotalPl2(() =>
-      validWallets.reduce(
-        (total, wallet) => total + parseFloat(wallet.pl2Balance),
         0
       )
     );
@@ -672,11 +682,7 @@ const Dashboard = () => {
                   )}
                 </th>
               )}
-              {expandedTable && (
-                <th>
-                  {convertTokenToUSD(totalPl2, revPrice, showDollarValues)}
-                </th>
-              )}
+
               <th>
                 {convertTokenToUSD(totalAvailable, dripPrice, showDollarValues)}
               </th>
@@ -786,14 +792,6 @@ const Dashboard = () => {
                           bnbPrice,
                           showDollarValues
                         )}
-                      </td>
-                      <td>
-                        {wallet.pl2Balance > 0 &&
-                          convertTokenToUSD(
-                            wallet.pl2Balance,
-                            revPrice,
-                            showDollarValues
-                          )}
                       </td>
                     </>
                   )}

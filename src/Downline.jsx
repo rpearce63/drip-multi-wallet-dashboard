@@ -44,9 +44,8 @@ const Downline = () => {
   const getUserData = async (childId) => {
     navigator.clipboard.writeText(childId);
     //console.log("getUserData for: " + childId);
-    const connection = await getConnection();
+    let connection = await getConnection();
     const contract = await getContract(connection);
-
     const userInfo = await getUserInfo(contract, childId);
     const buddyDate = await getJoinDate(childId);
 

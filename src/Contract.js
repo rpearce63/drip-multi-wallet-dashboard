@@ -2,16 +2,11 @@ import Web3 from "web3";
 import {
   FAUCET_ABI,
   FAUCET_ADDR,
-  DRIP_TOKEN_ABI,
-  DRIP_TOKEN_ADDR,
   FOUNTAIN_ABI,
   FOUNTAIN_ADDR,
   BR34P_ABI,
   BR34P_ADDRESS,
-  REV_TOKEN_ADDRESS,
-  REV_ABI,
   BASIC_TOKEN_ABI,
-  PL2_TOKEN_ADDRESS,
 } from "./dripconfig";
 //import { calcBNBPrice } from "./tokenPriceApi";
 const flatten = require("flat").flatten;
@@ -57,11 +52,11 @@ export const getUserInfo = async (contract, account) => {
   }
 };
 
-export const getDripBalance = async (web3, account) => {
-  const contract = new web3.eth.Contract(DRIP_TOKEN_ABI, DRIP_TOKEN_ADDR);
-  const tokenBalance = await contract.methods.balanceOf(account).call();
-  return tokenBalance / 10e17;
-};
+// export const getDripBalance = async (web3, account) => {
+//   const contract = new web3.eth.Contract(DRIP_TOKEN_ABI, DRIP_TOKEN_ADDR);
+//   const tokenBalance = await contract.methods.balanceOf(account).call();
+//   return tokenBalance / 10e17;
+// };
 
 export const getBr34pBalance = async (web3, account) => {
   const contract = new web3.eth.Contract(BR34P_ABI, BR34P_ADDRESS);
@@ -69,28 +64,34 @@ export const getBr34pBalance = async (web3, account) => {
   return tokenBalance / 10e7;
 };
 
-export const getREVBalance = async (web3, account) => {
-  const contract = new web3.eth.Contract(REV_ABI, REV_TOKEN_ADDRESS);
-  const tokenBalance = await contract.methods.balanceOf(account).call();
-  return tokenBalance / 10e17;
-};
+// export const getREVBalance = async (web3, account) => {
+//   const contract = new web3.eth.Contract(REV_ABI, REV_TOKEN_ADDRESS);
+//   const tokenBalance = await contract.methods.balanceOf(account).call();
+//   return tokenBalance / 10e17;
+// };
 
 export const getBnbBalance = async (web3, account) => {
   const balance = await web3.eth.getBalance(account);
   return balance / 10e17;
 };
 
-export const getPL2Balance = async (web3, account) => {
-  const contract = new web3.eth.Contract(BASIC_TOKEN_ABI, PL2_TOKEN_ADDRESS);
-  const tokenBalance = await contract.methods.balanceOf(account).call();
-  return tokenBalance / 10e17;
-};
+// export const getPL2Balance = async (web3, account) => {
+//   const contract = new web3.eth.Contract(BASIC_TOKEN_ABI, PL2_TOKEN_ADDRESS);
+//   const tokenBalance = await contract.methods.balanceOf(account).call();
+//   return tokenBalance / 10e17;
+// };
 
-export const getBUSDBalance = async (web3, account) => {
-  const contract = new web3.eth.Contract(
-    BASIC_TOKEN_ABI,
-    "0xe9e7cea3dedca5984780bafc599bd69add087d56"
-  );
+// export const getBUSDBalance = async (web3, account) => {
+//   const contract = new web3.eth.Contract(
+//     BASIC_TOKEN_ABI,
+//     "0xe9e7cea3dedca5984780bafc599bd69add087d56"
+//   );
+//   const tokenBalance = await contract.methods.balanceOf(account).call();
+//   return tokenBalance / 10e17;
+// };
+
+export const getTokenBalance = async (web3, account, tokenAddress) => {
+  const contract = new web3.eth.Contract(BASIC_TOKEN_ABI, tokenAddress);
   const tokenBalance = await contract.methods.balanceOf(account).call();
   return tokenBalance / 10e17;
 };
@@ -98,7 +99,7 @@ export const getBUSDBalance = async (web3, account) => {
 export const getDripPrice = async (web3) => {
   const contract = new web3.eth.Contract(FOUNTAIN_ABI, FOUNTAIN_ADDR);
   try {
-    const dripPrice = await contract.methods
+    const dripBnbRatio = await contract.methods
       .getTokenToBnbInputPrice(1000000000000000000n)
       .call();
 
@@ -112,10 +113,26 @@ export const getDripPrice = async (web3) => {
         .then((data) => data.wbnb.usd);
     const bnbPrice = await fetchBnbPrice();
 
-    return [bnbPrice, dripPrice, tokenBalance];
+    // const dripPcsPrice = await getDripPcsPrice();
+    // const dripDexPrice = (dripBnbRatio * bnbPrice) / 10e17;
+    // console.log("best price ", Math.max(dripPcsPrice, dripDexPrice));
+    // console.log(dripBnbRatio, (dripPcsPrice / bnbPrice) * 10e17);
+    // const bestDripPrice =
+    //   dripDexPrice > dripPcsPrice
+    //     ? dripBnbRatio
+    //     : (dripPcsPrice / bnbPrice) * 10e17;
+    //const bestPrice = await getBestDripPrice(web3);
+    return [bnbPrice, dripBnbRatio, tokenBalance];
   } catch (err) {
     console.log(err.message);
   }
+};
+
+export const getBestDripPrice = async (web3) => {
+  const pcsPrice = await getDripPcsPrice();
+  const [bnbPrice, dripBnbRatio, tokenBalance] = await getDripPrice(web3);
+  const dexPrice = (dripBnbRatio * bnbPrice) / 10e17;
+  console.log(pcsPrice, dexPrice);
 };
 
 export const getUplineCount = async (contract, wallet) => {
