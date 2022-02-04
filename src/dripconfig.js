@@ -2230,3 +2230,5 @@ export const BASIC_TOKEN_ABI = [
 ];
 
 export const PL2_TOKEN_ADDRESS = "0x820ad100befe8a31c96098db23b1a0fa1b3f0ab4";
+export const PIGSTokenAddress = "0x3A4C15F96B3b058ab3Fb5FAf1440Cc19E7AE07ce";
+export const DOGSTokenAddress = "0xDBdC73B95cC0D5e7E99dC95523045Fc8d075Fb9e";
