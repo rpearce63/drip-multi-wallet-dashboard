@@ -32,6 +32,19 @@ const Downline = () => {
   const [downline, setDownline] = useState();
   const { account } = useParams();
   const [depth, setDepth] = useState(0);
+  const [web3, setWeb3] = useState();
+  const [contract, setContract] = useState();
+
+  useEffect(() => {
+    const getWeb3 = async () => {
+      const web3 = await getConnection();
+      setWeb3(() => web3);
+      const contract = await getContract(web3);
+      setContract(() => contract);
+    };
+    getWeb3();
+  }, []);
+
   useEffect(() => {
     const fetchDownline = async () => {
       const downline = await getDownline(account);
@@ -44,8 +57,7 @@ const Downline = () => {
   const getUserData = async (childId) => {
     navigator.clipboard.writeText(childId);
     //console.log("getUserData for: " + childId);
-    let connection = await getConnection();
-    const contract = await getContract(connection);
+
     const userInfo = await getUserInfo(contract, childId);
     const buddyDate = await getJoinDate(childId);
 
@@ -56,7 +68,7 @@ const Downline = () => {
       dStr = dStr.replace(
         `"id":"${childId}",`,
         `"id":"${childId}","deposits":"${parseFloat(
-          connection.utils.fromWei(userInfo.deposits)
+          web3.utils.fromWei(userInfo.deposits)
         ).toFixed(2)}","buddyDate":"${format(
           new Date(buddyDate * 1000),
           "yyy-MM-dd"
