@@ -262,3 +262,8 @@ span.spinCtrl:after {
   flex-wrap: wrap;
   width: 10rem;
 }
+
+.stack {
+  display: flex;
+  flex-direction: column;
+}
