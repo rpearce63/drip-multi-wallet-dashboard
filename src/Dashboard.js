@@ -213,7 +213,6 @@ const Dashboard = () => {
 
     setBnbPrice(() => bnbPrice);
     setBr34pPrice(() => br34pPrice);
-    await getBestDripPrice(web3);
   };
 
   useEffect(() => {

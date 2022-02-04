@@ -5,6 +5,8 @@ import {
   getConnection,
   getDripPcsPrice,
   getDripPrice,
+  getPigPrice,
+  getDogPrice,
 } from "./Contract";
 import { formatCurrency, convertDrip } from "./utils";
 import { calcREVPrice } from "./tokenPriceApi";
@@ -15,6 +17,9 @@ const Header = () => {
   const [br34pPrice, setBr34pPrice] = useState(0);
   const [dripBnbPrice, setDripBnbPrice] = useState(0);
   const [dripPcsPrice, setDripPcsPrice] = useState(0);
+  const [pigPrice, setPigPrice] = useState(0);
+  const [dogPrice, setDogPrice] = useState(0);
+
   const BUY_SPREAD = 1.2;
 
   useEffect(() => {
@@ -24,6 +29,8 @@ const Header = () => {
       const currentDripPrice = dripPriceRaw * bnbPrice;
       const br34pPrice = await getBr34pPrice();
       const dripPcsPrice = await getDripPcsPrice();
+      const pigPrice = await getPigPrice();
+      const dogPrice = await getDogPrice();
 
       setDripPrice(() => currentDripPrice);
       setBnbPrice(() => bnbPrice);
@@ -31,6 +38,9 @@ const Header = () => {
       setBr34pPrice(() => br34pPrice);
       setDripBnbPrice(() => dripPriceRaw / 10e17);
       setDripPcsPrice(() => dripPcsPrice);
+      setPigPrice(() => pigPrice);
+      setDogPrice(() => dogPrice);
+
       document.title = formatCurrency(convertDrip(currentDripPrice));
     };
     fetchData();
@@ -102,6 +112,10 @@ const Header = () => {
               BR34P:
             </a>{" "}
             {formatCurrency(br34pPrice)}
+          </div>
+          <div className="price stack">
+            <div>Pig: {formatCurrency(pigPrice)}</div>
+            <div>Dog: {formatCurrency(dogPrice)}</div>
           </div>
         </div>
 
