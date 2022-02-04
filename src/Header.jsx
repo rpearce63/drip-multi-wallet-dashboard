@@ -88,10 +88,10 @@ const Header = () => {
               </div>
             </div>
           </div>
-          <div className="price">
-            DRIP/BNB: {parseFloat(dripBnbPrice).toFixed(5)}
+          <div className="price stack">
+            <label>DRIP/BNB:</label> {parseFloat(dripBnbPrice).toFixed(5)}
           </div>
-          <div className="price">
+          <div className="price stack">
             <a
               href="https://bscscan.com/token/0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"
               target="_blank"
@@ -99,10 +99,12 @@ const Header = () => {
             >
               BNB:
             </a>{" "}
-            <div className="drip-prices">{formatCurrency(bnbPrice)}</div>
+            <div className="">{formatCurrency(bnbPrice)}</div>
           </div>
-          <div className="price">DRIP Supply: {convertDrip(tokenBalance)}</div>
-          <div className="price">
+          <div className="price stack">
+            <label>DRIP Supply:</label> {convertDrip(tokenBalance)}
+          </div>
+          <div className="price stack">
             <a
               href="https://bscscan.com/token/0xa86d305a36cdb815af991834b46ad3d7fbb38523"
               target="_blank"
@@ -113,8 +115,26 @@ const Header = () => {
             {formatCurrency(br34pPrice)}
           </div>
           <div className="price stack">
-            <div>Pig: {formatCurrency(pigPrice)}</div>
-            <div>Dog: {formatCurrency(dogPrice)}</div>
+            <div>
+              <a
+                href="https://bscscan.com/address/0x3A4C15F96B3b058ab3Fb5FAf1440Cc19E7AE07ce"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Pig:
+              </a>{" "}
+              {formatCurrency(pigPrice)}
+            </div>
+            <div>
+              <a
+                href="https://bscscan.com/address/0xDBdC73B95cC0D5e7E99dC95523045Fc8d075Fb9e"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Dog:
+              </a>{" "}
+              {formatCurrency(dogPrice)}
+            </div>
           </div>
         </div>
 
