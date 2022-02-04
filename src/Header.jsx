@@ -5,11 +5,10 @@ import {
   getConnection,
   getDripPcsPrice,
   getDripPrice,
-  getPigPrice,
-  getDogPrice,
 } from "./Contract";
 import { formatCurrency, convertDrip } from "./utils";
-import { calcREVPrice } from "./tokenPriceApi";
+import { calcFarmPrice } from "./tokenPriceApi";
+import { DOGSTokenAddress, PIGSTokenAddress } from "./dripconfig";
 const Header = () => {
   const [dripPrice, setDripPrice] = useState(0);
   const [bnbPrice, setBnbPrice] = useState(0);
@@ -29,8 +28,8 @@ const Header = () => {
       const currentDripPrice = dripPriceRaw * bnbPrice;
       const br34pPrice = await getBr34pPrice();
       const dripPcsPrice = await getDripPcsPrice();
-      const pigPrice = await getPigPrice();
-      const dogPrice = await getDogPrice();
+      const pigPrice = await calcFarmPrice(PIGSTokenAddress);
+      const dogPrice = await calcFarmPrice(DOGSTokenAddress);
 
       setDripPrice(() => currentDripPrice);
       setBnbPrice(() => bnbPrice);
