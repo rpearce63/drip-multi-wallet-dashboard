@@ -8,7 +8,7 @@ const Footer = () => (
         </a>
       </span>
       <div>{process.env.REACT_APP_VERSION}</div>
-      <span className="affiliate">
+      {/* <span className="affiliate">
         <a
           href="https://4dinsingapore.com/amember/aff/go/rpearce63?i=8"
           target="_blank"
@@ -20,7 +20,7 @@ const Footer = () => (
             alt="DRIP Run Automation banner (version 1)"
           />
         </a>
-      </span>
+      </span> */}
     </div>
   </footer>
 );
