@@ -40,7 +40,9 @@ const Header = () => {
       setPigPrice(() => pigPrice);
       setDogPrice(() => dogPrice);
 
-      document.title = formatCurrency(convertDrip(currentDripPrice));
+      document.title = `${formatCurrency(
+        convertDrip(currentDripPrice)
+      )} - Drip Multi-Wallet Dashboard`;
     };
     fetchData();
 
