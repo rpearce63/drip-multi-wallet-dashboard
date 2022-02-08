@@ -35,6 +35,7 @@
 .main {
   margin-top: 10rem;
   margin-bottom: 5rem;
+  display: flex;
   flex-direction: column;
 }
 /* Small devices (portrait tablets and large phones, 600px and up) */
