@@ -14,12 +14,14 @@ import {
   getAirdrops,
   getTokenBalance,
   getBestDripPrice,
+  getBabyDripReflections,
 } from "./Contract";
 import {
   BUSD_TOKEN_ADDRESS,
   DRIP_BUSD_LP_ADDRESS,
   DRIP_TOKEN_ADDR,
   PL2_TOKEN_ADDRESS,
+  BABYDRIP_TOKEN,
 } from "./dripconfig";
 import Info from "./Info";
 
@@ -63,7 +65,8 @@ const Dashboard = () => {
   const [dripPrice, setDripPrice] = useState(0);
   const [br34pPrice, setBr34pPrice] = useState(0);
   const [revPrice, setRevPrice] = useState(4.5);
-
+  const [showBabyDrip, setShowBabyDrip] = useState(false);
+  const [hiddenCols, setHiddenCols] = useState([]);
   const TABLE_HEADERS = [
     "#",
     "Address",
@@ -73,6 +76,7 @@ const Dashboard = () => {
     "BUSD",
     "BR34P",
     "Drip",
+
     "BNB",
     "Available",
     "ROI",
@@ -82,6 +86,8 @@ const Dashboard = () => {
     "Rewarded",
     "Max Payout",
     "Team",
+    "Baby Drip",
+    "Reflections",
   ];
   const BASE_HEADERS = [
     "#",
@@ -106,6 +112,7 @@ const Dashboard = () => {
       bnbThreshold = 0.05,
       expandedTable = false,
       hideTableControls = false,
+      showBabyDrip = false,
     } = JSON.parse(localStorage.getItem("dripDashboard-config")) ?? {};
 
     setFlagAmount(() => flagAmount);
@@ -114,6 +121,7 @@ const Dashboard = () => {
     setBnbThreshold(() => bnbThreshold);
     setExpandedTable(() => expandedTable);
     setHideTableControls(() => hideTableControls);
+    setShowBabyDrip(() => showBabyDrip);
   }, []);
 
   const fetchData = async () => {
@@ -175,6 +183,14 @@ const Dashboard = () => {
       const c = parseFloat(web3.utils.fromWei(userInfo.payouts));
 
       const ndv = parseFloat(d + a + r - c).toFixed(3);
+      const babyDripBalance = parseFloat(
+        await getTokenBalance(web3, wallet.addr, BABYDRIP_TOKEN)
+      ).toFixed(3);
+
+      let babyDripReflections =
+        babyDripBalance > 0 ? await getBabyDripReflections(wallet.addr) : 0;
+      babyDripReflections = parseFloat(babyDripReflections).toFixed(3);
+
       const valid = !!userInfo;
       walletCache = [
         ...walletCache,
@@ -198,6 +214,8 @@ const Dashboard = () => {
           ndv,
           busdBalance,
           dripBusdLpBalance,
+          babyDripBalance,
+          babyDripReflections,
         },
       ];
 
@@ -442,6 +460,7 @@ const Dashboard = () => {
       bnbThreshold,
       expandedTable,
       hideTableControls,
+      showBabyDrip,
     };
     localStorage.setItem("dripDashboard-config", JSON.stringify(config));
   }, [
@@ -451,6 +470,7 @@ const Dashboard = () => {
     bnbThreshold,
     expandedTable,
     hideTableControls,
+    showBabyDrip,
   ]);
 
   const deleteRow = (addr) => {
@@ -515,6 +535,21 @@ const Dashboard = () => {
                     <div>Available will highlight to indicate when it is</div>
                     <div>ready to claim or hydrate</div>
 
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        id="flagShowBabyDrip"
+                        type="checkbox"
+                        checked={showBabyDrip}
+                        onChange={() => setShowBabyDrip(!showBabyDrip)}
+                      />
+                      <label
+                        className="form-check-label"
+                        htmlFor="flagShowBabyDrip"
+                      >
+                        Show Baby Drip
+                      </label>
+                    </div>
                     <div className="form-check">
                       <input
                         className="form-check-input"
@@ -630,7 +665,14 @@ const Dashboard = () => {
           <thead className="table-light">
             <tr>
               {expandedTable
-                ? TABLE_HEADERS.map((h) => <th key={h}>{h}</th>)
+                ? TABLE_HEADERS.map((h) => {
+                    const isbDCol = ["Baby Drip", "Reflections"].includes(h);
+                    if (isbDCol) {
+                      if (showBabyDrip) return <th key={h}>{h}</th>;
+                    } else {
+                      return <th key={h}>{h}</th>;
+                    }
+                  })
                 : BASE_HEADERS.map((h) => <th key={h}>{h}</th>)}
             </tr>
             <tr className="table-success">
@@ -672,6 +714,7 @@ const Dashboard = () => {
                   )}
                 </th>
               )}
+
               {expandedTable && (
                 <th>
                   {convertTokenToUSD(
@@ -711,6 +754,8 @@ const Dashboard = () => {
                 )}
               </th>
               <th>Directs: {totalTeam}</th>
+              {expandedTable && <th></th>}
+              {expandedTable && <th></th>}
             </tr>
           </thead>
           <tbody>
@@ -783,6 +828,7 @@ const Dashboard = () => {
                       )}
                     </td>
                   )}
+
                   {expandedTable && (
                     <>
                       <td className={highlightStyleFor("bnb", wallet)}>
@@ -855,6 +901,18 @@ const Dashboard = () => {
                       </Link>
                     )}
                   </td>
+                  {expandedTable && showBabyDrip && (
+                    <td>
+                      {wallet.babyDripBalance > 0 &&
+                        `${wallet.babyDripBalance}B`}
+                    </td>
+                  )}
+
+                  {expandedTable && showBabyDrip && (
+                    <td>
+                      {wallet.babyDripBalance > 0 && wallet.babyDripReflections}
+                    </td>
+                  )}
                 </tr>
               ))}
           </tbody>

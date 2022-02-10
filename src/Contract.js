@@ -216,3 +216,19 @@ export const getJoinDate = async (account) => {
   const buddyDate = txHistory.find((tx) => tx.input?.startsWith("0x17fed96f"));
   return buddyDate.timeStamp;
 };
+
+export const getBabyDripReflections = async (account) => {
+  const fetchBabyDripTransactions = async () =>
+    fetch(
+      `https://api.bscscan.com/api?module=account&action=tokentx&contractaddress=0x20f663cea80face82acdfa3aae6862d246ce0333&address=${account}&startblock=0&endblock=999999999&sort=asc&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY`
+    )
+      .then((response) => response.json())
+      .then((data) => data.result);
+
+  const babyDripTransactions = await fetchBabyDripTransactions();
+
+  const totalReflections = babyDripTransactions
+    .filter((tx) => tx.from === "0x820bfb786c454c3273f32e9db90d54af2ef200b5")
+    .reduce((totalDrip, tx) => totalDrip + parseInt(tx.value), 0);
+  return totalReflections / 10e17;
+};
