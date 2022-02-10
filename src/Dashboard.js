@@ -65,7 +65,7 @@ const Dashboard = () => {
   const [dripPrice, setDripPrice] = useState(0);
   const [br34pPrice, setBr34pPrice] = useState(0);
   const [revPrice, setRevPrice] = useState(4.5);
-  const [showBabyDrip, setShowBabyDrip] = useState(false);
+  const [showBabyDrip, setShowBabyDrip] = useState(true);
   const [hiddenCols, setHiddenCols] = useState([]);
   const TABLE_HEADERS = [
     "#",
