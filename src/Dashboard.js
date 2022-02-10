@@ -910,7 +910,12 @@ const Dashboard = () => {
 
                   {expandedTable && showBabyDrip && (
                     <td>
-                      {wallet.babyDripBalance > 0 && wallet.babyDripReflections}
+                      {wallet.babyDripBalance > 0 &&
+                        convertTokenToUSD(
+                          wallet.babyDripReflections,
+                          dripPrice,
+                          showDollarValues
+                        )}
                     </td>
                   )}
                 </tr>
