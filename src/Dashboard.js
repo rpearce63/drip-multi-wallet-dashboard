@@ -15,6 +15,7 @@ import {
   getTokenBalance,
   getBestDripPrice,
   getBabyDripReflections,
+  getBabyDripPrice,
 } from "./Contract";
 import {
   BUSD_TOKEN_ADDRESS,
@@ -67,6 +68,7 @@ const Dashboard = () => {
   const [revPrice, setRevPrice] = useState(4.5);
   const [showBabyDrip, setShowBabyDrip] = useState(true);
   const [hiddenCols, setHiddenCols] = useState([]);
+  const [babyDripPrice, setBabyDripPrice] = useState(0);
   const TABLE_HEADERS = [
     "#",
     "Address",
@@ -183,9 +185,10 @@ const Dashboard = () => {
       const c = parseFloat(web3.utils.fromWei(userInfo.payouts));
 
       const ndv = parseFloat(d + a + r - c).toFixed(3);
-      const babyDripBalance = parseFloat(
-        await getTokenBalance(web3, wallet.addr, BABYDRIP_TOKEN)
-      ).toFixed(3);
+      const babyDripBalance =
+        parseFloat(
+          await getTokenBalance(web3, wallet.addr, BABYDRIP_TOKEN)
+        ).toFixed(3) * 10e8;
 
       let babyDripReflections =
         babyDripBalance > 0 ? await getBabyDripReflections(wallet.addr) : 0;
@@ -227,8 +230,9 @@ const Dashboard = () => {
     const [bnbPrice, dripPrice] = await getDripPrice(web3);
     const br34pPrice = await getBr34pPrice();
     //const revPrice = await calcREVPrice();
+    const babyDripPrice = await getBabyDripPrice();
+    setBabyDripPrice(() => babyDripPrice);
     setDripPrice(() => (dripPrice * bnbPrice) / 10e17);
-
     setBnbPrice(() => bnbPrice);
     setBr34pPrice(() => br34pPrice);
   };
@@ -904,7 +908,11 @@ const Dashboard = () => {
                   {expandedTable && showBabyDrip && (
                     <td>
                       {wallet.babyDripBalance > 0 &&
-                        `${wallet.babyDripBalance}B`}
+                        convertTokenToUSD(
+                          wallet.babyDripBalance,
+                          babyDripPrice,
+                          showDollarValues
+                        )}
                     </td>
                   )}
 
