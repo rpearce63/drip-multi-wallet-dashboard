@@ -112,7 +112,7 @@ const Dashboard = () => {
       bnbThreshold = 0.05,
       expandedTable = false,
       hideTableControls = false,
-      showBabyDrip = false,
+      showBabyDrip = true,
     } = JSON.parse(localStorage.getItem("dripDashboard-config")) ?? {};
 
     setFlagAmount(() => flagAmount);
