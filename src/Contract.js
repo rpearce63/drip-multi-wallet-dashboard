@@ -232,3 +232,14 @@ export const getBabyDripReflections = async (account) => {
     .reduce((totalDrip, tx) => totalDrip + parseInt(tx.value), 0);
   return totalReflections / 10e17;
 };
+
+export const getBabyDripPrice = async () => {
+  const fetchBabyDripPrice = async () =>
+    fetch(
+      "https://api.pancakeswap.info/api/v2/tokens/0x1a95d3bd381e14da942408b4a0cefd8e00084eb0"
+    )
+      .then((response) => response.json())
+      .then((data) => data.data.price);
+  const babyDripPrice = await fetchBabyDripPrice();
+  return babyDripPrice;
+};
