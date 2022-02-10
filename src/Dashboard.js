@@ -186,9 +186,8 @@ const Dashboard = () => {
 
       const ndv = parseFloat(d + a + r - c).toFixed(3);
       const babyDripBalance =
-        parseFloat(
-          await getTokenBalance(web3, wallet.addr, BABYDRIP_TOKEN)
-        ).toFixed(3) * 10e8;
+        parseFloat(await getTokenBalance(web3, wallet.addr, BABYDRIP_TOKEN)) *
+        10e8;
 
       let babyDripReflections =
         babyDripBalance > 0 ? await getBabyDripReflections(wallet.addr) : 0;
