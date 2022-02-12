@@ -69,6 +69,8 @@ const Dashboard = () => {
   const [showBabyDrip, setShowBabyDrip] = useState(true);
   const [hiddenCols, setHiddenCols] = useState([]);
   const [babyDripPrice, setBabyDripPrice] = useState(0);
+  const [totalBabyDrip, setTotalBabyDrip] = useState(0);
+  const [totalRefections, setTotalReflections] = useState(0);
   const TABLE_HEADERS = [
     "#",
     "Address",
@@ -191,7 +193,7 @@ const Dashboard = () => {
 
       let babyDripReflections =
         babyDripBalance > 0 ? await getBabyDripReflections(wallet.addr) : 0;
-      babyDripReflections = parseFloat(babyDripReflections).toFixed(3);
+      //babyDripReflections = parseFloat(babyDripReflections).toFixed(3);
 
       const valid = !!userInfo;
       walletCache = [
@@ -289,6 +291,18 @@ const Dashboard = () => {
     setTotalBusd(() =>
       validWallets.reduce(
         (total, wallet) => total + parseFloat(wallet.busdBalance),
+        0
+      )
+    );
+    setTotalBabyDrip(() =>
+      validWallets.reduce(
+        (total, wallet) => total + parseFloat(wallet.babyDripBalance),
+        0
+      )
+    );
+    setTotalReflections(() =>
+      validWallets.reduce(
+        (total, wallet) => total + parseFloat(wallet.babyDripReflections),
         0
       )
     );
@@ -757,8 +771,24 @@ const Dashboard = () => {
                 )}
               </th>
               <th>Directs: {totalTeam}</th>
-              {expandedTable && <th></th>}
-              {expandedTable && <th></th>}
+              {expandedTable && (
+                <th>
+                  {convertTokenToUSD(
+                    totalBabyDrip,
+                    babyDripPrice,
+                    showDollarValues
+                  )}
+                </th>
+              )}
+              {expandedTable && (
+                <th>
+                  {convertTokenToUSD(
+                    totalRefections,
+                    dripPrice,
+                    showDollarValues
+                  )}
+                </th>
+              )}
             </tr>
           </thead>
           <tbody>
