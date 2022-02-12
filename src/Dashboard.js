@@ -771,7 +771,7 @@ const Dashboard = () => {
                 )}
               </th>
               <th>Directs: {totalTeam}</th>
-              {expandedTable && (
+              {expandedTable && showBabyDrip && (
                 <th>
                   {convertTokenToUSD(
                     totalBabyDrip,
@@ -780,7 +780,7 @@ const Dashboard = () => {
                   )}
                 </th>
               )}
-              {expandedTable && (
+              {expandedTable && showBabyDrip && (
                 <th>
                   {convertTokenToUSD(
                     totalRefections,
