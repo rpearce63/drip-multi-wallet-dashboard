@@ -57,7 +57,7 @@ const Header = () => {
   }, []);
 
   return (
-    <nav className="navbar navbar-expand-lg nav-wrap fixed-top navbar-dark bg-dark">
+    <nav className="navbar navbar-expand-lg nav-wrap fixed-top navbar-dark bg-dark inverted">
       <div className="container-fluid">
         <div className="navbar-brand">
           <Link to={"/drip-mw-dashboard"}>Drip Multi-Wallet Dashboard</Link>
