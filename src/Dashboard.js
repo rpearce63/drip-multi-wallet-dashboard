@@ -370,18 +370,29 @@ const Dashboard = () => {
       case "amt":
         if (flagAmount) {
           amount = parseFloat(convertTokenToUSD(wallet.available));
-          style = amount >= 1.0 ? "hydrate" : amount >= 0.5 ? "prepare" : "";
+          style =
+            amount >= 1.0
+              ? "hydrate inverted"
+              : amount >= 0.5
+              ? "prepare inverted"
+              : "";
         }
         return style;
       case "pct":
         if (flagPct) {
           percent = parseFloat(wallet.available / wallet.deposits);
           style =
-            percent >= 0.01 ? "hydrate" : percent >= 0.009 ? "prepare" : "";
+            percent >= 0.01
+              ? "hydrate inverted"
+              : percent >= 0.009
+              ? "prepare inverted"
+              : "";
         }
         return style;
       case "bnb":
-        return flagLowBnb && wallet.bnbBalance < bnbThreshold ? "warning" : "";
+        return flagLowBnb && wallet.bnbBalance < bnbThreshold
+          ? "warning inverted"
+          : "";
       default:
         return "";
     }
@@ -522,7 +533,7 @@ const Dashboard = () => {
                     Add
                   </button>
                   <input
-                    className="form-control"
+                    className="form-control inverted"
                     id="newAddressTxt"
                     type="text"
                     value={newAddress}
@@ -839,7 +850,7 @@ const Dashboard = () => {
                     <td
                       className={
                         wallet.coveredDepth < wallet.teamDepth
-                          ? "buy-more-br34p"
+                          ? "buy-more-br34p inverted"
                           : "good-br34p"
                       }
                     >
@@ -971,7 +982,7 @@ const Dashboard = () => {
         <div>Paste a list of addresses:</div>
         <div>
           <textarea
-            className="form-control"
+            className="form-control inverted"
             id="addressList"
             rows={10}
             cols={50}

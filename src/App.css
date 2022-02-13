@@ -12,7 +12,13 @@
 
 /* Extra large devices (large laptops and desktops, 1200px and up) */
 /* @media only screen and (min-width: 1200px) {...} */
+.dark-mode {
+  filter: invert(1) hue-rotate(180deg);
+}
 
+.invert {
+  filter: invert(1) hue-rotate(180deg);
+}
 .container {
   display: flex;
   max-width: fit-content;
@@ -249,6 +255,7 @@ span.spinCtrl:after {
 
 .buy-more-br34p {
   background-color: red !important;
+  color: white;
   margin-left: 5px;
 }
 
