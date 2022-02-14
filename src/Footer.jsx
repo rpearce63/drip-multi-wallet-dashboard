@@ -1,15 +1,48 @@
 import React, { useState } from "react";
-
+import { useCallback } from "react";
+import { useEffect } from "react";
 const Footer = () => {
   const [darkMode, setDarkMode] = useState(false);
 
-  const changeMode = () => {
-    setDarkMode(!darkMode);
-    document.documentElement.classList.toggle("dark-mode");
-    document.querySelectorAll(".inverted").forEach((result) => {
-      result.classList.toggle("invert");
-    });
-  };
+  const changeMode = useCallback(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark-mode");
+      document.querySelectorAll(".inverted").forEach((result) => {
+        result.classList.add("invert");
+      });
+    } else {
+      document.documentElement.classList.remove("dark-mode");
+      document.querySelectorAll(".inverted").forEach((result) => {
+        result.classList.remove("invert");
+      });
+    }
+  }, [darkMode]);
+  // const changeMode = () => {
+  //   if (darkMode) {
+  //     document.documentElement.classList.add("dark-mode");
+  //     document.querySelectorAll(".inverted").forEach((result) => {
+  //       result.classList.add("invert");
+  //     });
+  //   } else {
+  //     document.documentElement.classList.remove("dark-mode");
+  //     document.querySelectorAll(".inverted").forEach((result) => {
+  //       result.classList.remove("invert");
+  //     });
+  //   }
+  // };
+
+  useEffect(() => {
+    const configs = JSON.parse(localStorage.getItem("darkMode")) ?? {};
+    setDarkMode(() => configs.darkMode);
+  }, []);
+
+  useEffect(() => {
+    const configs = JSON.parse(localStorage.getItem("darkMode")) ?? {};
+    configs.darkMode = darkMode;
+
+    localStorage.setItem("darkMode", JSON.stringify(configs));
+    changeMode();
+  }, [darkMode, changeMode]);
 
   return (
     <footer id="footer" className="page-footer font-small blue inverted">
@@ -36,7 +69,12 @@ const Footer = () => {
       </span> */}
         <div>
           Dark Mode:{" "}
-          <input type="checkbox" value={darkMode} onChange={changeMode} />
+          <input
+            type="checkbox"
+            checked={darkMode}
+            value={darkMode}
+            onChange={() => setDarkMode(!darkMode)}
+          />
         </div>
       </div>
     </footer>

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getConnection, getContract, getUserInfo } from "./Contract";
-import Header from "./Header";
 
 const Upline = () => {
   let { buddy: buddyId } = useParams();

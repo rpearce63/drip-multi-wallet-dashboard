@@ -114,11 +114,11 @@ export const getDogPrice = async () => {
   return dogPrice;
 };
 
-export const getBestDripPrice = async (web3) => {
-  const pcsPrice = await getDripPcsPrice();
-  const [bnbPrice, dripBnbRatio, tokenBalance] = await getDripPrice(web3);
-  const dexPrice = (dripBnbRatio * bnbPrice) / 10e17;
-};
+// export const getBestDripPrice = async (web3) => {
+//   const pcsPrice = await getDripPcsPrice();
+//   const [bnbPrice, dripBnbRatio, tokenBalance] = await getDripPrice(web3);
+//   const dexPrice = (dripBnbRatio * bnbPrice) / 10e17;
+// };
 
 export const getUplineCount = async (contract, wallet) => {
   let upline = wallet,

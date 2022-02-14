@@ -13,7 +13,6 @@ import {
   getDownlineDepth,
   getAirdrops,
   getTokenBalance,
-  getBestDripPrice,
   getBabyDripReflections,
   getBabyDripPrice,
 } from "./Contract";
@@ -21,8 +20,8 @@ import {
   BUSD_TOKEN_ADDRESS,
   DRIP_BUSD_LP_ADDRESS,
   DRIP_TOKEN_ADDR,
-  PL2_TOKEN_ADDRESS,
   BABYDRIP_TOKEN,
+  CONFIGS_KEY,
 } from "./dripconfig";
 import Info from "./Info";
 
@@ -47,7 +46,6 @@ const Dashboard = () => {
   const [totalDripHeld, setTotalDripHeld] = useState(0);
   const [totalBnbBalance, setTotalBnbBalance] = useState(0);
   const [totalBr34p, setTotalBr34p] = useState(0);
-  const [totalPl2, setTotalPl2] = useState(0);
   const [totalBusd, setTotalBusd] = useState(0);
 
   const [newAddress, setNewAddress] = useState("");
@@ -65,12 +63,11 @@ const Dashboard = () => {
   const [bnbPrice, setBnbPrice] = useState(0);
   const [dripPrice, setDripPrice] = useState(0);
   const [br34pPrice, setBr34pPrice] = useState(0);
-  const [revPrice, setRevPrice] = useState(4.5);
   const [showBabyDrip, setShowBabyDrip] = useState(true);
-  const [hiddenCols, setHiddenCols] = useState([]);
   const [babyDripPrice, setBabyDripPrice] = useState(0);
   const [totalBabyDrip, setTotalBabyDrip] = useState(0);
   const [totalRefections, setTotalReflections] = useState(0);
+
   const TABLE_HEADERS = [
     "#",
     "Address",
@@ -117,7 +114,7 @@ const Dashboard = () => {
       expandedTable = false,
       hideTableControls = false,
       showBabyDrip = true,
-    } = JSON.parse(localStorage.getItem("dripDashboard-config")) ?? {};
+    } = JSON.parse(localStorage.getItem(CONFIGS_KEY)) ?? {};
 
     setFlagAmount(() => flagAmount);
     setFlagLowBnb(() => flagLowBnb);
@@ -490,7 +487,8 @@ const Dashboard = () => {
       hideTableControls,
       showBabyDrip,
     };
-    localStorage.setItem("dripDashboard-config", JSON.stringify(config));
+
+    localStorage.setItem(CONFIGS_KEY, JSON.stringify(config));
   }, [
     flagAmount,
     flagLowBnb,
@@ -695,8 +693,8 @@ const Dashboard = () => {
               {expandedTable
                 ? TABLE_HEADERS.map((h) => {
                     const isbDCol = ["Baby Drip", "Reflections"].includes(h);
-                    if (isbDCol) {
-                      if (showBabyDrip) return <th key={h}>{h}</th>;
+                    if (isbDCol && showBabyDrip) {
+                      return <th key={h}>{h}</th>;
                     } else {
                       return <th key={h}>{h}</th>;
                     }
