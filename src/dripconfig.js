@@ -1,3 +1,4 @@
+export const CONFIGS_KEY = "dripDashboard-config";
 export const DRIP_BUSD_LP_ADDRESS =
   "0xa0feb3c81a36e885b6608df7f0ff69db97491b58";
 export const BUSD_TOKEN_ADDRESS = "0xe9e7cea3dedca5984780bafc599bd69add087d56";
