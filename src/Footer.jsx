@@ -17,19 +17,6 @@ const Footer = () => {
       });
     }
   }, [darkMode]);
-  // const changeMode = () => {
-  //   if (darkMode) {
-  //     document.documentElement.classList.add("dark-mode");
-  //     document.querySelectorAll(".inverted").forEach((result) => {
-  //       result.classList.add("invert");
-  //     });
-  //   } else {
-  //     document.documentElement.classList.remove("dark-mode");
-  //     document.querySelectorAll(".inverted").forEach((result) => {
-  //       result.classList.remove("invert");
-  //     });
-  //   }
-  // };
 
   useEffect(() => {
     const configs = JSON.parse(localStorage.getItem("darkMode")) ?? {};
@@ -42,6 +29,11 @@ const Footer = () => {
 
     localStorage.setItem("darkMode", JSON.stringify(configs));
     changeMode();
+
+    const interval = setInterval(() => {
+      changeMode();
+    }, 5000);
+    return () => clearInterval(interval);
   }, [darkMode, changeMode]);
 
   return (
