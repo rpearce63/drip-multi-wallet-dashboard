@@ -33,7 +33,11 @@ import {
   findFibIndex,
 } from "./utils";
 
+import Web3 from "web3";
+
 const Dashboard = () => {
+  const [web3, setWeb3] = useState();
+  const [contract, setContract] = useState();
   const [wallets, setWallets] = useState([]);
   const [totalDeposits, setTotalDeposits] = useState(0);
   const [totalAvailable, setTotalAvailable] = useState(0);
@@ -103,7 +107,7 @@ const Dashboard = () => {
     "Max Payout",
     "Team",
   ];
-  let web3, contract;
+  // let contract;
 
   useEffect(() => {
     const {
@@ -126,8 +130,8 @@ const Dashboard = () => {
   }, []);
 
   const fetchData = async () => {
-    web3 = web3 ?? (await getConnection());
-    contract = contract ?? (await getContract(web3));
+    //web3 = web3 ?? (await getConnection());
+    //contract = contract ?? (await getContract(web3));
 
     let storedWallets = JSON.parse(
       window.localStorage.getItem("dripAddresses")
@@ -308,13 +312,36 @@ const Dashboard = () => {
   }, [wallets]);
 
   useEffect(() => {
-    fetchData();
+    const web3 = new Web3(
+      Web3.givenProvider || "https://bsc-dataseed.binance.org/"
+    );
+    web3.eth.net.isListening().then(() => {
+      setWeb3(web3);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (web3) {
+      setContract(getContract(web3));
+    }
+  }, [web3]);
+
+  useEffect(() => {
+    web3 && contract && fetchData();
     const interval = setInterval(() => {
       autoRefresh && fetchData();
     }, 60000);
 
     return () => clearInterval(interval);
-  }, [autoRefresh]);
+  }, [web3, contract, autoRefresh]);
+
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     autoRefresh && fetchData();
+  //   }, 60000);
+
+  //   return () => clearInterval(interval);
+  // }, [autoRefresh]);
 
   const saveAddresses = (e) => {
     e.preventDefault();
