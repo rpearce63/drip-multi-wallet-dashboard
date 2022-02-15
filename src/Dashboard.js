@@ -193,6 +193,8 @@ const Dashboard = () => {
       //babyDripReflections = parseFloat(babyDripReflections).toFixed(3);
 
       const valid = !!userInfo;
+      const referral_bonus =
+        parseFloat(userInfo.direct_bonus) + parseFloat(userInfo.match_bonus);
       walletCache = [
         ...walletCache,
         {
@@ -201,8 +203,8 @@ const Dashboard = () => {
           deposits: userInfo.deposits / 10e17,
           available: available / 10e17,
           payouts: userInfo.payouts / 10e17,
-          direct_bonus: userInfo.direct_bonus / 10e17,
-          match_bonus: userInfo.match_bonus / 10e17,
+          direct_bonus: referral_bonus / 10e17,
+
           address: wallet.addr,
           label: wallet.label,
           valid,
@@ -268,11 +270,11 @@ const Dashboard = () => {
         return total + parseFloat(wallet.direct_bonus);
       }, 0)
     );
-    setTotalMatch(() =>
-      validWallets.reduce((total, wallet) => {
-        return total + parseFloat(wallet.match_bonus);
-      }, 0)
-    );
+    // setTotalMatch(() =>
+    //   validWallets.reduce((total, wallet) => {
+    //     return total + parseFloat(wallet.match_bonus);
+    //   }, 0)
+    // );
     setTotalBr34p(() =>
       validWallets.reduce(
         (total, wallet) => total + parseFloat(wallet.br34pBalance),
@@ -770,7 +772,7 @@ const Dashboard = () => {
                   dripPrice,
                   showDollarValues
                 )}
-                /{convertTokenToUSD(totalMatch, dripPrice, showDollarValues)}
+                {/* /{convertTokenToUSD(totalMatch, dripPrice, showDollarValues)} */}
               </th>
               <th>
                 {convertTokenToUSD(
@@ -903,7 +905,9 @@ const Dashboard = () => {
                   </td>
                   <td
                     className={
-                      wallet.ndv / wallet.deposits <= 0.25 ? "warning" : ""
+                      wallet.ndv / wallet.deposits <= 0.25
+                        ? "warning inverted"
+                        : ""
                     }
                   >
                     {wallet.ndv}
@@ -921,12 +925,12 @@ const Dashboard = () => {
                       dripPrice,
                       showDollarValues
                     )}
-                    /
+                    {/* /
                     {convertTokenToUSD(
                       wallet.match_bonus,
                       dripPrice,
                       showDollarValues
-                    )}
+                    )} */}
                   </td>
                   <td>
                     {convertTokenToUSD(
