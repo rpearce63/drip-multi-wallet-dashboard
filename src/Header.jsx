@@ -25,7 +25,7 @@ const Header = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const web3 = await getConnection();
+      const web3 = getConnection();
       const [bnbPrice, dripPriceRaw, tokenBalance] = await getDripPrice(web3);
       const currentDripPrice = dripPriceRaw * bnbPrice;
       const br34pPrice = await getBr34pPrice();

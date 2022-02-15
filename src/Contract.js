@@ -11,8 +11,8 @@ import {
 
 const flatten = require("flat").flatten;
 
-export const getConnection = async () => {
-  const web3 = await new Web3(
+export const getConnection = () => {
+  const web3 = new Web3(
     Web3.givenProvider || "https://bsc-dataseed.binance.org/"
   );
   return web3;
@@ -22,8 +22,8 @@ export const getAccounts = async (web3) => {
   return await web3.eth.getAccounts();
 };
 
-export const getContract = async (web3) => {
-  const contract = await new web3.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
+export const getContract = (web3) => {
+  const contract = new web3.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
   return contract;
 };
 
@@ -223,7 +223,8 @@ export const getBabyDripReflections = async (account) => {
       `https://api.bscscan.com/api?module=account&action=tokentx&contractaddress=0x20f663cea80face82acdfa3aae6862d246ce0333&address=${account}&startblock=0&endblock=999999999&sort=asc&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY`
     )
       .then((response) => response.json())
-      .then((data) => data.result);
+      .then((data) => data.result)
+      .catch((err) => []);
 
   const babyDripTransactions = await fetchBabyDripTransactions();
 
