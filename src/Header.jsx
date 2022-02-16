@@ -4,7 +4,6 @@ import Web3 from "web3";
 import {
   getBabyDripPrice,
   getBr34pPrice,
-  getConnection,
   getDripPcsPrice,
   getDripPrice,
 } from "./Contract";

@@ -43,8 +43,6 @@ const Dashboard = () => {
   const [totalAvailable, setTotalAvailable] = useState(0);
   const [totalClaimed, setTotalClaimed] = useState(0);
   const [totalDirectBonus, setTotalDirectBonus] = useState(0);
-  const [totalMatch, setTotalMatch] = useState(0);
-  //const [totalChildren, setTotalChildren] = useState(0);
   const [totalTeam, setTotalTeam] = useState(0);
   const [addressList, setAddressList] = useState("");
   const [totalDripHeld, setTotalDripHeld] = useState(0);
@@ -53,7 +51,6 @@ const Dashboard = () => {
   const [totalBusd, setTotalBusd] = useState(0);
 
   const [newAddress, setNewAddress] = useState("");
-  //const [triggerType, setTriggerType] = useState("percent");
   const [flagAmount, setFlagAmount] = useState(true);
   const [flagPct, setFlagPct] = useState(true);
   const [flagLowBnb, setFlagLowBnb] = useState(true);
