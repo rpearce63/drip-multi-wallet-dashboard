@@ -8,6 +8,9 @@ import {
   BR34P_ADDRESS,
   BASIC_TOKEN_ABI,
 } from "./dripconfig";
+const axios = require("axios");
+const rax = require("retry-axios");
+const interceptorId = rax.attach();
 
 const flatten = require("flat").flatten;
 
@@ -114,12 +117,6 @@ export const getDogPrice = async () => {
   return dogPrice;
 };
 
-// export const getBestDripPrice = async (web3) => {
-//   const pcsPrice = await getDripPcsPrice();
-//   const [bnbPrice, dripBnbRatio, tokenBalance] = await getDripPrice(web3);
-//   const dexPrice = (dripBnbRatio * bnbPrice) / 10e17;
-// };
-
 export const getUplineCount = async (contract, wallet) => {
   let upline = wallet,
     count = 0,
@@ -195,11 +192,15 @@ export const getDownlineDepth = async (account) => {
 
 export const getDripPcsPrice = async () => {
   const fetchDripPcsPrice = async () =>
-    fetch(
-      "https://api.pancakeswap.info/api/v2/tokens/0x20f663cea80face82acdfa3aae6862d246ce0333"
-    )
-      .then((response) => response.json())
-      .then((data) => data.data.price);
+    axios
+      .get(
+        "https://api.pancakeswap.info/api/v2/tokens/0x20f663cea80face82acdfa3aae6862d246ce0333"
+      )
+      .then((result) => result.data.data.price)
+      .catch((err) => {
+        console.log(`Error getting Drip price from PCS: ${err.message}`);
+        return 0;
+      });
   const dripPcsPrice = await fetchDripPcsPrice();
   return dripPcsPrice;
 };

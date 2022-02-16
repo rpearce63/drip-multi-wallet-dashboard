@@ -78,7 +78,6 @@ const Dashboard = () => {
     "BUSD",
     "BR34P",
     "Drip",
-
     "BNB",
     "Available",
     "ROI",
@@ -455,25 +454,28 @@ const Dashboard = () => {
 
   const copyTableData = () => {
     const tableData = [
-      [...TABLE_HEADERS],
+      [
+        ...TABLE_HEADERS.filter(
+          (th) => !["Baby Drip", "Reflections"].includes(th)
+        ),
+      ],
       ...wallets.map((w, index) => [
         index + 1,
         w.address,
         w.label,
         w.upline,
         w.uplineCount,
+        w.busdBalance,
         parseFloat(w.br34pBalance).toFixed(2),
-        convertTokenToUSD(w.dripBalance),
-        parseFloat(convertTokenToUSD(w.bnbBalance)).toFixed(3),
-        convertTokenToUSD(w.pl2Balance),
-        convertTokenToUSD(w.available),
+        Math.round(w.dripBalance * 10e16) / 10e16,
+        parseFloat(w.bnbBalance).toFixed(3),
+        w.available,
         formatPercent(w.available / w.deposits),
-        convertTokenToUSD(w.deposits),
-        convertTokenToUSD(w.payouts),
-        `${convertTokenToUSD(w.direct_bonus)}/${convertTokenToUSD(
-          w.match_bonus
-        )}`,
-        convertTokenToUSD(w.deposits * 3.65),
+        w.deposits,
+        w.ndv,
+        w.payouts,
+        `${w.direct_bonus + w.match_bonus}`,
+        w.deposits * 3.65,
         `${w.referrals}/${w.total_structure}`,
       ]),
     ]
