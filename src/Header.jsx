@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import Web3 from "web3";
 import {
   getBabyDripPrice,
   getBr34pPrice,
-  getConnection,
   getDripPcsPrice,
   getDripPrice,
 } from "./Contract";
@@ -11,6 +11,7 @@ import { formatCurrency, convertDrip } from "./utils";
 import { calcFarmPrice } from "./tokenPriceApi";
 import { DOGSTokenAddress, PIGSTokenAddress } from "./dripconfig";
 const Header = () => {
+  const [web3, setWeb3] = useState();
   const [dripPrice, setDripPrice] = useState(0);
   const [bnbPrice, setBnbPrice] = useState(0);
   const [tokenBalance, setTokenBalance] = useState(0);
@@ -24,38 +25,42 @@ const Header = () => {
   const BUY_SPREAD = 1.2;
 
   useEffect(() => {
-    const fetchData = async () => {
-      const web3 = getConnection();
-      const [bnbPrice, dripPriceRaw, tokenBalance] = await getDripPrice(web3);
-      const currentDripPrice = dripPriceRaw * bnbPrice;
-      const br34pPrice = await getBr34pPrice();
-      const dripPcsPrice = await getDripPcsPrice();
-      const pigPrice = await calcFarmPrice(PIGSTokenAddress);
-      const dogPrice = await calcFarmPrice(DOGSTokenAddress);
-      const babyDripPrice = await getBabyDripPrice();
+    setWeb3(
+      new Web3(Web3.givenProvider || "https://bsc-dataseed.binance.org/")
+    );
+  }, []);
 
-      setDripPrice(() => currentDripPrice);
-      setBnbPrice(() => bnbPrice);
-      setTokenBalance(() => tokenBalance);
-      setBr34pPrice(() => br34pPrice);
-      setDripBnbPrice(() => dripPriceRaw / 10e17);
-      setDripPcsPrice(() => dripPcsPrice);
-      setPigPrice(() => pigPrice);
-      setDogPrice(() => dogPrice);
-      setBabyDripPrice(() => babyDripPrice);
-
-      document.title = `${formatCurrency(
-        convertDrip(currentDripPrice)
-      )} - Drip Multi-Wallet Dashboard`;
-    };
-    fetchData();
-
+  useEffect(() => {
+    web3 && fetchData();
     const interval = setInterval(() => {
       fetchData();
     }, 30000);
     return () => clearInterval(interval);
-  }, []);
+  }, [web3]);
 
+  const fetchData = async () => {
+    const [bnbPrice, dripPriceRaw, tokenBalance] = await getDripPrice(web3);
+    const currentDripPrice = dripPriceRaw * bnbPrice;
+    const br34pPrice = await getBr34pPrice();
+    const dripPcsPrice = await getDripPcsPrice();
+    const pigPrice = await calcFarmPrice(PIGSTokenAddress);
+    const dogPrice = await calcFarmPrice(DOGSTokenAddress);
+    const babyDripPrice = await getBabyDripPrice();
+
+    setDripPrice(() => currentDripPrice);
+    setBnbPrice(() => bnbPrice);
+    setTokenBalance(() => tokenBalance);
+    setBr34pPrice(() => br34pPrice);
+    setDripBnbPrice(() => dripPriceRaw / 10e17);
+    setDripPcsPrice(() => dripPcsPrice);
+    setPigPrice(() => pigPrice);
+    setDogPrice(() => dogPrice);
+    setBabyDripPrice(() => babyDripPrice);
+
+    document.title = `${formatCurrency(
+      convertDrip(currentDripPrice)
+    )} - Drip Multi-Wallet Dashboard`;
+  };
   return (
     <nav className="navbar navbar-expand-lg nav-wrap fixed-top navbar-dark bg-dark inverted">
       <div className="container-fluid">
