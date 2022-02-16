@@ -174,8 +174,8 @@ const Dashboard = () => {
         wallet.addr,
         DRIP_BUSD_LP_ADDRESS
       );
-      dripBusdLpBalance > 0 &&
-        console.log(`Drip/BUSD for ${wallet.addr}: ${dripBusdLpBalance}`);
+      // dripBusdLpBalance > 0 &&
+      //   console.log(`Drip/BUSD for ${wallet.addr}: ${dripBusdLpBalance}`);
 
       const coveredDepth = findFibIndex(br34pBalance);
       const teamDepth =

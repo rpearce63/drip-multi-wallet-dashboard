@@ -228,10 +228,13 @@ export const getBabyDripReflections = async (account) => {
 
   const babyDripTransactions = await fetchBabyDripTransactions();
 
-  const totalReflections = babyDripTransactions
-    .filter((tx) => tx.from === "0x820bfb786c454c3273f32e9db90d54af2ef200b5")
-    .reduce((totalDrip, tx) => totalDrip + parseInt(tx.value), 0);
-  return totalReflections / 10e17;
+  if (Array.isArray(babyDripTransactions)) {
+    const totalReflections = babyDripTransactions
+      .filter((tx) => tx.from === "0x820bfb786c454c3273f32e9db90d54af2ef200b5")
+      .reduce((totalDrip, tx) => totalDrip + parseInt(tx.value), 0);
+    return totalReflections / 10e17;
+  }
+  return 0;
 };
 
 export const getBabyDripPrice = async () => {
