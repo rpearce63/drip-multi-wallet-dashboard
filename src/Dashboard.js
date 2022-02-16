@@ -285,9 +285,9 @@ const Dashboard = () => {
       [...TABLE_HEADERS],
       ...wallets.map((w, index) => [
         index + 1,
-        shortenAddress(w.address),
+        w.address,
         w.label,
-        shortenAddress(w.upline),
+        w.upline,
         w.uplineCount,
         convertDrip(w.dripBalance),
         parseFloat(w.bnbBalance).toFixed(3),
@@ -435,7 +435,7 @@ const Dashboard = () => {
                     }
                   >
                     <Link to={`/upline/${wallet.address}`}>
-                      {shortenAddress(wallet.address)}
+                      {wallet.address}
                     </Link>
                   </td>
                   <td>
@@ -450,7 +450,7 @@ const Dashboard = () => {
                       wallet.label
                     )}
                   </td>
-                  <td>{shortenAddress(wallet.upline)}</td>
+                  <td>{wallet.upline}</td>
                   <td>{wallet.uplineCount}</td>
                   <td>{convertDrip(wallet.dripBalance)}</td>
                   <td
