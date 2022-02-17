@@ -46,12 +46,12 @@ const Header = () => {
 
   const getVersion = async () => {
     const ver = await getLatestVersion();
-    console.log(ver);
+    //console.log(ver);
     setVersion(ver);
   };
   const compareVersions = () => {
     const currentVer = process.env.REACT_APP_VERSION;
-    if (version) return semver.gte(version, currentVer);
+    if (version) return semver.gt(version, currentVer);
   };
 
   const fetchData = async () => {
