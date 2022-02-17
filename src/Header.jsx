@@ -84,8 +84,15 @@ const Header = () => {
           <Link to={"/drip-mw-dashboard"}>Drip Multi-Wallet Dashboard</Link>
           {compareVersions() && (
             <div style={{ marginLeft: 25 }}>
-              New version {version} available. Please refresh page to get
-              updates.
+              New version{" "}
+              <a
+                href="https://github.com/rpearce63/drip-multi-wallet-dashboard/releases"
+                target="_blank"
+                rel="noreferrer"
+              >
+                {version}
+              </a>{" "}
+              available. Please refresh page to get updates.
             </div>
           )}
         </div>
