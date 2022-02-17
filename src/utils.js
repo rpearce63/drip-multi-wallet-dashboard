@@ -1,3 +1,5 @@
+import axios from "axios";
+
 export const convertDrip = (drip, dripPrice, showDollarValues) => {
   const priceOfDrip = dripPrice || 1;
   const converted = parseFloat(
@@ -59,4 +61,14 @@ export const findFibIndex = (n) => {
   const br34p = [2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597];
   const level = br34p.filter((b) => b <= n).length;
   return level;
+};
+
+export const getLatestVersion = async () => {
+  const version = await axios
+    .get(
+      "https://api.github.com/repos/rpearce63/drip-multi-wallet-dashboard/tags"
+    )
+    .then((result) => result.data[0].name);
+
+  return version.replace("v", "");
 };

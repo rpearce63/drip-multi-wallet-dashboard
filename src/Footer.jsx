@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { useCallback } from "react";
 import { useEffect } from "react";
+import { getLatestVersion } from "./utils";
 const Footer = () => {
   const [darkMode, setDarkMode] = useState(false);
+  const [version, setVersion] = useState();
 
   const changeMode = useCallback(() => {
     if (darkMode) {
@@ -18,9 +20,15 @@ const Footer = () => {
     }
   }, [darkMode]);
 
+  const getVersion = async () => {
+    const ver = await getLatestVersion();
+    setVersion(ver);
+  };
+
   useEffect(() => {
     const configs = JSON.parse(localStorage.getItem("darkMode")) ?? {};
     setDarkMode(() => configs.darkMode);
+    getVersion();
   }, []);
 
   useEffect(() => {
@@ -46,6 +54,14 @@ const Footer = () => {
           </a>
         </span>
         <div>{process.env.REACT_APP_VERSION}</div>
+        <div>
+          {version > process.env.REACT_APP_VERSION && (
+            <div>
+              New version {version} available. Please refresh page to get
+              updates.
+            </div>
+          )}
+        </div>
         {/* <span className="affiliate">
         <a
           href="https://4dinsingapore.com/amember/aff/go/rpearce63?i=8"
