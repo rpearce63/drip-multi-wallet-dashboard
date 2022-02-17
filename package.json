@@ -50,7 +50,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-push": "npm version patch"
+      "pre-commit": "npm version patch"
     }
   },
   "devDependencies": {
