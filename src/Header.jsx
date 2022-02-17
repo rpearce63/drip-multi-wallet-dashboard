@@ -7,9 +7,12 @@ import {
   getDripPcsPrice,
   getDripPrice,
 } from "./Contract";
-import { formatCurrency, convertDrip } from "./utils";
+import { formatCurrency, convertDrip, getLatestVersion } from "./utils";
 import { calcFarmPrice } from "./tokenPriceApi";
 import { DOGSTokenAddress, PIGSTokenAddress } from "./dripconfig";
+
+import semver from "semver";
+
 const Header = () => {
   const [web3, setWeb3] = useState();
   const [dripPrice, setDripPrice] = useState(0);
@@ -21,6 +24,7 @@ const Header = () => {
   const [pigPrice, setPigPrice] = useState(0);
   const [dogPrice, setDogPrice] = useState(0);
   const [babyDripPrice, setBabyDripPrice] = useState(0);
+  const [version, setVersion] = useState();
 
   const BUY_SPREAD = 1.2;
 
@@ -34,9 +38,20 @@ const Header = () => {
     web3 && fetchData();
     const interval = setInterval(() => {
       fetchData();
+      getVersion();
     }, 30000);
     return () => clearInterval(interval);
   }, [web3]);
+
+  const getVersion = async () => {
+    const ver = await getLatestVersion();
+    console.log(ver);
+    setVersion(ver);
+  };
+  const compareVersions = () => {
+    const currentVer = process.env.REACT_APP_VERSION;
+    if (version) return semver.gte(version, currentVer);
+  };
 
   const fetchData = async () => {
     const [bnbPrice, dripPriceRaw, tokenBalance] = await getDripPrice(web3);
@@ -66,6 +81,12 @@ const Header = () => {
       <div className="container-fluid">
         <div className="navbar-brand">
           <Link to={"/drip-mw-dashboard"}>Drip Multi-Wallet Dashboard</Link>
+          {compareVersions() && (
+            <div style={{ marginLeft: 25 }}>
+              New version {version} available. Please refresh page to get
+              updates.
+            </div>
+          )}
         </div>
         <div className="prices">
           <div className="price">

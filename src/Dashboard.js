@@ -331,14 +331,6 @@ const Dashboard = () => {
     return () => clearInterval(interval);
   }, [web3, contract, autoRefresh]);
 
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     autoRefresh && fetchData();
-  //   }, 60000);
-
-  //   return () => clearInterval(interval);
-  // }, [autoRefresh]);
-
   const saveAddresses = (e) => {
     e.preventDefault();
     if (wallets.length) {
