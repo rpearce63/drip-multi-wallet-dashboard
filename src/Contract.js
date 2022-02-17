@@ -82,11 +82,12 @@ export const getDripPrice = async (web3) => {
     const tokenBalance = await contract.methods.tokenBalance().call();
 
     const fetchBnbPrice = async () =>
-      fetch(
-        "https://api.coingecko.com/api/v3/simple/price?ids=wbnb&vs_currencies=usd"
-      )
-        .then((response) => response.json())
-        .then((data) => data.wbnb.usd);
+      axios
+        .get(
+          "https://api.coingecko.com/api/v3/simple/price?ids=wbnb&vs_currencies=usd"
+        )
+        //.then((response) => response.json())
+        .then((response) => response.data.wbnb.usd);
     const bnbPrice = await fetchBnbPrice();
 
     return [bnbPrice, dripBnbRatio, tokenBalance];
@@ -97,22 +98,24 @@ export const getDripPrice = async (web3) => {
 
 export const getPigPrice = async () => {
   const fetchPigPrice = async () =>
-    fetch(
-      "https://api.pancakeswap.info/api/v2/tokens/0x3A4C15F96B3b058ab3Fb5FAf1440Cc19E7AE07ce"
-    )
-      .then((response) => response.json())
-      .then((data) => data.data.price);
+    axios
+      .get(
+        "https://api.pancakeswap.info/api/v2/tokens/0x3A4C15F96B3b058ab3Fb5FAf1440Cc19E7AE07ce"
+      )
+      //.then((response) => response.json())
+      .then((response) => response.data.data.price);
   const pigPrice = await fetchPigPrice();
   return pigPrice;
 };
 
 export const getDogPrice = async () => {
   const fetchDogPrice = async () =>
-    fetch(
-      "https://api.pancakeswap.info/api/v2/tokens/0xDBdC73B95cC0D5e7E99dC95523045Fc8d075Fb9e"
-    )
-      .then((response) => response.json())
-      .then((data) => data.data.price);
+    axios
+      .get(
+        "https://api.pancakeswap.info/api/v2/tokens/0xDBdC73B95cC0D5e7E99dC95523045Fc8d075Fb9e"
+      )
+      // .then((response) => response.json())
+      .then((response) => response.data.data.price);
   const dogPrice = await fetchDogPrice();
   return dogPrice;
 };
@@ -142,20 +145,20 @@ export const roll = async (account) => {
 
 export const getDownline = async (account) => {
   const fetchDownline = async (account) =>
-    fetch(`https://api.drip.community/org/${account}`)
-      .then((response) => response.json())
-      .then((data) => {
-        return data;
-      });
+    axios
+      .get(`https://api.drip.community/org/${account}`)
+      //.then((response) => response.json())
+      .then((response) => response.data);
   const downline = await fetchDownline(account);
   return downline;
 };
 
 export const getBr34pPrice = async () => {
   const fetchBr34PPrice = async () =>
-    fetch("https://api.coinpaprika.com/v1/tickers/br34p-br34p/")
-      .then((response) => response.json())
-      .then((data) => data);
+    axios
+      .get("https://api.coinpaprika.com/v1/tickers/br34p-br34p/")
+      // .then((response) => response.json())
+      .then((response) => response.data);
 
   const br34pData = await fetchBr34PPrice();
   return br34pData.quotes.USD.price;
@@ -163,11 +166,12 @@ export const getBr34pPrice = async () => {
 
 export const getBnbprice = async () => {
   const fetchBnbPrice = async () =>
-    fetch(
-      "https://api.coingecko.com/api/v3/simple/price?ids=wbnb&vs_currencies=usd"
-    )
-      .then((response) => response.json())
-      .then((data) => data.wbnb.usd);
+    axios
+      .get(
+        "https://api.coingecko.com/api/v3/simple/price?ids=wbnb&vs_currencies=usd"
+      )
+      // .then((response) => response.json())
+      .then((response) => response.data.wbnb.usd);
   const bnbPrice = await fetchBnbPrice();
   return bnbPrice;
 };
@@ -207,11 +211,12 @@ export const getDripPcsPrice = async () => {
 
 export const getJoinDate = async (account) => {
   const fetchBuddyDate = async () =>
-    fetch(
-      `https://api.bscscan.com/api?module=account&action=txlist&address=${account}&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY`
-    )
-      .then((response) => response.json())
-      .then((data) => data.result);
+    axios
+      .get(
+        `https://api.bscscan.com/api?module=account&action=txlist&address=${account}&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY`
+      )
+      // .then((response) => response.json())
+      .then((response) => response.data.result);
 
   const txHistory = await fetchBuddyDate();
   const buddyDate = txHistory.find((tx) => tx.input?.startsWith("0x17fed96f"));
@@ -220,11 +225,12 @@ export const getJoinDate = async (account) => {
 
 export const getBabyDripReflections = async (account) => {
   const fetchBabyDripTransactions = async () =>
-    fetch(
-      `https://api.bscscan.com/api?module=account&action=tokentx&contractaddress=0x20f663cea80face82acdfa3aae6862d246ce0333&address=${account}&startblock=0&endblock=999999999&sort=asc&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY`
-    )
-      .then((response) => response.json())
-      .then((data) => data.result)
+    axios
+      .get(
+        `https://api.bscscan.com/api?module=account&action=tokentx&contractaddress=0x20f663cea80face82acdfa3aae6862d246ce0333&address=${account}&startblock=0&endblock=999999999&sort=asc&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY`
+      )
+      // .then((response) => response.json())
+      .then((response) => response.data.result)
       .catch((err) => []);
 
   const babyDripTransactions = await fetchBabyDripTransactions();
@@ -240,11 +246,12 @@ export const getBabyDripReflections = async (account) => {
 
 export const getBabyDripPrice = async () => {
   const fetchBabyDripPrice = async () =>
-    fetch(
-      "https://api.pancakeswap.info/api/v2/tokens/0x1a95d3bd381e14da942408b4a0cefd8e00084eb0"
-    )
-      .then((response) => response.json())
-      .then((data) => data.data.price);
+    axios
+      .get(
+        "https://api.pancakeswap.info/api/v2/tokens/0x1a95d3bd381e14da942408b4a0cefd8e00084eb0"
+      )
+      //.then((response) => response.json())
+      .then((response) => response.data.data.price);
   const babyDripPrice = await fetchBabyDripPrice();
   return babyDripPrice;
 };
