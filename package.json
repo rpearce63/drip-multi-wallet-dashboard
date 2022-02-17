@@ -49,7 +49,9 @@
     ]
   },
   "husky": {
-    "hooks": {}
+    "hooks": {
+      "pre-push": "npm version patch"
+    }
   },
   "devDependencies": {
     "husky": "^7.0.4"
