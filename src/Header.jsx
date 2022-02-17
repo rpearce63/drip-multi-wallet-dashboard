@@ -36,6 +36,7 @@ const Header = () => {
 
   useEffect(() => {
     web3 && fetchData();
+    web3 && getVersion();
     const interval = setInterval(() => {
       fetchData();
       getVersion();
