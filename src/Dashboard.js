@@ -713,9 +713,9 @@ const Dashboard = () => {
               {expandedTable
                 ? TABLE_HEADERS.map((h) => {
                     const isbDCol = ["Baby Drip", "Reflections"].includes(h);
-                    if (isbDCol && showBabyDrip) {
+                    if (showBabyDrip && isbDCol) {
                       return <th key={h}>{h}</th>;
-                    } else {
+                    } else if (!isbDCol){
                       return <th key={h}>{h}</th>;
                     }
                   })
