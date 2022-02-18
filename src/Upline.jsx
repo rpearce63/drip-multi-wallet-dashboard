@@ -46,13 +46,13 @@ const Upline = () => {
   }, [buddyId]);
 
   return (
-    <div>
+    <div className="container main">
       {/* <Header /> */}
       <div className="page-title">
         <h1>Wallet Upline</h1>
       </div>
 
-      <div className="container main">
+      <div className="main">
         <table className="table">
           <thead>
             <tr>
