@@ -8,7 +8,7 @@ import {
   getDripPrice,
 } from "./Contract";
 import { formatCurrency, convertDrip, getLatestVersion } from "./utils";
-import { calcFarmPrice } from "./tokenPriceApi";
+import { calcFarmPrice, calcBabyDripPrice } from "./tokenPriceApi";
 import { DOGSTokenAddress, PIGSTokenAddress } from "./dripconfig";
 
 import semver from "semver";
@@ -61,7 +61,7 @@ const Header = () => {
     const dripPcsPrice = await getDripPcsPrice();
     const pigPrice = await calcFarmPrice(PIGSTokenAddress);
     const dogPrice = await calcFarmPrice(DOGSTokenAddress);
-    const babyDripPrice = await getBabyDripPrice();
+    const babyDripPrice = await calcBabyDripPrice(web3);
 
     setDripPrice(() => currentDripPrice);
     setBnbPrice(() => bnbPrice);
