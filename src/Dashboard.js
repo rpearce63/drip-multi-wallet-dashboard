@@ -16,6 +16,8 @@ import {
   getBabyDripReflections,
   getBabyDripPrice,
 } from "./Contract";
+
+import {calcBabyDripPrice} from './tokenPriceApi'
 import {
   BUSD_TOKEN_ADDRESS,
   DRIP_BUSD_LP_ADDRESS,
@@ -230,7 +232,7 @@ const Dashboard = () => {
     const [bnbPrice, dripPrice] = await getDripPrice(web3);
     const br34pPrice = await getBr34pPrice();
     //const revPrice = await calcREVPrice();
-    const babyDripPrice = await getBabyDripPrice();
+    const babyDripPrice = await calcBabyDripPrice(web3);
     setBabyDripPrice(() => babyDripPrice);
     setDripPrice(() => (dripPrice * bnbPrice) / 10e17);
     setBnbPrice(() => bnbPrice);
