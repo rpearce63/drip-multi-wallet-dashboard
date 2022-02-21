@@ -8,6 +8,8 @@ import {
   BR34P_ADDRESS,
   BASIC_TOKEN_ABI,
 } from "./dripconfig";
+const babyBirdContractABI =  require('./babyBirdContractABI.json');
+
 const axios = require("axios");
 const rax = require("retry-axios");
 const interceptorId = rax.attach();
@@ -255,3 +257,9 @@ export const getBabyDripPrice = async () => {
   const babyDripPrice = await fetchBabyDripPrice();
   return babyDripPrice;
 };
+
+export const getUnpaidEarnings = async (address, web3) => {
+  const contract = new web3.eth.Contract(babyBirdContractABI,"0x1a95d3bd381e14da942408b4a0cefd8e00084eb0" );
+  const unpaidEarnings = await contract.methods.getUnpaidEarnings(address).call()
+  console.log(`unpaid earnings: ${unpaidEarnings}`)
+}

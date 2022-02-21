@@ -129,7 +129,7 @@ const Header = () => {
             </div>
           </div>
           <div className="price stack">
-            <label>DRIP/BNB:</label> {parseFloat(dripBnbPrice).toFixed(5)}
+            <label>BNB/DRIP:</label> {parseFloat(dripBnbPrice).toFixed(5)}
           </div>
           <div className="price stack">
             <a
