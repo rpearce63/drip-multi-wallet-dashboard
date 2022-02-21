@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Web3 from "web3";
 import {
-  getBabyDripPrice,
+  //getBabyDripPrice,
   getBr34pPrice,
   getDripPcsPrice,
   getDripPrice,
 } from "./Contract";
 import { formatCurrency, convertDrip, getLatestVersion } from "./utils";
-import { calcFarmPrice, calcBabyDripPrice } from "./tokenPriceApi";
+import { calcFarmPrice } from "./tokenPriceApi";
 import { DOGSTokenAddress, PIGSTokenAddress } from "./dripconfig";
 
 import semver from "semver";
@@ -23,7 +23,7 @@ const Header = () => {
   const [dripPcsPrice, setDripPcsPrice] = useState(0);
   const [pigPrice, setPigPrice] = useState(0);
   const [dogPrice, setDogPrice] = useState(0);
-  const [babyDripPrice, setBabyDripPrice] = useState(0);
+  //const [babyDripPrice, setBabyDripPrice] = useState(0);
   const [version, setVersion] = useState();
 
   const BUY_SPREAD = 1.2;
