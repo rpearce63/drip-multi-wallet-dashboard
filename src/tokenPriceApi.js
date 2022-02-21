@@ -430,11 +430,11 @@ export async function calcBR34PPrice() {
 }
 
 export const calcBabyDripPrice = async (web3) => {
-const BUSDTokenAddress = "0xe9e7cea3dedca5984780bafc599bd69add087d56";
-  const USDTokenAddress = "0x55d398326f99059fF775485246999027B3197955"; //USDT
-  const WBNBTokenAddress = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
+  const BUSDTokenAddress = "0xe9e7cea3dedca5984780bafc599bd69add087d56";
+  //const USDTokenAddress = "0x55d398326f99059fF775485246999027B3197955"; //USDT
+  //const WBNBTokenAddress = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
   const BabyDripTokenAddress = "0x1a95d3bd381e14da942408b4a0cefd8e00084eb0";
-  let revToSell = web3.utils.toWei("1");
+  let revToSell = web3.utils.toWei("1", "ether");
   let amountOut;
   try {
     let router = await new web3.eth.Contract(
@@ -442,12 +442,13 @@ const BUSDTokenAddress = "0xe9e7cea3dedca5984780bafc599bd69add087d56";
       pancakeSwapContract
     );
     amountOut = await router.methods
-      .getAmountOut("10000000000000", BUSDTokenAddress, BabyDripTokenAddress)
+      .getAmountOut(revToSell, BUSDTokenAddress, BabyDripTokenAddress)
       .call();
+    console.log(amountOut);
     amountOut = web3.utils.fromWei(amountOut);
   } catch (error) {
     console.log(`error getting baby drip price: ${error}`);
   }
   if (!amountOut) return 0;
   return amountOut;
-}
+};

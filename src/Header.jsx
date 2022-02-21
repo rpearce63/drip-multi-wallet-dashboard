@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Web3 from "web3";
 import {
-  getBabyDripPrice,
+  //getBabyDripPrice,
   getBr34pPrice,
   getDripPcsPrice,
   getDripPrice,
 } from "./Contract";
 import { formatCurrency, convertDrip, getLatestVersion } from "./utils";
-import { calcFarmPrice, calcBabyDripPrice } from "./tokenPriceApi";
+import { calcFarmPrice } from "./tokenPriceApi";
 import { DOGSTokenAddress, PIGSTokenAddress } from "./dripconfig";
 
 import semver from "semver";
@@ -23,7 +23,7 @@ const Header = () => {
   const [dripPcsPrice, setDripPcsPrice] = useState(0);
   const [pigPrice, setPigPrice] = useState(0);
   const [dogPrice, setDogPrice] = useState(0);
-  const [babyDripPrice, setBabyDripPrice] = useState(0);
+  //const [babyDripPrice, setBabyDripPrice] = useState(0);
   const [version, setVersion] = useState();
 
   const BUY_SPREAD = 1.2;
@@ -61,7 +61,7 @@ const Header = () => {
     const dripPcsPrice = await getDripPcsPrice();
     const pigPrice = await calcFarmPrice(PIGSTokenAddress);
     const dogPrice = await calcFarmPrice(DOGSTokenAddress);
-    const babyDripPrice = await calcBabyDripPrice(web3);
+    //const babyDripPrice = await calcBabyDripPrice(web3);
 
     setDripPrice(() => currentDripPrice);
     setBnbPrice(() => bnbPrice);
@@ -71,7 +71,7 @@ const Header = () => {
     setDripPcsPrice(() => dripPcsPrice);
     setPigPrice(() => pigPrice);
     setDogPrice(() => dogPrice);
-    setBabyDripPrice(() => babyDripPrice);
+    //setBabyDripPrice(() => babyDripPrice);
 
     document.title = `${formatCurrency(
       convertDrip(currentDripPrice)
@@ -129,7 +129,7 @@ const Header = () => {
             </div>
           </div>
           <div className="price stack">
-            <label>DRIP/BNB:</label> {parseFloat(dripBnbPrice).toFixed(5)}
+            <label>BNB/DRIP:</label> {parseFloat(dripBnbPrice).toFixed(5)}
           </div>
           <div className="price stack">
             <a
@@ -176,7 +176,7 @@ const Header = () => {
               {formatCurrency(dogPrice)}
             </div>
           </div>
-          <div className="price stack">
+          {/* <div className="price stack">
             <a
               href="https://poocoin.app/tokens/0x1a95d3bd381e14da942408b4a0cefd8e00084eb0"
               target="_blank"
@@ -185,7 +185,7 @@ const Header = () => {
               BABYDRIP:
             </a>{" "}
             ${parseFloat(babyDripPrice).toFixed(9)}
-          </div>
+          </div> */}
         </div>
 
         <div className="navbar-text text-white beggar">

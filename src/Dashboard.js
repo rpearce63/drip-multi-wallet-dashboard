@@ -14,10 +14,10 @@ import {
   getAirdrops,
   getTokenBalance,
   getBabyDripReflections,
-  getBabyDripPrice,
+  //getBabyDripPrice,
 } from "./Contract";
 
-import {calcBabyDripPrice} from './tokenPriceApi'
+//import {calcBabyDripPrice} from './tokenPriceApi'
 import {
   BUSD_TOKEN_ADDRESS,
   DRIP_BUSD_LP_ADDRESS,
@@ -67,7 +67,7 @@ const Dashboard = () => {
   const [dripPrice, setDripPrice] = useState(0);
   const [br34pPrice, setBr34pPrice] = useState(0);
   const [showBabyDrip, setShowBabyDrip] = useState(true);
-  const [babyDripPrice, setBabyDripPrice] = useState(0);
+  //const [babyDripPrice, setBabyDripPrice] = useState(0);
   const [totalBabyDrip, setTotalBabyDrip] = useState(0);
   const [totalRefections, setTotalReflections] = useState(0);
 
@@ -232,8 +232,8 @@ const Dashboard = () => {
     const [bnbPrice, dripPrice] = await getDripPrice(web3);
     const br34pPrice = await getBr34pPrice();
     //const revPrice = await calcREVPrice();
-    const babyDripPrice = await calcBabyDripPrice(web3);
-    setBabyDripPrice(() => babyDripPrice);
+    //const babyDripPrice = await calcBabyDripPrice(web3);
+    //setBabyDripPrice(() => babyDripPrice);
     setDripPrice(() => (dripPrice * bnbPrice) / 10e17);
     setBnbPrice(() => bnbPrice);
     setBr34pPrice(() => br34pPrice);
@@ -717,7 +717,7 @@ const Dashboard = () => {
                     const isbDCol = ["Baby Drip", "Reflections"].includes(h);
                     if (showBabyDrip && isbDCol) {
                       return <th key={h}>{h}</th>;
-                    } else if (!isbDCol){
+                    } else if (!isbDCol) {
                       return <th key={h}>{h}</th>;
                     }
                   })
@@ -803,13 +803,7 @@ const Dashboard = () => {
               </th>
               <th>Directs: {totalTeam}</th>
               {expandedTable && showBabyDrip && (
-                <th>
-                  {convertTokenToUSD(
-                    totalBabyDrip,
-                    babyDripPrice,
-                    showDollarValues
-                  )}
-                </th>
+                <th>{convertTokenToUSD(totalBabyDrip, 0, false)}</th>
               )}
               {expandedTable && showBabyDrip && (
                 <th>
@@ -970,11 +964,7 @@ const Dashboard = () => {
                   {expandedTable && showBabyDrip && (
                     <td>
                       {wallet.babyDripBalance > 0 &&
-                        convertTokenToUSD(
-                          wallet.babyDripBalance,
-                          babyDripPrice,
-                          showDollarValues
-                        )}
+                        convertTokenToUSD(wallet.babyDripBalance, 0, false)}
                     </td>
                   )}
 

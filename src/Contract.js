@@ -8,6 +8,8 @@ import {
   BR34P_ADDRESS,
   BASIC_TOKEN_ABI,
 } from "./dripconfig";
+const babyBirdContractABI = require("./babyBirdContractABI.json");
+
 const axios = require("axios");
 const rax = require("retry-axios");
 const interceptorId = rax.attach();
@@ -200,13 +202,14 @@ export const getDripPcsPrice = async () => {
       .get(
         "https://api.pancakeswap.info/api/v2/tokens/0x20f663cea80face82acdfa3aae6862d246ce0333"
       )
-      .then((result) => result.data.data.price)
+      .then((result) => result.data.data.price_BNB)
       .catch((err) => {
         console.log(`Error getting Drip price from PCS: ${err.message}`);
         return 0;
       });
-  const dripPcsPrice = await fetchDripPcsPrice();
-  return dripPcsPrice;
+  const dripPcsPriceBNB = await fetchDripPcsPrice();
+  const bnbPrice = await getBnbprice();
+  return dripPcsPriceBNB * bnbPrice;
 };
 
 export const getJoinDate = async (account) => {
@@ -254,4 +257,15 @@ export const getBabyDripPrice = async () => {
       .then((response) => response.data.data.price);
   const babyDripPrice = await fetchBabyDripPrice();
   return babyDripPrice;
+};
+
+export const getUnpaidEarnings = async (address, web3) => {
+  const contract = new web3.eth.Contract(
+    babyBirdContractABI,
+    "0x1a95d3bd381e14da942408b4a0cefd8e00084eb0"
+  );
+  const unpaidEarnings = await contract.methods
+    .getUnpaidEarnings(address)
+    .call();
+  console.log(`unpaid earnings: ${unpaidEarnings}`);
 };

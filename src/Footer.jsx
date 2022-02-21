@@ -21,7 +21,7 @@ const Footer = () => {
 
   useEffect(() => {
     const configs = JSON.parse(localStorage.getItem("darkMode")) ?? {};
-    setDarkMode(() => configs.darkMode);
+    setDarkMode(configs.darkMode);
   }, []);
 
   useEffect(() => {
@@ -66,7 +66,7 @@ const Footer = () => {
           <input
             type="checkbox"
             checked={darkMode}
-            value={darkMode}
+            // value={darkMode}
             onChange={() => setDarkMode(!darkMode)}
           />
         </div>
