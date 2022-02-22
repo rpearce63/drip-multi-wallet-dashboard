@@ -46,7 +46,15 @@ const Footer = () => {
             Rick Pearce
           </a>
         </span>
-        <div>{process.env.REACT_APP_VERSION}</div>
+        <div>
+          <a
+            href="https://github.com/rpearce63/drip-multi-wallet-dashboard/releases"
+            target="_blank"
+            rel="noreferrer"
+          >
+            {process.env.REACT_APP_VERSION}
+          </a>
+        </div>
 
         {/* <span className="affiliate">
         <a
