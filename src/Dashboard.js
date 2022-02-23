@@ -14,6 +14,7 @@ import {
   getAirdrops,
   getTokenBalance,
   getBabyDripReflections,
+  getUnpaidEarnings,
   //getBabyDripPrice,
 } from "./Contract";
 
@@ -70,6 +71,7 @@ const Dashboard = () => {
   //const [babyDripPrice, setBabyDripPrice] = useState(0);
   const [totalBabyDrip, setTotalBabyDrip] = useState(0);
   const [totalRefections, setTotalReflections] = useState(0);
+  const [totalUnpaid, setTotalUnpaid] = useState(0);
 
   const TABLE_HEADERS = [
     "#",
@@ -89,8 +91,6 @@ const Dashboard = () => {
     "Rewarded",
     "Max Payout",
     "Team",
-    "Baby Drip",
-    "Reflections",
   ];
   const BASE_HEADERS = [
     "#",
@@ -105,6 +105,7 @@ const Dashboard = () => {
     "Max Payout",
     "Team",
   ];
+  const BABYDRIP_COLS = ["Baby Drip", "Reflections", "Unpaid"];
   // let contract;
 
   useEffect(() => {
@@ -190,10 +191,13 @@ const Dashboard = () => {
         parseFloat(await getTokenBalance(web3, wallet.addr, BABYDRIP_TOKEN)) *
         10e8;
 
-      let babyDripReflections =
+      const babyDripReflections =
         babyDripBalance > 0 ? await getBabyDripReflections(wallet.addr) : 0;
       //babyDripReflections = parseFloat(babyDripReflections).toFixed(3);
-
+      const babyDripUnpaid =
+        babyDripBalance > 0 && (await getUnpaidEarnings(wallet.addr, web3));
+      // babyDripBalance > 0 &&
+      //   console.log(`unpaid drip: ${babyDripUnclaimedDrip / 10e17}`);
       const valid = !!userInfo;
       const referral_bonus =
         parseFloat(userInfo.direct_bonus) + parseFloat(userInfo.match_bonus);
@@ -221,6 +225,7 @@ const Dashboard = () => {
           dripBusdLpBalance,
           babyDripBalance,
           babyDripReflections,
+          babyDripUnpaid: babyDripUnpaid / 10e17,
         },
       ];
 
@@ -304,6 +309,12 @@ const Dashboard = () => {
     setTotalReflections(() =>
       validWallets.reduce(
         (total, wallet) => total + parseFloat(wallet.babyDripReflections),
+        0
+      )
+    );
+    setTotalUnpaid(() =>
+      validWallets.reduce(
+        (total, wallet) => total + parseFloat(wallet.babyDripUnpaid),
         0
       )
     );
@@ -713,14 +724,9 @@ const Dashboard = () => {
           <thead className="table-light">
             <tr>
               {expandedTable
-                ? TABLE_HEADERS.map((h) => {
-                    const isbDCol = ["Baby Drip", "Reflections"].includes(h);
-                    if (showBabyDrip && isbDCol) {
-                      return <th key={h}>{h}</th>;
-                    } else if (!isbDCol) {
-                      return <th key={h}>{h}</th>;
-                    }
-                  })
+                ? TABLE_HEADERS.concat(showBabyDrip ? BABYDRIP_COLS : []).map(
+                    (h) => <th key={h}>{h}</th>
+                  )
                 : BASE_HEADERS.map((h) => <th key={h}>{h}</th>)}
             </tr>
             <tr className="table-success">
@@ -803,16 +809,24 @@ const Dashboard = () => {
               </th>
               <th>Directs: {totalTeam}</th>
               {expandedTable && showBabyDrip && (
-                <th>{convertTokenToUSD(totalBabyDrip, 0, false)}</th>
-              )}
-              {expandedTable && showBabyDrip && (
-                <th>
-                  {convertTokenToUSD(
-                    totalRefections,
-                    dripPrice,
-                    showDollarValues
-                  )}
-                </th>
+                <>
+                  <th>{convertTokenToUSD(totalBabyDrip, 0, false)}</th>
+
+                  <th>
+                    {convertTokenToUSD(
+                      totalRefections,
+                      dripPrice,
+                      showDollarValues
+                    )}
+                  </th>
+                  <th>
+                    {convertTokenToUSD(
+                      totalUnpaid,
+                      dripPrice,
+                      showDollarValues
+                    )}
+                  </th>
+                </>
               )}
             </tr>
           </thead>
@@ -962,21 +976,29 @@ const Dashboard = () => {
                     )}
                   </td>
                   {expandedTable && showBabyDrip && (
-                    <td>
-                      {wallet.babyDripBalance > 0 &&
-                        convertTokenToUSD(wallet.babyDripBalance, 0, false)}
-                    </td>
-                  )}
+                    <>
+                      <td>
+                        {wallet.babyDripBalance > 0 &&
+                          convertTokenToUSD(wallet.babyDripBalance, 0, false)}
+                      </td>
 
-                  {expandedTable && showBabyDrip && (
-                    <td>
-                      {wallet.babyDripBalance > 0 &&
-                        convertTokenToUSD(
-                          wallet.babyDripReflections,
-                          dripPrice,
-                          showDollarValues
-                        )}
-                    </td>
+                      <td>
+                        {wallet.babyDripBalance > 0 &&
+                          convertTokenToUSD(
+                            wallet.babyDripReflections,
+                            dripPrice,
+                            showDollarValues
+                          )}
+                      </td>
+                      <td>
+                        {wallet.babyDripBalance > 0 &&
+                          convertTokenToUSD(
+                            wallet.babyDripUnpaid,
+                            dripPrice,
+                            showDollarValues
+                          )}
+                      </td>
+                    </>
                   )}
                 </tr>
               ))}
