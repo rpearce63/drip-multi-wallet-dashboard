@@ -1,6 +1,6 @@
 {
   "name": "drip-multi-wallet-dashboard",
-  "version": "1.2.22",
+  "version": "1.2.23",
   "private": true,
   "dependencies": {
     "@jpmonette/bscscan": "^0.2.3",
@@ -17,6 +17,7 @@
     "react": "^17.0.2",
     "react-bootstrap": "^2.0.3",
     "react-bootstrap-input-spinner": "^1.0.2",
+    "react-dark-mode-toggle": "^0.2.0",
     "react-dom": "^17.0.2",
     "react-router-dom": "^6.2.1",
     "react-scripts": "^4.0.3",
