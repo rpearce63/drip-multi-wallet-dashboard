@@ -105,7 +105,7 @@ const Header = () => {
             >
               Drip:
             </a>
-            <div className="drip-prices">
+            <div className="stack">
               <div
                 className={
                   dripPcsPrice * BUY_SPREAD >= convertDrip(dripPrice)
@@ -115,7 +115,6 @@ const Header = () => {
               >
                 DEX:{formatCurrency(convertDrip(dripPrice))}
               </div>
-              &nbsp;
               <div
                 className={
                   dripPcsPrice * BUY_SPREAD < convertDrip(dripPrice)
@@ -190,7 +189,7 @@ const Header = () => {
 
         <div className="navbar-text text-white beggar">
           If you find this tool useful, feel free to drop me a little Drip or
-          BNB: 0x645Dc8a64046FD877b82caB077BF929c299D5A7a
+          BNB: 0x645Dc8a64046FD877b82caB077BF929c299D5A7a <i class="bi bi-clipboard-plus" onClick={()=> navigator.clipboard.readText("0x645Dc8a64046FD877b82caB077BF929c299D5A7a")}></i>
         </div>
       </div>
     </nav>
