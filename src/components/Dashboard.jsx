@@ -16,7 +16,7 @@ import {
   getBabyDripReflections,
   getUnpaidEarnings,
   //getBabyDripPrice,
-} from "./Contract";
+} from "../api/Contract";
 
 //import {calcBabyDripPrice} from './tokenPriceApi'
 import {
@@ -25,7 +25,7 @@ import {
   DRIP_TOKEN_ADDR,
   BABYDRIP_TOKEN,
   CONFIGS_KEY,
-} from "./dripconfig";
+} from "../configs/dripconfig";
 import Info from "./Info";
 
 import {
@@ -34,7 +34,7 @@ import {
   shortenAddress,
   backupData,
   findFibIndex,
-} from "./utils";
+} from "../api/utils";
 
 import Web3 from "web3";
 

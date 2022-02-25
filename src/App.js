@@ -1,10 +1,10 @@
 import React from "react";
-import Dashboard from "./Dashboard";
+import Dashboard from "./components/Dashboard";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Upline from "./Upline";
-import Downline from "./Downline";
-import Header from "./Header";
-import Footer from "./Footer";
+import Upline from "./components/Upline";
+import Downline from "./components/Downline";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 const App = () => (
   <Router>

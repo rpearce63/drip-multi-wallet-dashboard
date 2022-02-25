@@ -6,10 +6,10 @@ import {
   getBr34pPrice,
   getDripPcsPrice,
   getDripPrice,
-} from "./Contract";
-import { formatCurrency, convertDrip, getLatestVersion } from "./utils";
-import { calcFarmPrice } from "./tokenPriceApi";
-import { DOGSTokenAddress, PIGSTokenAddress } from "./dripconfig";
+} from "../api/Contract";
+import { formatCurrency, convertDrip, getLatestVersion } from "../api/utils";
+import { calcFarmPrice } from "../api/tokenPriceApi";
+import { DOGSTokenAddress, PIGSTokenAddress } from "../configs/dripconfig";
 
 import semver from "semver";
 
