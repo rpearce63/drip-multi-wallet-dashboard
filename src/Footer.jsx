@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useCallback } from "react";
 import { useEffect } from "react";
+import DarkModeToggle from "react-dark-mode-toggle";
 
 const Footer = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -69,7 +70,7 @@ const Footer = () => {
           />
         </a>
       </span> */}
-        <div>
+        {/* <div>
           Dark Mode:{" "}
           <input
             type="checkbox"
@@ -77,8 +78,13 @@ const Footer = () => {
             // value={darkMode}
             onChange={() => setDarkMode(!darkMode)}
           />
-        </div>
-      </div>
+        </div> */}
+
+<DarkModeToggle
+      onChange={setDarkMode}
+      checked={darkMode}
+      size={80}
+    />    </div>
     </footer>
   );
 };
