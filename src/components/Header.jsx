@@ -189,7 +189,15 @@ const Header = () => {
 
         <div className="navbar-text text-white beggar">
           If you find this tool useful, feel free to drop me a little Drip or
-          BNB: 0x645Dc8a64046FD877b82caB077BF929c299D5A7a <i class="bi bi-clipboard-plus" onClick={()=> navigator.clipboard.readText("0x645Dc8a64046FD877b82caB077BF929c299D5A7a")}></i>
+          BNB: 0x645Dc8a64046FD877b82caB077BF929c299D5A7a{" "}
+          <i
+            className="bi bi-clipboard-plus"
+            onClick={() =>
+              navigator.clipboard.writeText(
+                "0x645Dc8a64046FD877b82caB077BF929c299D5A7a"
+              )
+            }
+          ></i>
         </div>
       </div>
     </nav>
