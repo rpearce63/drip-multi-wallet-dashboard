@@ -9,11 +9,13 @@ const Footer = () => {
   const changeMode = useCallback(() => {
     if (darkMode) {
       document.documentElement.classList.add("dark-mode");
+      document.documentElement.classList.remove("light-mode");
       document.querySelectorAll(".inverted").forEach((result) => {
         result.classList.add("invert");
       });
     } else {
       document.documentElement.classList.remove("dark-mode");
+      document.documentElement.classList.add("light-mode");
       document.querySelectorAll(".inverted").forEach((result) => {
         result.classList.remove("invert");
       });
@@ -31,10 +33,13 @@ const Footer = () => {
 
     localStorage.setItem("darkMode", JSON.stringify(configs));
     changeMode();
-
+    let counter = 2;
     const interval = setInterval(() => {
       changeMode();
-    }, 5000);
+      if (counter-- === 0) {
+        clearInterval(interval);
+      }
+    }, 2000);
     return () => clearInterval(interval);
   }, [darkMode, changeMode]);
 
@@ -56,7 +61,6 @@ const Footer = () => {
             {process.env.REACT_APP_VERSION}
           </a>
         </div>
-
         {/* <span className="affiliate">
         <a
           href="https://4dinsingapore.com/amember/aff/go/rpearce63?i=8"
@@ -79,12 +83,8 @@ const Footer = () => {
             onChange={() => setDarkMode(!darkMode)}
           />
         </div> */}
-
-<DarkModeToggle
-      onChange={setDarkMode}
-      checked={darkMode}
-      size={80}
-    />    </div>
+        <DarkModeToggle onChange={setDarkMode} checked={darkMode} size={40} />{" "}
+      </div>
     </footer>
   );
 };

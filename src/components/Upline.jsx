@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getConnection, getContract, getUserInfo } from "./Contract";
+import { getConnection, getContract, getUserInfo } from "../api/Contract";
 
 const Upline = () => {
   let { buddy: buddyId } = useParams();

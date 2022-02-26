@@ -12,14 +12,22 @@
 
 /* Extra large devices (large laptops and desktops, 1200px and up) */
 /* @media only screen and (min-width: 1200px) {...} */
+#root {
+  width: fit-content;
+}
 .dark-mode {
   filter: invert(1) hue-rotate(180deg);
+  transition: filter 0.5s ease-in-out;
+}
+.light-mode {
+  transition: 0.5s ease-in-out;
 }
 
 .invert {
   filter: invert(1) hue-rotate(180deg);
+  transition: filter 0.5s ease-in-out;
 }
-.container {
+.navbar {
   display: flex;
   max-width: fit-content;
 }

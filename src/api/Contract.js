@@ -7,8 +7,8 @@ import {
   BR34P_ABI,
   BR34P_ADDRESS,
   BASIC_TOKEN_ABI,
-} from "./dripconfig";
-const babyDripDistributorABI = require("./babyDripDistributor.json");
+} from "../configs/dripconfig";
+const babyDripDistributorABI = require("../configs/babyDripDistributor.json");
 
 const axios = require("axios");
 const rax = require("retry-axios");
@@ -150,7 +150,8 @@ export const getDownline = async (account) => {
     axios
       .get(`https://api.drip.community/org/${account}`)
       //.then((response) => response.json())
-      .then((response) => response.data);
+      .then((response) => response.data)
+      .catch((err) => console.log(`Error getting downline: ${err.message}`));
   const downline = await fetchDownline(account);
   return downline;
 };

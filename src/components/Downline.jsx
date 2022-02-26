@@ -7,7 +7,7 @@ import {
   getContract,
   getConnection,
   getJoinDate,
-} from "./Contract";
+} from "../api/Contract";
 
 import format from "date-fns/format";
 const flatten = require("flat").flatten;
