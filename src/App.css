@@ -12,9 +12,9 @@
 
 /* Extra large devices (large laptops and desktops, 1200px and up) */
 /* @media only screen and (min-width: 1200px) {...} */
-#root {
+/* #root {
   width: fit-content;
-}
+} */
 .dark-mode {
   filter: invert(1) hue-rotate(180deg);
   transition: filter 0.5s ease-in-out;
@@ -27,7 +27,8 @@
   filter: invert(1) hue-rotate(180deg);
   transition: filter 0.5s ease-in-out;
 }
-.navbar {
+.navbar,
+.container {
   display: flex;
   max-width: fit-content;
 }
@@ -57,7 +58,7 @@
   flex-direction: column;
 }
 /* Small devices (portrait tablets and large phones, 600px and up) */
-@media only screen and (max-width: 662px) {
+@media only screen and (max-width: 700px) {
   .main {
     margin-top: 13rem;
   }
@@ -160,7 +161,7 @@ button {
   justify-content: space-between;
 }
 
-@media only screen and (max-width: 500px) {
+@media only screen and (max-width: 700px) {
   .prices {
     font-size: 14px;
     margin-right: 0;
