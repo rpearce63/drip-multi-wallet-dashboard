@@ -33,13 +33,13 @@ const Footer = () => {
 
     localStorage.setItem("darkMode", JSON.stringify(configs));
     changeMode();
-    let counter = 2;
+    let counter = 10;
     const interval = setInterval(() => {
       changeMode();
       if (counter-- === 0) {
         clearInterval(interval);
       }
-    }, 2000);
+    }, 1000);
     return () => clearInterval(interval);
   }, [darkMode, changeMode]);
 
