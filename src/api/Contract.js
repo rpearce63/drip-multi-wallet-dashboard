@@ -8,6 +8,7 @@ import {
   BR34P_ADDRESS,
   BASIC_TOKEN_ABI,
 } from "../configs/dripconfig";
+import LRU from "lru-cache";
 const babyDripDistributorABI = require("../configs/babyDripDistributor.json");
 
 const axios = require("axios");
@@ -15,7 +16,14 @@ const rax = require("retry-axios");
 const interceptorId = rax.attach();
 
 const flatten = require("flat").flatten;
+const memoize = require("lodash.memoize");
 
+const options = {
+  max: 500,
+  ttl: 1000 * 60 * 5,
+};
+const cache = new LRU(options);
+//console.log("creating new cache");
 const ROLL_HEX = "0xcd5e3c5d";
 const CLAIM_HEX = "0x4e71d92d";
 
@@ -271,7 +279,24 @@ export const getUnpaidEarnings = async (address, web3) => {
   const unpaidEarnings = await contract.methods
     .getUnpaidEarnings(address)
     .call();
-  return unpaidEarnings;
+
+  return unpaidEarnings / 10e17;
+};
+
+export const getShares = async (address, web3) => {
+  const contract = new web3.eth.Contract(
+    babyDripDistributorABI,
+    "0x820BFb786C454C3273F32e9DB90D54Af2ef200b5"
+  );
+  const { amount, totalExcluded, totalRealised } = await contract.methods
+    .shares(address)
+    .call();
+  // console.log(`totalRealised: ${totalRealised}
+  // totalExcluded: ${totalExcluded}`);
+  return {
+    babyDripReflections: totalRealised / 10e17,
+    babyDripUnpaid: totalExcluded / 10e17,
+  };
 };
 
 export const getStartBlock = async () => {
@@ -286,13 +311,29 @@ export const getStartBlock = async () => {
 };
 
 export const getLastAction = async (startBlock, address) => {
+  if (cache.has(address)) {
+    //console.log(`returning cached value for ${address}`);
+    return cache.get(address);
+  }
   const transactions = await axios
     .get(
       `https://api.bscscan.com/api?module=account&action=txlist&address=${address}&startblock=${startBlock}}&endblock=99999999&sort=desc&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY`
     )
-    .then((response) => response.data.result);
+    .then((response) => response.data.result)
+    .catch((err) => {
+      console.log(`error getting last action: ${err.message}`);
+      return null;
+    });
+  if (!Array.isArray(transactions)) {
+    console.log(`transactions is not an array: ${transactions}`);
+    return null;
+  }
   const lastActionHex = transactions.filter((result) =>
     [ROLL_HEX, CLAIM_HEX].includes(result.input)
   )[0].input;
-  return lastActionHex === ROLL_HEX ? "Roll" : "Claim";
+
+  const lastAction = lastActionHex === ROLL_HEX ? "Roll" : "Claim";
+  //console.log(`setting cached value: ${lastAction} for ${address}`);
+  cache.set(address, lastAction);
+  return lastAction;
 };

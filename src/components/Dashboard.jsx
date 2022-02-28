@@ -17,6 +17,7 @@ import {
   getUnpaidEarnings,
   getStartBlock,
   getLastAction,
+  getShares,
   //getBabyDripPrice,
 } from "../api/Contract";
 
@@ -191,8 +192,8 @@ const Dashboard = () => {
         parseFloat(await getTokenBalance(web3, wallet.addr, BABYDRIP_TOKEN)) *
         10e8;
 
-      const babyDripReflections =
-        babyDripBalance > 0 ? await getBabyDripReflections(wallet.addr) : 0;
+      const { babyDripReflections } =
+        babyDripBalance > 0 ? await getShares(wallet.addr, web3) : 0;
       const babyDripUnpaid =
         babyDripBalance > 0 && (await getUnpaidEarnings(wallet.addr, web3));
       const valid = !!userInfo;
@@ -224,7 +225,7 @@ const Dashboard = () => {
           dripBusdLpBalance,
           babyDripBalance,
           babyDripReflections,
-          babyDripUnpaid: babyDripUnpaid / 10e17,
+          babyDripUnpaid,
           lastAction,
         },
       ];
