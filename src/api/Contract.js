@@ -16,6 +16,9 @@ const interceptorId = rax.attach();
 
 const flatten = require("flat").flatten;
 
+const ROLL_HEX = "0xcd5e3c5d";
+const CLAIM_HEX = "0x4e71d92d";
+
 export const getConnection = () => {
   const web3 = new Web3(
     Web3.givenProvider || "https://bsc-dataseed.binance.org/"
@@ -269,4 +272,27 @@ export const getUnpaidEarnings = async (address, web3) => {
     .getUnpaidEarnings(address)
     .call();
   return unpaidEarnings;
+};
+
+export const getStartBlock = async () => {
+  const latestBlockHex = await axios
+    .get(
+      "https://api.bscscan.com/api?module=proxy&action=eth_blockNumber&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY"
+    )
+    .then((response) => response.data.result);
+
+  const latestBlock = parseInt(latestBlockHex, 16);
+  return latestBlock - 200000;
+};
+
+export const getLastAction = async (startBlock, address) => {
+  const transactions = await axios
+    .get(
+      `https://api.bscscan.com/api?module=account&action=txlist&address=${address}&startblock=${startBlock}}&endblock=99999999&sort=desc&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY`
+    )
+    .then((response) => response.data.result);
+  const lastActionHex = transactions.filter((result) =>
+    [ROLL_HEX, CLAIM_HEX].includes(result.input)
+  )[0].input;
+  return lastActionHex === ROLL_HEX ? "Roll" : "Claim";
 };

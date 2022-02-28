@@ -15,6 +15,8 @@ import {
   getTokenBalance,
   getBabyDripReflections,
   getUnpaidEarnings,
+  getStartBlock,
+  getLastAction,
   //getBabyDripPrice,
 } from "../api/Contract";
 
@@ -131,6 +133,7 @@ const Dashboard = () => {
   const fetchData = async () => {
     //web3 = web3 ?? (await getConnection());
     //contract = contract ?? (await getContract(web3));
+    const startBlock = await getStartBlock();
 
     let storedWallets = JSON.parse(
       window.localStorage.getItem("dripAddresses")
@@ -161,7 +164,6 @@ const Dashboard = () => {
       const uplineCount = await getUplineCount(contract, wallet.addr);
       const br34pBalance = await getBr34pBalance(web3, wallet.addr);
       const bnbBalance = await getBnbBalance(web3, wallet.addr);
-      //const revBalance = await getREVBalance(web3, wallet.addr);
 
       const busdBalance = await getTokenBalance(
         web3,
@@ -173,8 +175,6 @@ const Dashboard = () => {
         wallet.addr,
         DRIP_BUSD_LP_ADDRESS
       );
-      // dripBusdLpBalance > 0 &&
-      //   console.log(`Drip/BUSD for ${wallet.addr}: ${dripBusdLpBalance}`);
 
       const coveredDepth = findFibIndex(br34pBalance);
       const teamDepth =
@@ -193,14 +193,13 @@ const Dashboard = () => {
 
       const babyDripReflections =
         babyDripBalance > 0 ? await getBabyDripReflections(wallet.addr) : 0;
-      //babyDripReflections = parseFloat(babyDripReflections).toFixed(3);
       const babyDripUnpaid =
         babyDripBalance > 0 && (await getUnpaidEarnings(wallet.addr, web3));
-      // babyDripBalance > 0 &&
-      //   console.log(`unpaid drip: ${babyDripUnclaimedDrip / 10e17}`);
       const valid = !!userInfo;
       const referral_bonus =
         parseFloat(userInfo.direct_bonus) + parseFloat(userInfo.match_bonus);
+
+      const lastAction = await getLastAction(startBlock, wallet.addr);
       walletCache = [
         ...walletCache,
         {
@@ -226,6 +225,7 @@ const Dashboard = () => {
           babyDripBalance,
           babyDripReflections,
           babyDripUnpaid: babyDripUnpaid / 10e17,
+          lastAction,
         },
       ];
 
@@ -544,17 +544,27 @@ const Dashboard = () => {
 
   return (
     <div className="container">
-      {/* <Header /> */}
-
       <div className="main">
         {!!wallets.length && (
           <div>
+            <div className="hideControlsBtn">
+              <input
+                id="hideControls"
+                type="checkbox"
+                className="btn-check"
+                autoComplete="off"
+                onChange={() => setHideTableControls(!hideTableControls)}
+              ></input>
+              <label htmlFor="hideControls" className="btn btn-primary btn-sm">
+                {hideTableControls ? "Show" : "Hide"} Form Config
+              </label>
+            </div>
             <div
               className="controls"
               style={{ display: hideTableControls ? "block" : "flex" }}
             >
               <div className="form-config">
-                <div className="input-group mb-3">
+                <div className="input-group mb-3 add-address">
                   <button
                     type="button"
                     className="btn btn-primary"
@@ -571,24 +581,8 @@ const Dashboard = () => {
                     onChange={(e) => setNewAddress(e.target.value)}
                     placeholder="Add additional single wallet"
                   />
-                  {/* </div>
-                <div className="col"> */}
                 </div>
-                <div className="hideControlsBtn">
-                  <input
-                    id="hideControls"
-                    type="checkbox"
-                    className="btn-check"
-                    autoComplete="off"
-                    onChange={() => setHideTableControls(!hideTableControls)}
-                  ></input>
-                  <label
-                    htmlFor="hideControls"
-                    className="btn btn-primary btn-sm"
-                  >
-                    {hideTableControls ? "Show" : "Hide"} Form Config
-                  </label>
-                </div>
+
                 {hideTableControls || (
                   <div className="alert">
                     <div>Available will highlight to indicate when it is</div>
@@ -998,6 +992,7 @@ const Dashboard = () => {
                             showDollarValues
                           )}
                       </td>
+                      <td>{wallet.lastAction}</td>
                     </>
                   )}
                 </tr>
@@ -1005,32 +1000,46 @@ const Dashboard = () => {
           </tbody>
         </table>
 
-        <button
-          type="button"
-          className="btn btn-primary"
-          onClick={saveAddresses}
-          disabled={!addressList.length && !wallets.length}
-        >
-          {addressList.length ? "Save" : "Clear"} List
-        </button>
-        <div>Paste a list of addresses:</div>
-        <div>
-          <textarea
-            className="form-control inverted"
-            id="addressList"
-            rows={10}
-            cols={50}
-            value={addressList}
-            onChange={(e) => setAddressList(e.target.value)}
-          />
-          <div>Or load a saved list of wallets and labels:</div>
-          <input
-            className="form-control"
-            type="file"
-            name="file"
-            onChange={changeHandler}
-            placeholder="Load from Backup"
-          />
+        <div className="bottom-controls">
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={saveAddresses}
+            disabled={!addressList.length && !wallets.length}
+          >
+            {addressList.length ? "Save" : "Clear"} List
+          </button>
+          <div>Paste a list of addresses:</div>
+          <div>
+            <textarea
+              className="form-control inverted"
+              id="addressList"
+              rows={10}
+              cols={50}
+              value={addressList}
+              onChange={(e) => setAddressList(e.target.value)}
+            />
+            <div>Or load a saved list of wallets and labels:</div>
+            <div className="file-input-wrapper">
+              <button type="button" className="btn btn-primary btn-file-input">
+                Load backup file
+              </button>
+              <input
+                className="form-control"
+                type="file"
+                name="file"
+                onChange={changeHandler}
+              />
+            </div>
+
+            {/* <input
+              className="form-control inverted"
+              type="file"
+              name="file"
+              onChange={changeHandler}
+              placeholder="Load from Backup"
+            /> */}
+          </div>
         </div>
       </div>
     </div>

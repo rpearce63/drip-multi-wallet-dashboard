@@ -33,13 +33,16 @@ const Footer = () => {
 
     localStorage.setItem("darkMode", JSON.stringify(configs));
     changeMode();
-    let counter = 10;
+
+    //let counter = 10;
+
     const interval = setInterval(() => {
       changeMode();
-      if (counter-- === 0) {
-        clearInterval(interval);
-      }
-    }, 1000);
+
+      //if (counter-- < 1) {
+      // clearInterval(interval);
+      //}
+    }, 5000);
     return () => clearInterval(interval);
   }, [darkMode, changeMode]);
 
@@ -61,28 +64,6 @@ const Footer = () => {
             {process.env.REACT_APP_VERSION}
           </a>
         </div>
-        {/* <span className="affiliate">
-        <a
-          href="https://4dinsingapore.com/amember/aff/go/rpearce63?i=8"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <img
-            src="https://4dinsingapore.com/amember/file/get/path/banners.61bbbb50b08be/i/31928"
-            border={0}
-            alt="DRIP Run Automation banner (version 1)"
-          />
-        </a>
-      </span> */}
-        {/* <div>
-          Dark Mode:{" "}
-          <input
-            type="checkbox"
-            checked={darkMode}
-            // value={darkMode}
-            onChange={() => setDarkMode(!darkMode)}
-          />
-        </div> */}
         <DarkModeToggle onChange={setDarkMode} checked={darkMode} size={40} />{" "}
       </div>
     </footer>
