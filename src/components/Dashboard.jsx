@@ -103,6 +103,7 @@ const Dashboard = () => {
     "Available",
     "ROI",
     "Deposits",
+    "Last Action",
     "NDV",
     "Claimed",
     "Rewarded",
