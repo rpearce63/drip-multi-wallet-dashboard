@@ -73,7 +73,7 @@ const Dashboard = () => {
   const [showBabyDrip, setShowBabyDrip] = useState(true);
   //const [babyDripPrice, setBabyDripPrice] = useState(0);
   const [totalBabyDrip, setTotalBabyDrip] = useState(0);
-  const [totalRefections, setTotalReflections] = useState(0);
+  const [totalReflections, setTotalReflections] = useState(0);
   const [totalUnpaid, setTotalUnpaid] = useState(0);
 
   const TABLE_HEADERS = [
@@ -89,6 +89,7 @@ const Dashboard = () => {
     "Available",
     "ROI",
     "Deposits",
+    "Last Action",
     "NDV",
     "Claimed",
     "Rewarded",
@@ -784,6 +785,7 @@ const Dashboard = () => {
                 {convertTokenToUSD(totalDeposits, dripPrice, showDollarValues)}
               </th>
               <th></th>
+              <th></th>
               <th>
                 {convertTokenToUSD(totalClaimed, dripPrice, showDollarValues)}
               </th>
@@ -809,7 +811,7 @@ const Dashboard = () => {
 
                   <th>
                     {convertTokenToUSD(
-                      totalRefections,
+                      totalReflections,
                       dripPrice,
                       showDollarValues
                     )}
@@ -926,6 +928,7 @@ const Dashboard = () => {
                       showDollarValues
                     )}
                   </td>
+                  <td>{wallet.lastAction}</td>
                   <td
                     className={
                       wallet.ndv / wallet.deposits <= 0.25
@@ -993,7 +996,6 @@ const Dashboard = () => {
                             showDollarValues
                           )}
                       </td>
-                      <td>{wallet.lastAction}</td>
                     </>
                   )}
                 </tr>

@@ -332,7 +332,7 @@ export const getLastAction = async (startBlock, address) => {
     [ROLL_HEX, CLAIM_HEX].includes(result.input)
   )[0].input;
 
-  const lastAction = lastActionHex === ROLL_HEX ? "Roll" : "Claim";
+  const lastAction = lastActionHex === ROLL_HEX ? "Hydrate" : "Claim";
   //console.log(`setting cached value: ${lastAction} for ${address}`);
   cache.set(address, lastAction);
   return lastAction;
