@@ -294,7 +294,7 @@ export const getShares = async (address, web3) => {
   // console.log(`totalRealised: ${totalRealised}
   // totalExcluded: ${totalExcluded}`);
   return {
-    babyDripReflections: totalRealised / 10e17,
+    babyDripReflections: totalRealised ? totalRealised / 10e17 : 0,
     babyDripUnpaid: totalExcluded / 10e17,
   };
 };
@@ -317,7 +317,7 @@ export const getLastAction = async (startBlock, address) => {
   }
   const transactions = await axios
     .get(
-      `https://api.bscscan.com/api?module=account&action=txlist&address=${address}&startblock=${startBlock}}&endblock=99999999&sort=desc&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY`
+      `https://api.bscscan.com/api?module=account&action=txlist&address=${address}&startblock=${startBlock}}&endblock=99999999&sort=asc&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY`
     )
     .then((response) => response.data.result)
     .catch((err) => {
@@ -328,9 +328,9 @@ export const getLastAction = async (startBlock, address) => {
     console.log(`transactions is not an array: ${transactions}`);
     return null;
   }
-  const lastActionHex = transactions.filter((result) =>
-    [ROLL_HEX, CLAIM_HEX].includes(result.input)
-  )[0].input;
+  const lastActionHex = transactions
+    .filter((result) => [ROLL_HEX, CLAIM_HEX].includes(result.input))
+    .sort((t1, t2) => t2.timeStamp - t1.timeStamp)[0].input;
 
   const lastAction = lastActionHex === ROLL_HEX ? "Hydrate" : "Claim";
   //console.log(`setting cached value: ${lastAction} for ${address}`);

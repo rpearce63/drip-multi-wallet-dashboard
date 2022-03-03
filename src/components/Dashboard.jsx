@@ -195,9 +195,12 @@ const Dashboard = () => {
         10e8;
 
       const { babyDripReflections } =
-        babyDripBalance > 0 ? await getShares(wallet.addr, web3) : 0;
+        babyDripBalance > 0 && (await getShares(wallet.addr, web3));
+
       const babyDripUnpaid =
-        babyDripBalance > 0 && (await getUnpaidEarnings(wallet.addr, web3));
+        babyDripBalance > 0 ? await getUnpaidEarnings(wallet.addr, web3) : 0;
+      // console.log(`reflections: ${babyDripReflections}
+      //   unpaid: ${babyDripBalance}`);
       const valid = !!userInfo;
       const referral_bonus =
         parseFloat(userInfo.direct_bonus) + parseFloat(userInfo.match_bonus);
@@ -226,8 +229,8 @@ const Dashboard = () => {
           busdBalance,
           dripBusdLpBalance,
           babyDripBalance,
-          babyDripReflections,
-          babyDripUnpaid,
+          babyDripReflections: babyDripReflections ?? 0,
+          babyDripUnpaid: babyDripUnpaid ?? 0,
           lastAction,
         },
       ];
