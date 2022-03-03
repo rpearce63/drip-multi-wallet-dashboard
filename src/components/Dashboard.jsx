@@ -751,7 +751,11 @@ const Dashboard = () => {
                         h !== "Last Action"
                     )
                     .map((h) => <th key={h}>{h}</th>)
-                : BASE_HEADERS.map((h) => <th key={h}>{h}</th>)}
+                : BASE_HEADERS.filter(
+                    (h) =>
+                      (h === "Last Action" && showLastAction) ||
+                      h !== "Last Action"
+                  ).map((h) => <th key={h}>{h}</th>)}
             </tr>
             <tr className="table-success">
               <th> </th>
