@@ -75,7 +75,7 @@ const Dashboard = () => {
   const [totalBabyDrip, setTotalBabyDrip] = useState(0);
   const [totalReflections, setTotalReflections] = useState(0);
   const [totalUnpaid, setTotalUnpaid] = useState(0);
-
+  const [showLastAction, setShowLastAction] = useState(true);
   const TABLE_HEADERS = [
     "#",
     "Address",
@@ -122,6 +122,7 @@ const Dashboard = () => {
       expandedTable = false,
       hideTableControls = false,
       showBabyDrip = true,
+      showLastAction = true,
     } = JSON.parse(localStorage.getItem(CONFIGS_KEY)) ?? {};
 
     setFlagAmount(() => flagAmount);
@@ -131,6 +132,7 @@ const Dashboard = () => {
     setExpandedTable(() => expandedTable);
     setHideTableControls(() => hideTableControls);
     setShowBabyDrip(() => showBabyDrip);
+    setShowLastAction(() => showLastAction);
   }, []);
 
   const fetchData = async () => {
@@ -205,7 +207,8 @@ const Dashboard = () => {
       const referral_bonus =
         parseFloat(userInfo.direct_bonus) + parseFloat(userInfo.match_bonus);
 
-      const lastAction = await getLastAction(startBlock, wallet.addr);
+      const lastAction =
+        showLastAction && (await getLastAction(startBlock, wallet.addr));
       walletCache = [
         ...walletCache,
         {
@@ -525,6 +528,7 @@ const Dashboard = () => {
       expandedTable,
       hideTableControls,
       showBabyDrip,
+      showLastAction,
     };
 
     localStorage.setItem(CONFIGS_KEY, JSON.stringify(config));
@@ -536,6 +540,7 @@ const Dashboard = () => {
     expandedTable,
     hideTableControls,
     showBabyDrip,
+    showLastAction,
   ]);
 
   const deleteRow = (addr) => {
@@ -594,6 +599,21 @@ const Dashboard = () => {
                     <div>Available will highlight to indicate when it is</div>
                     <div>ready to claim or hydrate</div>
 
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        id="showLastAction"
+                        type="checkbox"
+                        checked={showLastAction}
+                        onChange={() => setShowLastAction(!showLastAction)}
+                      />
+                      <label
+                        className="form-check-label"
+                        htmlFor="showLastAction"
+                      >
+                        Show Last Action
+                      </label>
+                    </div>
                     <div className="form-check">
                       <input
                         className="form-check-input"
@@ -724,9 +744,13 @@ const Dashboard = () => {
           <thead className="table-light">
             <tr>
               {expandedTable
-                ? TABLE_HEADERS.concat(showBabyDrip ? BABYDRIP_COLS : []).map(
-                    (h) => <th key={h}>{h}</th>
-                  )
+                ? TABLE_HEADERS.concat(showBabyDrip ? BABYDRIP_COLS : [])
+                    .filter(
+                      (h) =>
+                        (h === "Last Action" && showLastAction) ||
+                        h !== "Last Action"
+                    )
+                    .map((h) => <th key={h}>{h}</th>)
                 : BASE_HEADERS.map((h) => <th key={h}>{h}</th>)}
             </tr>
             <tr className="table-success">
@@ -788,7 +812,7 @@ const Dashboard = () => {
               <th>
                 {convertTokenToUSD(totalDeposits, dripPrice, showDollarValues)}
               </th>
-              <th></th>
+              {showLastAction && <th></th>}
               <th></th>
               <th>
                 {convertTokenToUSD(totalClaimed, dripPrice, showDollarValues)}
@@ -932,7 +956,7 @@ const Dashboard = () => {
                       showDollarValues
                     )}
                   </td>
-                  <td>{wallet.lastAction}</td>
+                  {showLastAction && <td>{wallet.lastAction}</td>}
                   <td
                     className={
                       wallet.ndv / wallet.deposits <= 0.25
