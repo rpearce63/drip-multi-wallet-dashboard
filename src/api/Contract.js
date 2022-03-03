@@ -26,6 +26,7 @@ const cache = new LRU(options);
 //console.log("creating new cache");
 const ROLL_HEX = "0xcd5e3c5d";
 const CLAIM_HEX = "0x4e71d92d";
+const DEPOSIT_HEX = "0x47e7ef24";
 
 export const getConnection = () => {
   const web3 = new Web3(
@@ -328,11 +329,23 @@ export const getLastAction = async (startBlock, address) => {
     console.log(`transactions is not an array: ${transactions}`);
     return null;
   }
-  const lastActionHex = transactions
-    .filter((result) => [ROLL_HEX, CLAIM_HEX].includes(result.input))
-    .sort((t1, t2) => t2.timeStamp - t1.timeStamp)[0].input;
-
-  const lastAction = lastActionHex === ROLL_HEX ? "Hydrate" : "Claim";
+  const lastActionHex =
+    transactions
+      .filter((result) =>
+        [ROLL_HEX, CLAIM_HEX, DEPOSIT_HEX].some((a) =>
+          result.input.startsWith(a)
+        )
+      )
+      .sort((t1, t2) => t2.timeStamp - t1.timeStamp)[0]?.input ?? "";
+  console.log(lastActionHex);
+  const lastAction =
+    lastActionHex === ROLL_HEX
+      ? "Hydrate"
+      : lastActionHex === CLAIM_HEX
+      ? "Claim"
+      : lastActionHex.startsWith(DEPOSIT_HEX)
+      ? "Deposit"
+      : "";
   //console.log(`setting cached value: ${lastAction} for ${address}`);
   cache.set(address, lastAction);
   return lastAction;
