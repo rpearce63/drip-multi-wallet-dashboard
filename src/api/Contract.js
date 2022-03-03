@@ -337,7 +337,6 @@ export const getLastAction = async (startBlock, address) => {
         )
       )
       .sort((t1, t2) => t2.timeStamp - t1.timeStamp)[0]?.input ?? "";
-  console.log(lastActionHex);
   const lastAction =
     lastActionHex === ROLL_HEX
       ? "Hydrate"
