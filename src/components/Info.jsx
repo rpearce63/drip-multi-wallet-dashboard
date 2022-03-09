@@ -28,11 +28,11 @@ const Info = ({ backupData }) => {
           Team: displays # of Direct referrals / Total team size / Max depth of
           team
         </li>
-        <li>
+        {/* <li>
           If you have BABYDRIP, turn that feature on and the table will show
           your BABYDRIP balance as well as your total token Reflections/rewards
           of Drip from the BABYDRIP contract.
-        </li>
+        </li> */}
       </ul>
     </div>
   );

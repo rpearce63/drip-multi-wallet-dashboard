@@ -28,6 +28,7 @@ import {
   DRIP_TOKEN_ADDR,
   BABYDRIP_TOKEN,
   CONFIGS_KEY,
+  adminWallets
 } from "../configs/dripconfig";
 import Info from "./Info";
 
@@ -70,7 +71,7 @@ const Dashboard = () => {
   const [bnbPrice, setBnbPrice] = useState(0);
   const [dripPrice, setDripPrice] = useState(0);
   const [br34pPrice, setBr34pPrice] = useState(0);
-  const [showBabyDrip, setShowBabyDrip] = useState(true);
+  const [showBabyDrip, setShowBabyDrip] = useState(false);
   //const [babyDripPrice, setBabyDripPrice] = useState(0);
   const [totalBabyDrip, setTotalBabyDrip] = useState(0);
   const [totalReflections, setTotalReflections] = useState(0);
@@ -121,7 +122,7 @@ const Dashboard = () => {
       bnbThreshold = 0.05,
       expandedTable = false,
       hideTableControls = false,
-      showBabyDrip = true,
+      showBabyDrip = false,
       showLastAction = true,
     } = JSON.parse(localStorage.getItem(CONFIGS_KEY)) ?? {};
 
@@ -131,7 +132,7 @@ const Dashboard = () => {
     setBnbThreshold(() => bnbThreshold);
     setExpandedTable(() => expandedTable);
     setHideTableControls(() => hideTableControls);
-    setShowBabyDrip(() => showBabyDrip);
+    setShowBabyDrip(() => false);
     setShowLastAction(() => showLastAction);
   }, []);
 
@@ -140,7 +141,8 @@ const Dashboard = () => {
     //contract = contract ?? (await getContract(web3));
     const startBlock = await getStartBlock();
 
-    let storedWallets = JSON.parse(
+    let storedWallets =
+    JSON.parse(
       window.localStorage.getItem("dripAddresses")
     );
     if (storedWallets && !storedWallets[0].addr) {
@@ -156,7 +158,8 @@ const Dashboard = () => {
       storedWallets?.map((wallet) => ({
         addr: wallet.addr.trim().replace("\n", ""),
         label: wallet.label,
-      })) ?? [];
+      })) ?? adminWallets;
+      localStorage.setItem("dripAddresses", JSON.stringify(myWallets));
     let walletCache = [];
     myWallets.forEach(async (wallet, index) => {
       const userInfo = await getUserInfo(contract, wallet.addr);
@@ -614,7 +617,7 @@ const Dashboard = () => {
                         Show Last Action
                       </label>
                     </div>
-                    <div className="form-check">
+                    {/* <div className="form-check">
                       <input
                         className="form-check-input"
                         id="flagShowBabyDrip"
@@ -628,7 +631,7 @@ const Dashboard = () => {
                       >
                         Show Baby Drip
                       </label>
-                    </div>
+                    </div> */}
                     <div className="form-check">
                       <input
                         className="form-check-input"
@@ -1035,47 +1038,13 @@ const Dashboard = () => {
           </tbody>
         </table>
 
-        <div className="bottom-controls">
-          <button
+        <button
             type="button"
             className="btn btn-primary"
             onClick={saveAddresses}
-            disabled={!addressList.length && !wallets.length}
           >
-            {addressList.length ? "Save" : "Clear"} List
+            Reset List
           </button>
-          <div>Paste a list of addresses:</div>
-          <div>
-            <textarea
-              className="form-control inverted"
-              id="addressList"
-              rows={10}
-              cols={50}
-              value={addressList}
-              onChange={(e) => setAddressList(e.target.value)}
-            />
-            <div>Or load a saved list of wallets and labels:</div>
-            <div className="file-input-wrapper">
-              <button type="button" className="btn btn-primary btn-file-input">
-                Load backup file
-              </button>
-              <input
-                className="form-control"
-                type="file"
-                name="file"
-                onChange={changeHandler}
-              />
-            </div>
-
-            {/* <input
-              className="form-control inverted"
-              type="file"
-              name="file"
-              onChange={changeHandler}
-              placeholder="Load from Backup"
-            /> */}
-          </div>
-        </div>
       </div>
     </div>
   );
