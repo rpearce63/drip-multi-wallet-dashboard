@@ -161,6 +161,7 @@ const Dashboard = () => {
         addr: wallet.addr.trim().replace("\n", ""),
         label: wallet.label,
       })) ?? [adminWallet];
+      
       //localStorage.setItem("dripAddresses", JSON.stringify(myWallets));
     let walletCache = [];
     myWallets.forEach(async (wallet, index) => {
