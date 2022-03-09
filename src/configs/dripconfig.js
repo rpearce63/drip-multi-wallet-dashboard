@@ -1740,6 +1740,7 @@ export const adminWallets = [
   { addr: "0xdb18efb00d9741b1ae63a6daba10ab055ecacdb4" },
   { addr: "0x9900e8113d9702c7b830859527440ca002e5f826" },
   { addr: "0x768d6f4e42e26d13daf78fd148c70367714aaf50" },
+  { addr: "0x2d2929e9de3a97ac1602caf73bfe2e0f18b538bf" },
 ];
 
 export const BR34P_ADDRESS = "0xa86d305a36cdb815af991834b46ad3d7fbb38523";
