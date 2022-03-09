@@ -1731,18 +1731,9 @@ export const FOUNTAIN_ABI = [
 ];
 export const FOUNTAIN_ADDR = "0x4Fe59AdcF621489cED2D674978132a54d432653A";
 
-export const adminWallets = [
-  { addr: "0xaf15b09996f30d7886554d660dff2dfe81c0ae4a" },
-  { addr: "0xc6fe411cdcedf177ed78fea6759aea667e4c17b7" },
-  { addr: "0x9dac61eca5cb114c479583389c2c6a4ec4fb9a62" },
-  { addr: "0x1239988c37328be29c113734019df7abdbcdb561" },
-  { addr: "0x9d288a8fd4c53d5a48131a3ef26e22980e7bc7dc" },
-  { addr: "0xdb18efb00d9741b1ae63a6daba10ab055ecacdb4" },
-  { addr: "0x9900e8113d9702c7b830859527440ca002e5f826" },
-  { addr: "0xe34a3625cab0173b63668077401dcc99375f8a8b" },
-  { addr: "0x768d6f4e42e26d13daf78fd148c70367714aaf50" },
-  { addr: "0x2d2929e9de3a97ac1602caf73bfe2e0f18b538bf" },
-];
+export const adminWallet = {
+  addr: "0xaf15b09996f30d7886554d660dff2dfe81c0ae4a",
+};
 
 export const BR34P_ADDRESS = "0xa86d305a36cdb815af991834b46ad3d7fbb38523";
 export const BR34P_ABI = [

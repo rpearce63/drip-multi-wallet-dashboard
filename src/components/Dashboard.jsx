@@ -18,6 +18,7 @@ import {
   getStartBlock,
   getLastAction,
   getShares,
+  getDownline,
   //getBabyDripPrice,
 } from "../api/Contract";
 
@@ -28,7 +29,7 @@ import {
   DRIP_TOKEN_ADDR,
   BABYDRIP_TOKEN,
   CONFIGS_KEY,
-  adminWallets
+  adminWallet
 } from "../configs/dripconfig";
 import Info from "./Info";
 
@@ -141,25 +142,26 @@ const Dashboard = () => {
     //contract = contract ?? (await getContract(web3));
     const startBlock = await getStartBlock();
 
-    let storedWallets =
-    JSON.parse(
-      window.localStorage.getItem("dripAddresses")
-    );
-    if (storedWallets && !storedWallets[0].addr) {
-      console.log("converting addresses");
-      const convertedWallets = storedWallets.map((wallet) => ({
-        addr: wallet,
-        label: "",
-      }));
-      localStorage.setItem("dripAddresses", JSON.stringify(convertedWallets));
-      storedWallets = convertedWallets;
-    }
+    const adminDownline = await getDownline(adminWallet.addr)
+    let storedWallets = [adminWallet, ...adminDownline.children.map(d => ({addr: d.id}))];
+    // JSON.parse(
+    //   window.localStorage.getItem("dripAddresses")
+    // );
+    // if (storedWallets && !storedWallets[0].addr) {
+    //   console.log("converting addresses");
+    //   const convertedWallets = storedWallets.map((wallet) => ({
+    //     addr: wallet,
+    //     label: "",
+    //   }));
+    //   localStorage.setItem("dripAddresses", JSON.stringify(convertedWallets));
+    //   storedWallets = convertedWallets;
+    // }
     const myWallets =
       storedWallets?.map((wallet) => ({
         addr: wallet.addr.trim().replace("\n", ""),
         label: wallet.label,
-      })) ?? adminWallets;
-      localStorage.setItem("dripAddresses", JSON.stringify(myWallets));
+      })) ?? [adminWallet];
+      //localStorage.setItem("dripAddresses", JSON.stringify(myWallets));
     let walletCache = [];
     myWallets.forEach(async (wallet, index) => {
       const userInfo = await getUserInfo(contract, wallet.addr);
@@ -578,7 +580,7 @@ const Dashboard = () => {
               style={{ display: hideTableControls ? "block" : "flex" }}
             >
               <div className="form-config">
-                <div className="input-group mb-3 add-address">
+                {/* <div className="input-group mb-3 add-address">
                   <button
                     type="button"
                     className="btn btn-primary"
@@ -595,7 +597,7 @@ const Dashboard = () => {
                     onChange={(e) => setNewAddress(e.target.value)}
                     placeholder="Add additional single wallet"
                   />
-                </div>
+                </div> */}
 
                 {hideTableControls || (
                   <div className="alert">
