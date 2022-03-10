@@ -30,7 +30,7 @@ const Header = () => {
 
   useEffect(() => {
     setWeb3(
-      new Web3(Web3.givenProvider || "https://bsc-dataseed.binance.org/")
+      new Web3( "https://bsc-dataseed.binance.org/")
     );
   }, []);
 

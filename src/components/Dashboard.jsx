@@ -343,7 +343,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     const web3 = new Web3(
-      Web3.givenProvider || "https://bsc-dataseed.binance.org/"
+      "https://bsc-dataseed.binance.org/"
     );
     web3.eth.net.isListening().then(() => {
       setWeb3(web3);
