@@ -143,25 +143,31 @@ const Dashboard = () => {
     const startBlock = await getStartBlock();
 
     const adminDownline = await getDownline(adminWallet.addr)
-    let storedWallets = [adminWallet, ...adminDownline.children.map(d => ({addr: d.id}))];
-    // JSON.parse(
-    //   window.localStorage.getItem("dripAddresses")
-    // );
+    let defaultWallets = [adminWallet, ...adminDownline.children.map(d => ({addr: d.id}))];
+    let storedWallets = JSON.parse(
+      window.localStorage.getItem("dripAddresses")
+    ) ?? [];
+    if(defaultWallets.length > storedWallets.length) {
+      storedWallets = storedWallets.concat(defaultWallets.slice(storedWallets.length))
+    }
+    localStorage.setItem("dripAddresses", JSON.stringify(storedWallets));
+
     // if (storedWallets && !storedWallets[0].addr) {
     //   console.log("converting addresses");
     //   const convertedWallets = storedWallets.map((wallet) => ({
     //     addr: wallet,
     //     label: "",
     //   }));
-    //   localStorage.setItem("dripAddresses", JSON.stringify(convertedWallets));
+    //   
     //   storedWallets = convertedWallets;
     // }
+
     const myWallets =
       storedWallets?.map((wallet) => ({
         addr: wallet.addr.trim().replace("\n", ""),
         label: wallet.label,
       })) ?? [adminWallet];
-      
+
       //localStorage.setItem("dripAddresses", JSON.stringify(myWallets));
     let walletCache = [];
     myWallets.forEach(async (wallet, index) => {
