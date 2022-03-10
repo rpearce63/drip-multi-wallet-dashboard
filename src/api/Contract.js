@@ -13,10 +13,11 @@ const babyDripDistributorABI = require("../configs/babyDripDistributor.json");
 
 const axios = require("axios");
 const rax = require("retry-axios");
+// eslint-disable-next-line no-unused-vars
 const interceptorId = rax.attach();
 
 const flatten = require("flat").flatten;
-const memoize = require("lodash.memoize");
+// const memoize = require("lodash.memoize");
 
 const options = {
   max: 500,
@@ -287,6 +288,7 @@ export const getShares = async (address, web3) => {
     babyDripDistributorABI,
     "0x820BFb786C454C3273F32e9DB90D54Af2ef200b5"
   );
+  // eslint-disable-next-line no-unused-vars
   const { amount, totalExcluded, totalRealised } = await contract.methods
     .shares(address)
     .call();
