@@ -29,9 +29,7 @@ const CLAIM_HEX = "0x4e71d92d";
 const DEPOSIT_HEX = "0x47e7ef24";
 
 export const getConnection = () => {
-  const web3 = new Web3(
-    Web3.givenProvider || "https://bsc-dataseed.binance.org/"
-  );
+  const web3 = new Web3("https://bsc-dataseed.binance.org/");
   return web3;
 };
 

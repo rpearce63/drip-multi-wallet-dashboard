@@ -193,7 +193,7 @@ const Dashboard = () => {
 
       const ndv = parseFloat(d + a + r - c).toFixed(3);
       const babyDripBalance =
-        parseFloat(await getTokenBalance(web3, wallet.addr, BABYDRIP_TOKEN)) *
+        showBabyDrip && parseFloat(await getTokenBalance(web3, wallet.addr, BABYDRIP_TOKEN)) *
         10e8;
 
       const { babyDripReflections } =
@@ -331,7 +331,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     const web3 = new Web3(
-      Web3.givenProvider || "https://bsc-dataseed.binance.org/"
+       "https://bsc-dataseed.binance.org/"
     );
     web3.eth.net.isListening().then(() => {
       setWeb3(web3);
