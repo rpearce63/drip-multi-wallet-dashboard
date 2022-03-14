@@ -33,6 +33,13 @@ const Info = ({ backupData }) => {
           your BABYDRIP balance as well as your total token Reflections/rewards
           of Drip from the BABYDRIP contract.
         </li>
+        <li>
+          Ref Pos: This value shows which upline wallet is next to receive
+          rewards on the next action via the Round Robin cycle. 0 means your
+          buddy is next. If you have a parent/child wallet setup, you could use
+          this value to time when you want to make a new deposit in your child
+          wallet so that your parent wallet gets the reward.
+        </li>
       </ul>
     </div>
   );

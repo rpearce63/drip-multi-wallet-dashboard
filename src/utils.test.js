@@ -1,4 +1,4 @@
-import { findFibIndex } from "./utils";
+import { findFibIndex } from "./api/utils";
 
 test("should find the fib index", () => {
   expect(findFibIndex(1)).toBe(0);
