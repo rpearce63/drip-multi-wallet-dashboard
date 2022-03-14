@@ -70,7 +70,7 @@ const Dashboard = () => {
   const [bnbPrice, setBnbPrice] = useState(0);
   const [dripPrice, setDripPrice] = useState(0);
   const [br34pPrice, setBr34pPrice] = useState(0);
-  const [showBabyDrip, setShowBabyDrip] = useState(true);
+  const [showBabyDrip, setShowBabyDrip] = useState(false);
   //const [babyDripPrice, setBabyDripPrice] = useState(0);
   const [totalBabyDrip, setTotalBabyDrip] = useState(0);
   const [totalReflections, setTotalReflections] = useState(0);
@@ -95,6 +95,7 @@ const Dashboard = () => {
     "Rewarded",
     "Max Payout",
     "Team",
+    "Ref Pos",
   ];
   const BASE_HEADERS = [
     "#",
@@ -109,6 +110,7 @@ const Dashboard = () => {
     "Rewarded",
     "Max Payout",
     "Team",
+    "Ref Pos",
   ];
   const BABYDRIP_COLS = ["Baby Drip", "Reflections", "Unpaid"];
   // let contract;
@@ -121,7 +123,7 @@ const Dashboard = () => {
       bnbThreshold = 0.05,
       expandedTable = false,
       hideTableControls = false,
-      showBabyDrip = true,
+      showBabyDrip = false,
       showLastAction = true,
     } = JSON.parse(localStorage.getItem(CONFIGS_KEY)) ?? {};
 
@@ -193,8 +195,9 @@ const Dashboard = () => {
 
       const ndv = parseFloat(d + a + r - c).toFixed(3);
       const babyDripBalance =
-        showBabyDrip && parseFloat(await getTokenBalance(web3, wallet.addr, BABYDRIP_TOKEN)) *
-        10e8;
+        showBabyDrip &&
+        parseFloat(await getTokenBalance(web3, wallet.addr, BABYDRIP_TOKEN)) *
+          10e8;
 
       const { babyDripReflections } =
         babyDripBalance > 0 && (await getShares(wallet.addr, web3));
@@ -330,9 +333,7 @@ const Dashboard = () => {
   }, [wallets]);
 
   useEffect(() => {
-    const web3 = new Web3(
-       "https://bsc-dataseed.binance.org/"
-    );
+    const web3 = new Web3("https://bsc-dataseed.binance.org/");
     web3.eth.net.isListening().then(() => {
       setWeb3(web3);
     });
@@ -837,6 +838,7 @@ const Dashboard = () => {
                 )}
               </th>
               <th>Directs: {totalTeam}</th>
+              <th></th>
               {expandedTable && showBabyDrip && (
                 <>
                   <th>{convertTokenToUSD(totalBabyDrip, 0, false)}</th>
@@ -1004,6 +1006,13 @@ const Dashboard = () => {
                         {wallet.teamDepth}
                       </Link>
                     )}
+                  </td>
+                  <td
+                    className={
+                      wallet.ref_claim_pos === "0" ? "hydrate inverted" : ""
+                    }
+                  >
+                    {wallet.ref_claim_pos}
                   </td>
                   {expandedTable && showBabyDrip && (
                     <>
