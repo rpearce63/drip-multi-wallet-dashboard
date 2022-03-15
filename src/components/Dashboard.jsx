@@ -40,6 +40,7 @@ import {
 } from "../api/utils";
 
 import Web3 from "web3";
+import TableRow from "./TableRow";
 
 const Dashboard = () => {
   const [web3, setWeb3] = useState();
@@ -76,6 +77,7 @@ const Dashboard = () => {
   const [totalReflections, setTotalReflections] = useState(0);
   const [totalUnpaid, setTotalUnpaid] = useState(0);
   const [showLastAction, setShowLastAction] = useState(true);
+  const [startBlock, setStartBlock] = useState();
   const TABLE_HEADERS = [
     "#",
     "Address",
@@ -116,6 +118,19 @@ const Dashboard = () => {
   // let contract;
 
   useEffect(() => {
+    const web3 = new Web3("https://bsc-dataseed.binance.org/");
+    web3.eth.net.isListening().then(() => {
+      setWeb3(web3);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (web3) {
+      setContract(getContract(web3));
+    }
+  }, [web3]);
+
+  useEffect(() => {
     const {
       flagAmount = true,
       flagLowBnb = true,
@@ -141,6 +156,7 @@ const Dashboard = () => {
     //web3 = web3 ?? (await getConnection());
     //contract = contract ?? (await getContract(web3));
     const startBlock = await getStartBlock();
+    setStartBlock(() => startBlock);
 
     let storedWallets = JSON.parse(
       window.localStorage.getItem("dripAddresses")
@@ -161,91 +177,16 @@ const Dashboard = () => {
       })) ?? [];
     let walletCache = [];
     myWallets.forEach(async (wallet, index) => {
-      const userInfo = await getUserInfo(contract, wallet.addr);
-      const available = await claimsAvailable(contract, wallet.addr);
-      const dripBalance = await getTokenBalance(
-        web3,
-        wallet.addr,
-        DRIP_TOKEN_ADDR
-      );
-      const uplineCount = await getUplineCount(contract, wallet.addr);
-      const br34pBalance = await getBr34pBalance(web3, wallet.addr);
-      const bnbBalance = await getBnbBalance(web3, wallet.addr);
-
-      const busdBalance = await getTokenBalance(
-        web3,
-        wallet.addr,
-        BUSD_TOKEN_ADDRESS
-      );
-      const dripBusdLpBalance = await getTokenBalance(
-        web3,
-        wallet.addr,
-        DRIP_BUSD_LP_ADDRESS
-      );
-
-      const coveredDepth = findFibIndex(br34pBalance);
-      const teamDepth =
-        userInfo.referrals > 0 && (await getDownlineDepth(wallet.addr));
-
-      const { airdrops } = await getAirdrops(contract, wallet.addr);
-      const a = parseFloat(web3.utils.fromWei(airdrops));
-      const d = parseFloat(web3.utils.fromWei(userInfo.deposits));
-      const r = parseFloat(web3.utils.fromWei(userInfo.rolls));
-      const c = parseFloat(web3.utils.fromWei(userInfo.payouts));
-
-      const ndv = parseFloat(d + a + r - c).toFixed(3);
-      const babyDripBalance =
-        showBabyDrip &&
-        parseFloat(await getTokenBalance(web3, wallet.addr, BABYDRIP_TOKEN)) *
-          10e8;
-
-      const { babyDripReflections } =
-        babyDripBalance > 0 && (await getShares(wallet.addr, web3));
-
-      const babyDripUnpaid =
-        babyDripBalance > 0 ? await getUnpaidEarnings(wallet.addr, web3) : 0;
-      // console.log(`reflections: ${babyDripReflections}
-      //   unpaid: ${babyDripBalance}`);
-      const valid = !!userInfo;
-      const referral_bonus =
-        parseFloat(userInfo.direct_bonus) + parseFloat(userInfo.match_bonus);
-
-      const lastAction =
-        showLastAction && (await getLastAction(startBlock, wallet.addr));
-      walletCache = [
-        ...walletCache,
-        {
-          index,
-          ...userInfo,
-          deposits: userInfo.deposits / 10e17,
-          available: available / 10e17,
-          payouts: userInfo.payouts / 10e17,
-          direct_bonus: referral_bonus / 10e17,
-
-          address: wallet.addr,
-          label: wallet.label,
-          valid,
-          dripBalance,
-          br34pBalance,
-          uplineCount,
-          bnbBalance,
-          coveredDepth,
-          teamDepth,
-          ndv,
-          busdBalance,
-          dripBusdLpBalance,
-          babyDripBalance,
-          babyDripReflections: babyDripReflections ?? 0,
-          babyDripUnpaid: babyDripUnpaid ?? 0,
-          lastAction,
-        },
-      ];
-
-      setWallets(() => [...walletCache]);
-      setDataCopied(false);
-
-      // setRevPrice(() => revPrice);
+      const walletData = await fetchWalletData(wallet, index);
+      console.log(walletData);
+      walletCache.push(walletData);
     });
+    setWallets(() => walletCache);
+    setDataCopied(false);
+    await fetchPrices();
+  };
+
+  const fetchPrices = async () => {
     const [bnbPrice, dripPrice] = await getDripPrice(web3);
     const br34pPrice = await getBr34pPrice();
     //const revPrice = await calcREVPrice();
@@ -256,6 +197,86 @@ const Dashboard = () => {
     setBr34pPrice(() => br34pPrice);
   };
 
+  const fetchWalletData = async (wallet, index) => {
+    const userInfo = await getUserInfo(contract, wallet.addr);
+    const available = await claimsAvailable(contract, wallet.addr);
+    const dripBalance = await getTokenBalance(
+      web3,
+      wallet.addr,
+      DRIP_TOKEN_ADDR
+    );
+    const uplineCount = await getUplineCount(contract, wallet.addr);
+    const br34pBalance = await getBr34pBalance(web3, wallet.addr);
+    const bnbBalance = await getBnbBalance(web3, wallet.addr);
+
+    const busdBalance = await getTokenBalance(
+      web3,
+      wallet.addr,
+      BUSD_TOKEN_ADDRESS
+    );
+    const dripBusdLpBalance = await getTokenBalance(
+      web3,
+      wallet.addr,
+      DRIP_BUSD_LP_ADDRESS
+    );
+
+    const coveredDepth = findFibIndex(br34pBalance);
+    const teamDepth =
+      userInfo.referrals > 0 && (await getDownlineDepth(wallet.addr));
+
+    const { airdrops } = await getAirdrops(contract, wallet.addr);
+    const a = parseFloat(web3.utils.fromWei(airdrops));
+    const d = parseFloat(web3.utils.fromWei(userInfo.deposits));
+    const r = parseFloat(web3.utils.fromWei(userInfo.rolls));
+    const c = parseFloat(web3.utils.fromWei(userInfo.payouts));
+
+    const ndv = parseFloat(d + a + r - c).toFixed(3);
+    const babyDripBalance =
+      showBabyDrip &&
+      parseFloat(await getTokenBalance(web3, wallet.addr, BABYDRIP_TOKEN)) *
+        10e8;
+
+    const { babyDripReflections } =
+      babyDripBalance > 0 && (await getShares(wallet.addr, web3));
+
+    const babyDripUnpaid =
+      babyDripBalance > 0 ? await getUnpaidEarnings(wallet.addr, web3) : 0;
+    // console.log(`reflections: ${babyDripReflections}
+    //   unpaid: ${babyDripBalance}`);
+    const valid = !!userInfo;
+    const referral_bonus =
+      parseFloat(userInfo.direct_bonus) + parseFloat(userInfo.match_bonus);
+
+    const lastAction =
+      showLastAction && (await getLastAction(startBlock, wallet.addr));
+    return {
+      index,
+      ...userInfo,
+      deposits: userInfo.deposits / 10e17,
+      available: available / 10e17,
+      payouts: userInfo.payouts / 10e17,
+      direct_bonus: referral_bonus / 10e17,
+
+      address: wallet.addr,
+      label: wallet.label,
+      valid,
+      dripBalance,
+      br34pBalance,
+      uplineCount,
+      bnbBalance,
+      coveredDepth,
+      teamDepth,
+      ndv,
+      busdBalance,
+      dripBusdLpBalance,
+      babyDripBalance,
+      babyDripReflections: babyDripReflections ?? 0,
+      babyDripUnpaid: babyDripUnpaid ?? 0,
+      lastAction,
+    };
+
+    // setRevPrice(() => revPrice);
+  };
   useEffect(() => {
     const validWallets = wallets.filter((wallet) => wallet.valid);
 
@@ -331,19 +352,6 @@ const Dashboard = () => {
       )
     );
   }, [wallets]);
-
-  useEffect(() => {
-    const web3 = new Web3("https://bsc-dataseed.binance.org/");
-    web3.eth.net.isListening().then(() => {
-      setWeb3(web3);
-    });
-  }, []);
-
-  useEffect(() => {
-    if (web3) {
-      setContract(getContract(web3));
-    }
-  }, [web3]);
 
   useEffect(() => {
     web3 && contract && fetchData();
@@ -865,181 +873,22 @@ const Dashboard = () => {
             {wallets
               .sort((a, b) => a.index - b.index)
               .map((wallet, index) => (
-                <tr key={wallet.address}>
-                  <td
-                    className="rowIndex"
-                    onClick={() => deleteRow(wallet.address)}
-                  >
-                    <span>{index + 1}</span>
-                  </td>
-                  <td
-                    className={wallet.valid ? "" : "invalid"}
-                    onClick={(e) =>
-                      navigator.clipboard.writeText(wallet.address)
-                    }
-                  >
-                    <Link to={`/upline/${wallet.address}`}>
-                      {shortenAddress(wallet.address)}
-                    </Link>
-                  </td>
-                  <td>
-                    {editLabels ? (
-                      <input
-                        size={8}
-                        type="text"
-                        value={wallet.label}
-                        onChange={(e) => addLabel(wallet.index, e.target.value)}
-                      />
-                    ) : (
-                      wallet.label
-                    )}
-                  </td>
-                  {expandedTable && <td>{shortenAddress(wallet.upline)}</td>}
-                  {expandedTable && <td>{wallet.uplineCount}</td>}
-                  {expandedTable && (
-                    <td>
-                      {convertTokenToUSD(
-                        wallet.busdBalance,
-                        1,
-                        showDollarValues
-                      )}
-                    </td>
-                  )}
-                  {expandedTable && (
-                    <td
-                      className={
-                        wallet.coveredDepth < wallet.teamDepth
-                          ? "buy-more-br34p inverted"
-                          : "good-br34p"
-                      }
-                    >
-                      {(wallet.br34pBalance > 0 || wallet.teamDepth > 0) &&
-                        `${convertTokenToUSD(
-                          wallet.br34pBalance,
-                          br34pPrice,
-                          showDollarValues
-                        )}
-                      / ${wallet.coveredDepth}`}
-                    </td>
-                  )}
-                  {expandedTable && (
-                    <td>
-                      {convertTokenToUSD(
-                        wallet.dripBalance,
-                        dripPrice,
-                        showDollarValues
-                      )}
-                    </td>
-                  )}
-
-                  {expandedTable && (
-                    <>
-                      <td className={highlightStyleFor("bnb", wallet)}>
-                        {convertTokenToUSD(
-                          wallet.bnbBalance,
-                          bnbPrice,
-                          showDollarValues
-                        )}
-                      </td>
-                    </>
-                  )}
-                  <td className={highlightStyleFor("amt", wallet)}>
-                    {convertTokenToUSD(
-                      wallet.available,
-                      dripPrice,
-                      showDollarValues
-                    )}
-                  </td>
-
-                  <td className={highlightStyleFor("pct", wallet)}>
-                    {formatPercent(wallet.available / wallet.deposits)}%
-                  </td>
-
-                  <td>
-                    {convertTokenToUSD(
-                      wallet.deposits,
-                      dripPrice,
-                      showDollarValues
-                    )}
-                  </td>
-                  {showLastAction && <td>{wallet.lastAction}</td>}
-                  <td
-                    className={
-                      wallet.ndv / wallet.deposits <= 0.25
-                        ? "warning inverted"
-                        : ""
-                    }
-                  >
-                    {wallet.ndv}
-                  </td>
-                  <td>
-                    {convertTokenToUSD(
-                      wallet.payouts,
-                      dripPrice,
-                      showDollarValues
-                    )}
-                  </td>
-                  <td>
-                    {convertTokenToUSD(
-                      wallet.direct_bonus,
-                      dripPrice,
-                      showDollarValues
-                    )}
-                    {/* /
-                    {convertTokenToUSD(
-                      wallet.match_bonus,
-                      dripPrice,
-                      showDollarValues
-                    )} */}
-                  </td>
-                  <td>
-                    {convertTokenToUSD(
-                      wallet.deposits * 3.65,
-                      dripPrice,
-                      showDollarValues
-                    )}
-                  </td>
-                  <td>
-                    {wallet.referrals > 0 && (
-                      <Link to={`/downline/${wallet.address}`}>
-                        {wallet.referrals} / {wallet.total_structure} /{" "}
-                        {wallet.teamDepth}
-                      </Link>
-                    )}
-                  </td>
-                  <td
-                    className={
-                      wallet.ref_claim_pos === "0" ? "hydrate inverted" : ""
-                    }
-                  >
-                    {wallet.ref_claim_pos}
-                  </td>
-                  {expandedTable && showBabyDrip && (
-                    <>
-                      <td>
-                        {wallet.babyDripBalance > 0 &&
-                          convertTokenToUSD(wallet.babyDripBalance, 0, false)}
-                      </td>
-
-                      <td>
-                        {wallet.babyDripBalance > 0 &&
-                          convertTokenToUSD(
-                            wallet.babyDripReflections,
-                            dripPrice,
-                            showDollarValues
-                          )}
-                      </td>
-                      <td>
-                        {wallet.babyDripBalance > 0 &&
-                          convertTokenToUSD(
-                            wallet.babyDripUnpaid,
-                            dripPrice,
-                            showDollarValues
-                          )}
-                      </td>
-                    </>
-                  )}
-                </tr>
+                <TableRow
+                  key={index}
+                  index={index}
+                  addLabel={addLabel}
+                  bnbPrice={bnbPrice}
+                  deleteRow={deleteRow}
+                  dripPrice={dripPrice}
+                  expandedTable={expandedTable}
+                  highlightStyleFor={highlightStyleFor}
+                  showBabyDrip={showBabyDrip}
+                  showDollarValues={showDollarValues}
+                  showLastAction={showLastAction}
+                  wallet={wallet}
+                  br34pPrice={br34pPrice}
+                  editLabels={editLabels}
+                />
               ))}
           </tbody>
         </table>
