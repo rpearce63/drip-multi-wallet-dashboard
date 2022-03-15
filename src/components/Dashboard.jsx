@@ -28,6 +28,7 @@ import {
   DRIP_TOKEN_ADDR,
   BABYDRIP_TOKEN,
   CONFIGS_KEY,
+  myWallets,
 } from "../configs/dripconfig";
 import Info from "./Info";
 
@@ -175,15 +176,17 @@ const Dashboard = () => {
         addr: wallet.addr.trim().replace("\n", ""),
         label: wallet.label,
       })) ?? [];
-    let walletCache = [];
-    myWallets.forEach(async (wallet, index) => {
-      const walletData = await fetchWalletData(wallet, index);
-      console.log(walletData);
-      walletCache.push(walletData);
-    });
-    setWallets(() => walletCache);
+
+    const walletCache = await Promise.all(
+      myWallets.map(async (wallet, index) => {
+        const walletData = await fetchWalletData(wallet, index);
+        return walletData;
+      })
+    );
+    setWallets(walletCache);
+
     setDataCopied(false);
-    await fetchPrices();
+    fetchPrices();
   };
 
   const fetchPrices = async () => {
