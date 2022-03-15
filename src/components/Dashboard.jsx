@@ -79,6 +79,7 @@ const Dashboard = () => {
   const [totalUnpaid, setTotalUnpaid] = useState(0);
   const [showLastAction, setShowLastAction] = useState(true);
   const [startBlock, setStartBlock] = useState();
+  const [timer, setTimer] = useState(0);
   const TABLE_HEADERS = [
     "#",
     "Address",
@@ -154,6 +155,7 @@ const Dashboard = () => {
   }, []);
 
   const fetchData = async () => {
+    setTimer(60);
     //web3 = web3 ?? (await getConnection());
     //contract = contract ?? (await getContract(web3));
     const startBlock = await getStartBlock();
@@ -361,8 +363,13 @@ const Dashboard = () => {
     const interval = setInterval(() => {
       autoRefresh && fetchData();
     }, 60000);
-
-    return () => clearInterval(interval);
+    const timerInterval = setInterval(() => {
+      setTimer((timer) => timer - 1);
+    }, 1000);
+    return () => {
+      clearInterval(timerInterval);
+      clearInterval(interval);
+    };
   }, [web3, contract, autoRefresh]);
 
   const saveAddresses = (e) => {
@@ -570,6 +577,15 @@ const Dashboard = () => {
       <div className="main">
         {!!wallets.length && (
           <div>
+            <div
+              style={{
+                backgroundColor: "green",
+                width: `${timer}rem`,
+                height: 2,
+                marginBottom: 5,
+                transition: `width 1s linear`,
+              }}
+            ></div>
             <div className="hideControlsBtn">
               <input
                 id="hideControls"
