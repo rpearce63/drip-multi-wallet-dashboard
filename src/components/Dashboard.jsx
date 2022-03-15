@@ -364,7 +364,7 @@ const Dashboard = () => {
       autoRefresh && fetchData();
     }, 60000);
     const timerInterval = setInterval(() => {
-      setTimer((timer) => timer - 1);
+      autoRefresh && setTimer((timer) => timer - 1);
     }, 1000);
     return () => {
       clearInterval(timerInterval);
