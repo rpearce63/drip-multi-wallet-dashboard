@@ -80,6 +80,8 @@ const Dashboard = () => {
   const [showLastAction, setShowLastAction] = useState(true);
   const [startBlock, setStartBlock] = useState();
   const [timer, setTimer] = useState(0);
+  const [loading, setLoading] = useState(true);
+
   const TABLE_HEADERS = [
     "#",
     "Address",
@@ -155,6 +157,7 @@ const Dashboard = () => {
   }, []);
 
   const fetchData = async () => {
+    //setLoading(true);
     setTimer(60);
     //web3 = web3 ?? (await getConnection());
     //contract = contract ?? (await getContract(web3));
@@ -189,6 +192,7 @@ const Dashboard = () => {
 
     setDataCopied(false);
     fetchPrices();
+    setLoading(false);
   };
 
   const fetchPrices = async () => {
@@ -733,7 +737,9 @@ const Dashboard = () => {
             </div>
           </div>
         )}
-        {!!wallets.length && (
+        {loading ? (
+          <div className="loading">Loading...</div>
+        ) : (
           <div className="table-options">
             <button
               className="btn-copy btn btn-outline-secondary"
