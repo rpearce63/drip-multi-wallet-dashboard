@@ -59,7 +59,7 @@ const Header = () => {
     const currentDripPrice = dripPriceRaw * bnbPrice;
     const br34pPrice = await getBr34pPrice();
     const dripPcsPrice = await getDripPcsPrice();
-    const pigPrice = await calcFarmPrice(PIGSTokenAddress);
+    //const pigPrice = await calcFarmPrice(PIGSTokenAddress);
     const dogPrice = await calcFarmPrice(DOGSTokenAddress);
     //const babyDripPrice = await calcBabyDripPrice(web3);
 
@@ -69,7 +69,7 @@ const Header = () => {
     setBr34pPrice(() => br34pPrice);
     setDripBnbPrice(() => dripPriceRaw / 10e17);
     setDripPcsPrice(() => dripPcsPrice);
-    setPigPrice(() => pigPrice);
+    //setPigPrice(() => pigPrice);
     setDogPrice(() => dogPrice);
     //setBabyDripPrice(() => babyDripPrice);
 
@@ -160,9 +160,9 @@ const Header = () => {
                 target="_blank"
                 rel="noreferrer"
               >
-                Pig:
+                PigV2:
               </a>{" "}
-              {formatCurrency(pigPrice)}
+              TBA
             </div>
             <div>
               <a
