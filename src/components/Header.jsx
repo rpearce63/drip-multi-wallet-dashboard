@@ -29,9 +29,7 @@ const Header = () => {
   const BUY_SPREAD = 1.2;
 
   useEffect(() => {
-    setWeb3(
-      new Web3( "https://bsc-dataseed.binance.org/")
-    );
+    setWeb3(new Web3("https://bsc-dataseed.binance.org/"));
   }, []);
 
   useEffect(() => {
@@ -59,7 +57,7 @@ const Header = () => {
     const currentDripPrice = dripPriceRaw * bnbPrice;
     const br34pPrice = await getBr34pPrice();
     const dripPcsPrice = await getDripPcsPrice();
-    //const pigPrice = await calcFarmPrice(PIGSTokenAddress);
+    const pigPrice = await calcFarmPrice(PIGSTokenAddress);
     const dogPrice = await calcFarmPrice(DOGSTokenAddress);
     //const babyDripPrice = await calcBabyDripPrice(web3);
 
@@ -69,7 +67,7 @@ const Header = () => {
     setBr34pPrice(() => br34pPrice);
     setDripBnbPrice(() => dripPriceRaw / 10e17);
     setDripPcsPrice(() => dripPcsPrice);
-    //setPigPrice(() => pigPrice);
+    setPigPrice(() => pigPrice);
     setDogPrice(() => dogPrice);
     //setBabyDripPrice(() => babyDripPrice);
 
@@ -155,14 +153,14 @@ const Header = () => {
           </div>
           <div className="price stack">
             <div>
-              <a
+              {/* <a
                 href="https://bscscan.com/address/0x3A4C15F96B3b058ab3Fb5FAf1440Cc19E7AE07ce"
                 target="_blank"
                 rel="noreferrer"
-              >
-                PigV2:
-              </a>{" "}
-              TBA
+              > */}
+              PigV2: TBA
+              {/* </a>{" "} */}
+              {/* {formatCurrency(pigPrice)} */}
             </div>
             <div>
               <a
