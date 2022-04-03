@@ -1732,7 +1732,7 @@ export const FOUNTAIN_ABI = [
 export const FOUNTAIN_ADDR = "0x4Fe59AdcF621489cED2D674978132a54d432653A";
 
 export const adminWallet = {
-  addr: "0xaf15b09996f30d7886554d660dff2dfe81c0ae4a",
+  id: "0xaf15b09996f30d7886554d660dff2dfe81c0ae4a",
 };
 
 export const BR34P_ADDRESS = "0xa86d305a36cdb815af991834b46ad3d7fbb38523";

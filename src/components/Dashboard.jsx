@@ -18,6 +18,9 @@ import {
   getLastAction,
   getShares,
   getDownline,
+  getAdminWallets,
+  addNewAdminWallets,
+  updateAdminWalletLabels,
   //getBabyDripPrice,
 } from "../api/Contract";
 
@@ -28,7 +31,7 @@ import {
   DRIP_TOKEN_ADDR,
   BABYDRIP_TOKEN,
   CONFIGS_KEY,
-  adminWallet
+  adminWallet,
 } from "../configs/dripconfig";
 import Info from "./Info";
 
@@ -77,6 +80,8 @@ const Dashboard = () => {
   const [totalReflections, setTotalReflections] = useState(0);
   const [totalUnpaid, setTotalUnpaid] = useState(0);
   const [showLastAction, setShowLastAction] = useState(true);
+  const [updatedLabels, setUpdatedLabels] = useState([]);
+
   const TABLE_HEADERS = [
     "#",
     "Address",
@@ -139,16 +144,34 @@ const Dashboard = () => {
     //web3 = web3 ?? (await getConnection());
     //contract = contract ?? (await getContract(web3));
     const startBlock = await getStartBlock();
+    const adminWalletsFromDB = await getAdminWallets();
+    const adminDownline = await getDownline(adminWallet.id);
 
-    const adminDownline = await getDownline(adminWallet.addr)
-    let defaultWallets = [adminWallet, ...adminDownline.children.map(d => ({addr: d.id}))];
-    let storedWallets = JSON.parse(
-      window.localStorage.getItem("dripAddresses")
-    ) ?? [];
-    if(defaultWallets.length > storedWallets.length) {
-      storedWallets = storedWallets.concat(defaultWallets.slice(storedWallets.length))
-    }
-    localStorage.setItem("dripAddresses", JSON.stringify(storedWallets));
+    let teamWalletsFromOrg = [
+      adminWallet,
+      ...adminDownline.children.map((d) => ({
+        id: d.id,
+        label: d.label || "",
+      })),
+    ];
+    const newWallets = [];
+    teamWalletsFromOrg.length > adminWalletsFromDB.length &&
+      teamWalletsFromOrg.forEach((tw) => {
+        adminWalletsFromDB.find((aw) => aw.id === tw.id) || newWallets.push(tw);
+      });
+    let combinedWallets = [...adminWalletsFromDB, ...newWallets].map((w) => ({
+      addr: w.id,
+      label: w.label,
+    }));
+    newWallets.length && addNewAdminWallets(newWallets);
+
+    //   JSON.parse(window.localStorage.getItem("dripAddresses")) ?? [];
+    // if (defaultWallets.length > storedWallets.length) {
+    //   storedWallets = storedWallets.concat(
+    //     defaultWallets.slice(storedWallets.length)
+    //   );
+    // }
+    // localStorage.setItem("dripAddresses", JSON.stringify(storedWallets));
 
     // if (storedWallets && !storedWallets[0].addr) {
     //   console.log("converting addresses");
@@ -156,19 +179,13 @@ const Dashboard = () => {
     //     addr: wallet,
     //     label: "",
     //   }));
-    //   
+    //
     //   storedWallets = convertedWallets;
     // }
 
-    const myWallets =
-      storedWallets?.map((wallet) => ({
-        addr: wallet.addr.trim().replace("\n", ""),
-        label: wallet.label,
-      })) ?? [adminWallet];
-
-      //localStorage.setItem("dripAddresses", JSON.stringify(myWallets));
+    //localStorage.setItem("dripAddresses", JSON.stringify(myWallets));
     let walletCache = [];
-    myWallets.forEach(async (wallet, index) => {
+    combinedWallets.forEach(async (wallet, index) => {
       const userInfo = await getUserInfo(contract, wallet.addr);
       const available = await claimsAvailable(contract, wallet.addr);
       const dripBalance = await getTokenBalance(
@@ -203,8 +220,9 @@ const Dashboard = () => {
 
       const ndv = parseFloat(d + a + r - c).toFixed(3);
       const babyDripBalance =
-        showBabyDrip && parseFloat(await getTokenBalance(web3, wallet.addr, BABYDRIP_TOKEN)) *
-        10e8;
+        showBabyDrip &&
+        parseFloat(await getTokenBalance(web3, wallet.addr, BABYDRIP_TOKEN)) *
+          10e8;
 
       const { babyDripReflections } =
         babyDripBalance > 0 && (await getShares(wallet.addr, web3));
@@ -340,9 +358,7 @@ const Dashboard = () => {
   }, [wallets]);
 
   useEffect(() => {
-    const web3 = new Web3(
-      "https://bsc-dataseed.binance.org/"
-    );
+    const web3 = new Web3("https://bsc-dataseed.binance.org/");
     web3.eth.net.isListening().then(() => {
       setWeb3(web3);
     });
@@ -446,36 +462,45 @@ const Dashboard = () => {
   };
 
   const addLabel = (index, label) => {
-    let walletAddr;
-    const newWallets = wallets.map((wallet) => {
-      if (parseInt(wallet.index) === index) {
-        walletAddr = wallet.address;
-        return { ...wallet, label };
-      } else {
-        return { ...wallet };
+    const matchedWallet = wallets.find((wallet) => wallet.index === index);
+    matchedWallet.label = label;
+    const updatedLabel = { id: matchedWallet.address, label };
+
+    // let storedWallets = JSON.parse(
+    //   window.localStorage.getItem("dripAddresses")
+    // );
+    // storedWallets = storedWallets.map((wallet, index) => {
+    //   if (walletAddr === wallet.addr) {
+    //     return { addr: wallet.addr, label };
+    //   } else {
+    //     return { ...wallet };
+    //   }
+    // });
+    // window.localStorage.setItem("dripAddresses", JSON.stringify(storedWallets));
+    const updatedList = updatedLabels.map((w) => {
+      if (w.id === updatedLabel.id) {
+        w.label = updatedLabel.label;
       }
+      return w;
     });
 
-    let storedWallets = JSON.parse(
-      window.localStorage.getItem("dripAddresses")
-    );
-    storedWallets = storedWallets.map((wallet, index) => {
-      if (walletAddr === wallet.addr) {
-        return { addr: wallet.addr, label };
-      } else {
-        return { ...wallet };
-      }
-    });
-    window.localStorage.setItem("dripAddresses", JSON.stringify(storedWallets));
-    setWallets(newWallets);
+    if (updatedList.find((u) => u.id === updatedLabel.id)) {
+      setUpdatedLabels([...updatedList]);
+    } else {
+      setUpdatedLabels([...updatedList, updatedLabel]);
+    }
   };
 
-  // const changeHandler = (event) => {
-  //   event.target.files[0].text().then((t) => {
-  //     localStorage.setItem("dripAddresses", t);
-  //   });
-  //   window.location.reload(true);
-  // };
+  useEffect(() => {
+    !editLabels && updateAdminWalletLabels(updatedLabels);
+  }, [editLabels]);
+
+  const changeHandler = (event) => {
+    event.target.files[0].text().then((t) => {
+      localStorage.setItem("dripAddresses", t);
+    });
+    window.location.reload(true);
+  };
 
   const copyTableData = () => {
     const tableData = [
@@ -1047,12 +1072,12 @@ const Dashboard = () => {
         </table>
 
         <button
-            type="button"
-            className="btn btn-primary"
-            onClick={saveAddresses}
-          >
-            Reset List
-          </button>
+          type="button"
+          className="btn btn-primary"
+          onClick={saveAddresses}
+        >
+          Reset List
+        </button>
       </div>
     </div>
   );

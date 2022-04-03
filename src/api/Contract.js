@@ -349,3 +349,30 @@ export const getLastAction = async (startBlock, address) => {
   cache.set(address, lastAction);
   return lastAction;
 };
+
+export const getAdminWallets = async () => {
+  const response = await axios.get(
+    "https://2qqxfh205f.execute-api.us-east-1.amazonaws.com/items"
+  );
+  const wallets = response.data;
+  return wallets;
+};
+
+export const addNewAdminWallets = async (newWallets) => {
+  newWallets.forEach(async (wallet) => {
+    await axios({
+      method: "PUT",
+      url: "https://2qqxfh205f.execute-api.us-east-1.amazonaws.com/items",
+      data: wallet,
+    });
+  });
+};
+
+export const updateAdminWalletLabels = async (updatedLabels) => {
+  updatedLabels.forEach(async (wallet) => {
+    await axios.patch(
+      `https://2qqxfh205f.execute-api.us-east-1.amazonaws.com/items/${wallet.id}`,
+      { label: wallet.label }
+    );
+  });
+};
