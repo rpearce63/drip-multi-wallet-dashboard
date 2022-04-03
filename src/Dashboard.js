@@ -84,7 +84,6 @@ const Dashboard = () => {
       const bnbBalance = await getBnbBalance(web3, wallet.addr);
       const referral_bonus =
         parseFloat(userInfo.direct_bonus) + parseFloat(userInfo.match_bonus);
-      console.log(`referral_bonus: ${referral_bonus / 10e17}`);
       const valid = !!userInfo;
       walletCache = [
         ...walletCache,
