@@ -25,7 +25,7 @@ const Dashboard = () => {
   const [totalAvailable, setTotalAvailable] = useState(0);
   const [totalClaimed, setTotalClaimed] = useState(0);
   const [totalDirectBonus, setTotalDirectBonus] = useState(0);
-  const [totalMatch, setTotalMatch] = useState(0);
+  //const [totalMatch, setTotalMatch] = useState(0);
   const [totalChildren, setTotalChildren] = useState(0);
   const [totalTeam, setTotalTeam] = useState(0);
   const [addressList, setAddressList] = useState("");
@@ -82,6 +82,9 @@ const Dashboard = () => {
       const uplineCount = await getUplineCount(contract, wallet.addr);
       const br34pBalance = await getBr34pBalance(web3, wallet.addr);
       const bnbBalance = await getBnbBalance(web3, wallet.addr);
+      const referral_bonus =
+        parseFloat(userInfo.direct_bonus) + parseFloat(userInfo.match_bonus);
+      console.log(`referral_bonus: ${referral_bonus / 10e17}`);
       const valid = !!userInfo;
       walletCache = [
         ...walletCache,
@@ -96,6 +99,7 @@ const Dashboard = () => {
           br34pBalance,
           uplineCount,
           bnbBalance,
+          direct_bonus: referral_bonus,
         },
       ];
 
@@ -132,11 +136,11 @@ const Dashboard = () => {
         return total + parseFloat(wallet.direct_bonus);
       }, 0)
     );
-    setTotalMatch((totalMatch) =>
-      validWallets.reduce((total, wallet) => {
-        return total + parseFloat(wallet.match_bonus);
-      }, 0)
-    );
+    // setTotalMatch((totalMatch) =>
+    //   validWallets.reduce((total, wallet) => {
+    //     return total + parseFloat(wallet.match_bonus);
+    //   }, 0)
+    // );
 
     setTotalChildren((totalChildren) =>
       validWallets.reduce((total, wallet) => {
@@ -204,34 +208,6 @@ const Dashboard = () => {
     }
   };
 
-  // const highlightStyle = (wallet) => {
-  //   let style;
-  //   const pct = wallet.available / wallet.deposits;
-  //   const amount = convertDrip(wallet.available);
-
-  //   switch (triggerType) {
-  //     case "percent":
-  //       //const pct = wallet.available / wallet.deposits;
-  //       style = pct >= 0.01 ? "hydrate" : pct >= 0.009 ? "prepare" : "";
-  //       return style;
-
-  //     case "amount":
-  //       //const amount = convertDrip(wallet.available);
-  //       style = amount >= 1 ? "hydrate" : amount >= 0.5 ? "prepare" : "";
-  //       return style;
-  //     case "both":
-  //       style =
-  //         pct >= 0.01 && amount >= 1
-  //           ? "hydrate"
-  //           : pct >= 0.01 && amount >= 0.5
-  //           ? "hydrate"
-  //           : "";
-  //       return style;
-  //     default:
-  //       return "";
-  //   }
-  // };
-
   const highlightStyleFor = (col, wallet) => {
     let amount, percent, style;
     switch (col) {
@@ -295,7 +271,7 @@ const Dashboard = () => {
         formatPercent(w.available / w.deposits),
         convertDrip(w.deposits),
         convertDrip(w.payouts),
-        `${convertDrip(w.direct_bonus)}/${convertDrip(w.match_bonus)}`,
+        convertDrip(w.direct_bonus),
         convertDrip(w.deposits * 3.65),
         `${w.referrals}/${w.total_structure}`,
       ]),
@@ -413,9 +389,7 @@ const Dashboard = () => {
               <th></th>
               <th>{convertDrip(totalDeposits)}</th>
               <th>{convertDrip(totalClaimed)}</th>
-              <th>
-                {convertDrip(totalDirectBonus)}/{convertDrip(totalMatch)}
-              </th>
+              <th>{convertDrip(totalDirectBonus)}</th>
               <th>{convertDrip(totalDeposits * 3.65)}</th>
               <th>
                 {totalChildren}/{totalTeam}
@@ -466,10 +440,7 @@ const Dashboard = () => {
                   </td>
                   <td>{convertDrip(wallet.deposits)}</td>
                   <td>{convertDrip(wallet.payouts)}</td>
-                  <td>
-                    {convertDrip(wallet.direct_bonus)}/
-                    {convertDrip(wallet.match_bonus)}
-                  </td>
+                  <td>{convertDrip(wallet.direct_bonus)}</td>
                   <td>{convertDrip(wallet.deposits * 3.65)}</td>
                   <td>
                     {wallet.referrals} / {wallet.total_structure}
@@ -514,19 +485,6 @@ const Dashboard = () => {
             <span>© 2022 - </span>
             <a href="https://t.me/rpearce63" target="_blank no_referrer">
               Rick Pearce
-            </a>
-          </span>
-          <span className="affiliate">
-            <a
-              href="https://4dinsingapore.com/amember/aff/go/rpearce63?i=8"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <img
-                src="https://4dinsingapore.com/amember/file/get/path/banners.61bbbb50b08be/i/31928"
-                border={0}
-                alt="DRIP Run Automation banner (version 1)"
-              />
             </a>
           </span>
         </div>
