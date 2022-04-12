@@ -329,6 +329,7 @@ export const getLastAction = async (startBlock, address) => {
   }
   const lastActionHex =
     transactions
+      .filter((tx) => tx.to === "0xFFE811714ab35360b67eE195acE7C10D93f89D8C")
       .filter((result) =>
         [ROLL_HEX, CLAIM_HEX, DEPOSIT_HEX].some((a) =>
           result.input.startsWith(a)
