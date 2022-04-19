@@ -646,7 +646,7 @@ const Dashboard = () => {
                         Show Last Action
                       </label>
                     </div>
-                    <div className="form-check">
+                    {/* <div className="form-check">
                       <input
                         className="form-check-input"
                         id="flagShowBabyDrip"
@@ -660,7 +660,7 @@ const Dashboard = () => {
                       >
                         Show Baby Drip
                       </label>
-                    </div>
+                    </div> */}
                     <div className="form-check">
                       <input
                         className="form-check-input"
