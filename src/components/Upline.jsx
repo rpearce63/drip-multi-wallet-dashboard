@@ -56,8 +56,8 @@ const Upline = () => {
         <table className="table">
           <thead>
             <tr>
-              <th></th>
-              <th></th>
+              <th>Referral Index</th>
+              <th>Address</th>
               <th>Referral Coverage Depth</th>
               <th>Net Positive</th>
               <th>Team</th>
@@ -66,7 +66,7 @@ const Upline = () => {
           <tbody>
             {uplineData.map((upline, index) => (
               <tr key={upline.address}>
-                <td>{index + 1}</td>
+                <td>{index === 0 ? "Self" : index - 1}</td>
                 <td>
                   <a
                     href={`https://bscscan.com/address/${upline.address}`}
