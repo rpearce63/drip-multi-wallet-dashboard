@@ -2013,6 +2013,6 @@ export const BASIC_TOKEN_ABI = [
   },
 ];
 
-export const PIGSTokenAddress = "0x3A4C15F96B3b058ab3Fb5FAf1440Cc19E7AE07ce";
+export const PIGSTokenAddress = "0x9a3321e1acd3b9f6debee5e042dd2411a1742002";
 export const DOGSTokenAddress = "0xDBdC73B95cC0D5e7E99dC95523045Fc8d075Fb9e";
 export const BABYDRIP_TOKEN = "0x1a95d3bd381e14da942408b4a0cefd8e00084eb0";

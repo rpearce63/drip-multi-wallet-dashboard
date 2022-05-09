@@ -153,14 +153,14 @@ const Header = () => {
           </div>
           <div className="price stack">
             <div>
-              {/* <a
-                href="https://bscscan.com/address/0x3A4C15F96B3b058ab3Fb5FAf1440Cc19E7AE07ce"
+              <a
+                href="https://poocoin.app/tokens/0x9a3321e1acd3b9f6debee5e042dd2411a1742002"
                 target="_blank"
                 rel="noreferrer"
-              > */}
-              PigV2: TBA
-              {/* </a>{" "} */}
-              {/* {formatCurrency(pigPrice)} */}
+              >
+                PigV2:
+              </a>{" "}
+              {formatCurrency(pigPrice)}
             </div>
             <div>
               <a
