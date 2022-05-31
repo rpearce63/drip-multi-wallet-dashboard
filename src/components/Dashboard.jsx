@@ -13,20 +13,17 @@ import {
   getDownlineDepth,
   getAirdrops,
   getTokenBalance,
-  getBabyDripReflections,
   getUnpaidEarnings,
   getStartBlock,
   getLastAction,
   getShares,
-  //getBabyDripPrice,
 } from "../api/Contract";
 
-//import {calcBabyDripPrice} from './tokenPriceApi'
 import {
   BUSD_TOKEN_ADDRESS,
   DRIP_BUSD_LP_ADDRESS,
   DRIP_TOKEN_ADDR,
-  BABYDRIP_TOKEN,
+  DRIP_TOKEN,
   CONFIGS_KEY,
   myWallets,
 } from "../configs/dripconfig";
@@ -57,6 +54,7 @@ const Dashboard = () => {
   const [totalBnbBalance, setTotalBnbBalance] = useState(0);
   const [totalBr34p, setTotalBr34p] = useState(0);
   const [totalBusd, setTotalBusd] = useState(0);
+  const [totalHydrated, setTotalHydrated] = useState(0);
 
   const [newAddress, setNewAddress] = useState("");
   const [flagAmount, setFlagAmount] = useState(true);
@@ -72,9 +70,6 @@ const Dashboard = () => {
   const [bnbPrice, setBnbPrice] = useState(0);
   const [dripPrice, setDripPrice] = useState(0);
   const [br34pPrice, setBr34pPrice] = useState(0);
-  const [showBabyDrip, setShowBabyDrip] = useState(false);
-  //const [babyDripPrice, setBabyDripPrice] = useState(0);
-  const [totalBabyDrip, setTotalBabyDrip] = useState(0);
   const [totalReflections, setTotalReflections] = useState(0);
   const [totalUnpaid, setTotalUnpaid] = useState(0);
   const [showLastAction, setShowLastAction] = useState(true);
@@ -98,6 +93,7 @@ const Dashboard = () => {
     "Last Action",
     "NDV",
     "Claimed",
+    "Hydrated",
     "Rewarded",
     "Max Payout",
     "Team",
@@ -118,8 +114,6 @@ const Dashboard = () => {
     "Team",
     "Ref Pos",
   ];
-  const BABYDRIP_COLS = ["Baby Drip", "Reflections", "Unpaid"];
-  // let contract;
 
   useEffect(() => {
     const web3 = new Web3("https://bsc-dataseed.binance.org/");
@@ -142,7 +136,6 @@ const Dashboard = () => {
       bnbThreshold = 0.05,
       expandedTable = false,
       hideTableControls = false,
-      showBabyDrip = false,
       showLastAction = true,
     } = JSON.parse(localStorage.getItem(CONFIGS_KEY)) ?? {};
 
@@ -152,7 +145,6 @@ const Dashboard = () => {
     setBnbThreshold(() => bnbThreshold);
     setExpandedTable(() => expandedTable);
     setHideTableControls(() => hideTableControls);
-    setShowBabyDrip(() => showBabyDrip);
     setShowLastAction(() => showLastAction);
   }, []);
 
@@ -198,9 +190,7 @@ const Dashboard = () => {
   const fetchPrices = async () => {
     const [bnbPrice, dripPrice] = await getDripPrice(web3);
     const br34pPrice = await getBr34pPrice();
-    //const revPrice = await calcREVPrice();
-    //const babyDripPrice = await calcBabyDripPrice(web3);
-    //setBabyDripPrice(() => babyDripPrice);
+
     setDripPrice(() => (dripPrice * bnbPrice) / 10e17);
     setBnbPrice(() => bnbPrice);
     setBr34pPrice(() => br34pPrice);
@@ -240,18 +230,7 @@ const Dashboard = () => {
     const c = parseFloat(web3.utils.fromWei(userInfo.payouts));
 
     const ndv = parseFloat(d + a + r - c).toFixed(3);
-    const babyDripBalance =
-      showBabyDrip &&
-      parseFloat(await getTokenBalance(web3, wallet.addr, BABYDRIP_TOKEN)) *
-        10e8;
 
-    const { babyDripReflections } =
-      babyDripBalance > 0 && (await getShares(wallet.addr, web3));
-
-    const babyDripUnpaid =
-      babyDripBalance > 0 ? await getUnpaidEarnings(wallet.addr, web3) : 0;
-    // console.log(`reflections: ${babyDripReflections}
-    //   unpaid: ${babyDripBalance}`);
     const valid = !!userInfo;
     const referral_bonus =
       parseFloat(userInfo.direct_bonus) + parseFloat(userInfo.match_bonus);
@@ -278,10 +257,8 @@ const Dashboard = () => {
       ndv,
       busdBalance,
       dripBusdLpBalance,
-      babyDripBalance,
-      babyDripReflections: babyDripReflections ?? 0,
-      babyDripUnpaid: babyDripUnpaid ?? 0,
       lastAction,
+      r,
     };
 
     // setRevPrice(() => revPrice);
@@ -342,23 +319,8 @@ const Dashboard = () => {
         0
       )
     );
-    setTotalBabyDrip(() =>
-      validWallets.reduce(
-        (total, wallet) => total + parseFloat(wallet.babyDripBalance),
-        0
-      )
-    );
-    setTotalReflections(() =>
-      validWallets.reduce(
-        (total, wallet) => total + parseFloat(wallet.babyDripReflections),
-        0
-      )
-    );
-    setTotalUnpaid(() =>
-      validWallets.reduce(
-        (total, wallet) => total + parseFloat(wallet.babyDripUnpaid),
-        0
-      )
+    setTotalHydrated(() =>
+      validWallets.reduce((total, wallet) => total + parseFloat(wallet.r), 0)
     );
   }, [wallets]);
 
@@ -491,11 +453,6 @@ const Dashboard = () => {
 
   const copyTableData = () => {
     const tableData = [
-      [
-        ...TABLE_HEADERS.filter(
-          (th) => !["Baby Drip", "Reflections"].includes(th)
-        ),
-      ],
       ...wallets.map((w, index) => [
         index + 1,
         w.address,
@@ -550,7 +507,6 @@ const Dashboard = () => {
       bnbThreshold,
       expandedTable,
       hideTableControls,
-      showBabyDrip,
       showLastAction,
     };
 
@@ -562,7 +518,6 @@ const Dashboard = () => {
     bnbThreshold,
     expandedTable,
     hideTableControls,
-    showBabyDrip,
     showLastAction,
   ]);
 
@@ -646,21 +601,7 @@ const Dashboard = () => {
                         Show Last Action
                       </label>
                     </div>
-                    {/* <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        id="flagShowBabyDrip"
-                        type="checkbox"
-                        checked={showBabyDrip}
-                        onChange={() => setShowBabyDrip(!showBabyDrip)}
-                      />
-                      <label
-                        className="form-check-label"
-                        htmlFor="flagShowBabyDrip"
-                      >
-                        Show Baby Drip
-                      </label>
-                    </div> */}
+
                     <div className="form-check">
                       <input
                         className="form-check-input"
@@ -778,13 +719,11 @@ const Dashboard = () => {
           <thead className="table-light">
             <tr>
               {expandedTable
-                ? TABLE_HEADERS.concat(showBabyDrip ? BABYDRIP_COLS : [])
-                    .filter(
-                      (h) =>
-                        (h === "Last Action" && showLastAction) ||
-                        h !== "Last Action"
-                    )
-                    .map((h) => <th key={h}>{h}</th>)
+                ? TABLE_HEADERS.filter(
+                    (h) =>
+                      (h === "Last Action" && showLastAction) ||
+                      h !== "Last Action"
+                  ).map((h) => <th key={h}>{h}</th>)
                 : BASE_HEADERS.filter(
                     (h) =>
                       (h === "Last Action" && showLastAction) ||
@@ -850,11 +789,21 @@ const Dashboard = () => {
               <th>
                 {convertTokenToUSD(totalDeposits, dripPrice, showDollarValues)}
               </th>
+
               {showLastAction && <th></th>}
               <th></th>
               <th>
                 {convertTokenToUSD(totalClaimed, dripPrice, showDollarValues)}
               </th>
+              {expandedTable && (
+                <th>
+                  {convertTokenToUSD(
+                    totalHydrated,
+                    dripPrice,
+                    showDollarValues
+                  )}
+                </th>
+              )}
               <th>
                 {convertTokenToUSD(
                   totalDirectBonus,
@@ -872,26 +821,6 @@ const Dashboard = () => {
               </th>
               <th>Directs: {totalTeam}</th>
               <th></th>
-              {expandedTable && showBabyDrip && (
-                <>
-                  <th>{convertTokenToUSD(totalBabyDrip, 0, false)}</th>
-
-                  <th>
-                    {convertTokenToUSD(
-                      totalReflections,
-                      dripPrice,
-                      showDollarValues
-                    )}
-                  </th>
-                  <th>
-                    {convertTokenToUSD(
-                      totalUnpaid,
-                      dripPrice,
-                      showDollarValues
-                    )}
-                  </th>
-                </>
-              )}
             </tr>
           </thead>
           <tbody>
@@ -907,7 +836,6 @@ const Dashboard = () => {
                   dripPrice={dripPrice}
                   expandedTable={expandedTable}
                   highlightStyleFor={highlightStyleFor}
-                  showBabyDrip={showBabyDrip}
                   showDollarValues={showDollarValues}
                   showLastAction={showLastAction}
                   wallet={wallet}
