@@ -5,7 +5,6 @@ const TableRow = ({
   wallet,
   expandedTable,
   showDollarValues,
-  showBabyDrip,
   showLastAction,
   deleteRow,
   addLabel,
@@ -93,6 +92,11 @@ const TableRow = ({
         {wallet.ndv}
       </td>
       <td>{convertTokenToUSD(wallet.payouts, dripPrice, showDollarValues)}</td>
+      {expandedTable && (
+        <>
+          <td>{convertTokenToUSD(wallet.r, dripPrice, showDollarValues)}</td>
+        </>
+      )}
       <td>
         {convertTokenToUSD(wallet.direct_bonus, dripPrice, showDollarValues)}
         {/* /
@@ -115,31 +119,6 @@ const TableRow = ({
       <td className={wallet.ref_claim_pos === "0" ? "hydrate inverted" : ""}>
         {wallet.ref_claim_pos}
       </td>
-      {expandedTable && showBabyDrip && (
-        <>
-          <td>
-            {wallet.babyDripBalance > 0 &&
-              convertTokenToUSD(wallet.babyDripBalance, 0, false)}
-          </td>
-
-          <td>
-            {wallet.babyDripBalance > 0 &&
-              convertTokenToUSD(
-                wallet.babyDripReflections,
-                dripPrice,
-                showDollarValues
-              )}
-          </td>
-          <td>
-            {wallet.babyDripBalance > 0 &&
-              convertTokenToUSD(
-                wallet.babyDripUnpaid,
-                dripPrice,
-                showDollarValues
-              )}
-          </td>
-        </>
-      )}
     </tr>
   );
 };

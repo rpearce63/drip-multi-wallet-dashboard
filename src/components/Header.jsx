@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Web3 from "web3";
-import {
-  //getBabyDripPrice,
-  getBr34pPrice,
-  getDripPcsPrice,
-  getDripPrice,
-} from "../api/Contract";
+import { getBr34pPrice, getDripPcsPrice, getDripPrice } from "../api/Contract";
 import { formatCurrency, convertDrip, getLatestVersion } from "../api/utils";
 import { calcFarmPrice } from "../api/tokenPriceApi";
 import { DOGSTokenAddress, PIGSTokenAddress } from "../configs/dripconfig";
@@ -23,7 +18,6 @@ const Header = () => {
   const [dripPcsPrice, setDripPcsPrice] = useState(0);
   const [pigPrice, setPigPrice] = useState(0);
   const [dogPrice, setDogPrice] = useState(0);
-  //const [babyDripPrice, setBabyDripPrice] = useState(0);
   const [version, setVersion] = useState();
 
   const BUY_SPREAD = 1.2;
@@ -59,7 +53,6 @@ const Header = () => {
     const dripPcsPrice = await getDripPcsPrice();
     const pigPrice = await calcFarmPrice(PIGSTokenAddress);
     const dogPrice = await calcFarmPrice(DOGSTokenAddress);
-    //const babyDripPrice = await calcBabyDripPrice(web3);
 
     setDripPrice(() => currentDripPrice);
     setBnbPrice(() => bnbPrice);
@@ -69,7 +62,6 @@ const Header = () => {
     setDripPcsPrice(() => dripPcsPrice);
     setPigPrice(() => pigPrice);
     setDogPrice(() => dogPrice);
-    //setBabyDripPrice(() => babyDripPrice);
 
     document.title = `${formatCurrency(
       convertDrip(currentDripPrice)
@@ -173,16 +165,6 @@ const Header = () => {
               {formatCurrency(dogPrice)}
             </div>
           </div>
-          {/* <div className="price stack">
-            <a
-              href="https://poocoin.app/tokens/0x1a95d3bd381e14da942408b4a0cefd8e00084eb0"
-              target="_blank"
-              rel="noreferrer"
-            >
-              BABYDRIP:
-            </a>{" "}
-            ${parseFloat(babyDripPrice).toFixed(9)}
-          </div> */}
         </div>
 
         <div className="navbar-text text-white beggar">

@@ -9,7 +9,6 @@ import {
   BASIC_TOKEN_ABI,
 } from "../configs/dripconfig";
 import LRU from "lru-cache";
-const babyDripDistributorABI = require("../configs/babyDripDistributor.json");
 
 const axios = require("axios");
 const rax = require("retry-axios");
@@ -235,67 +234,6 @@ export const getJoinDate = async (account) => {
   const txHistory = await fetchBuddyDate();
   const buddyDate = txHistory.find((tx) => tx.input?.startsWith("0x17fed96f"));
   return buddyDate.timeStamp;
-};
-
-export const getBabyDripReflections = async (account) => {
-  const fetchBabyDripTransactions = async () =>
-    axios
-      .get(
-        `https://api.bscscan.com/api?module=account&action=tokentx&contractaddress=0x20f663cea80face82acdfa3aae6862d246ce0333&address=${account}&startblock=0&endblock=999999999&sort=asc&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY`
-      )
-      // .then((response) => response.json())
-      .then((response) => response.data.result)
-      .catch((err) => []);
-
-  const babyDripTransactions = await fetchBabyDripTransactions();
-
-  if (Array.isArray(babyDripTransactions)) {
-    const totalReflections = babyDripTransactions
-      .filter((tx) => tx.from === "0x820bfb786c454c3273f32e9db90d54af2ef200b5")
-      .reduce((totalDrip, tx) => totalDrip + parseInt(tx.value), 0);
-    return totalReflections / 10e17;
-  }
-  return 0;
-};
-
-export const getBabyDripPrice = async () => {
-  const fetchBabyDripPrice = async () =>
-    axios
-      .get(
-        "https://api.pancakeswap.info/api/v2/tokens/0x1a95d3bd381e14da942408b4a0cefd8e00084eb0"
-      )
-      //.then((response) => response.json())
-      .then((response) => response.data.data.price);
-  const babyDripPrice = await fetchBabyDripPrice();
-  return babyDripPrice;
-};
-
-export const getUnpaidEarnings = async (address, web3) => {
-  const contract = new web3.eth.Contract(
-    babyDripDistributorABI,
-    "0x820BFb786C454C3273F32e9DB90D54Af2ef200b5"
-  );
-  const unpaidEarnings = await contract.methods
-    .getUnpaidEarnings(address)
-    .call();
-
-  return unpaidEarnings / 10e17;
-};
-
-export const getShares = async (address, web3) => {
-  const contract = new web3.eth.Contract(
-    babyDripDistributorABI,
-    "0x820BFb786C454C3273F32e9DB90D54Af2ef200b5"
-  );
-  const { amount, totalExcluded, totalRealised } = await contract.methods
-    .shares(address)
-    .call();
-  // console.log(`totalRealised: ${totalRealised}
-  // totalExcluded: ${totalExcluded}`);
-  return {
-    babyDripReflections: totalRealised ? totalRealised / 10e17 : 0,
-    babyDripUnpaid: totalExcluded / 10e17,
-  };
 };
 
 export const getStartBlock = async () => {
