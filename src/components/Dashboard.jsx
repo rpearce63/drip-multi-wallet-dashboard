@@ -795,7 +795,7 @@ const Dashboard = () => {
               </th>
 
               {showLastAction && <th></th>}
-              <th>{totalNDV}</th>
+              <th>{parseFloat(totalNDV).toFixed(3)}</th>
               <th>
                 {convertTokenToUSD(totalClaimed, dripPrice, showDollarValues)}
               </th>
