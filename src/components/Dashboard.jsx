@@ -55,6 +55,7 @@ const Dashboard = () => {
   const [totalBr34p, setTotalBr34p] = useState(0);
   const [totalBusd, setTotalBusd] = useState(0);
   const [totalHydrated, setTotalHydrated] = useState(0);
+  const [totalNDV, setTotalNDV] = useState(0);
 
   const [newAddress, setNewAddress] = useState("");
   const [flagAmount, setFlagAmount] = useState(true);
@@ -321,6 +322,9 @@ const Dashboard = () => {
     );
     setTotalHydrated(() =>
       validWallets.reduce((total, wallet) => total + parseFloat(wallet.r), 0)
+    );
+    setTotalNDV(() =>
+      validWallets.reduce((total, wallet) => total + parseFloat(wallet.ndv), 0)
     );
   }, [wallets]);
 
@@ -791,7 +795,7 @@ const Dashboard = () => {
               </th>
 
               {showLastAction && <th></th>}
-              <th></th>
+              <th>{totalNDV}</th>
               <th>
                 {convertTokenToUSD(totalClaimed, dripPrice, showDollarValues)}
               </th>
