@@ -13,6 +13,8 @@ const TableRow = ({
   highlightStyleFor,
   editLabels,
   br34pPrice,
+  flagLowNdv,
+  ndvWarningLevel
 }) => {
   return (
     <tr>
@@ -86,7 +88,7 @@ const TableRow = ({
       {showLastAction && <td>{wallet.lastAction}</td>}
       <td
         className={
-          wallet.ndv / wallet.deposits <= 0.25 ? "warning inverted" : ""
+          flagLowNdv && wallet.ndv / wallet.deposits <= ndvWarningLevel / 100 ? "warning inverted" : ""
         }
       >
         {wallet.ndv}
