@@ -526,7 +526,7 @@ const Dashboard = () => {
   const decrementNdvWarning = () => {
     setFlagLowNdv(true);
     let val = (ndvWarningLevel);
-    if (val > 10) {
+    if (val > 5) {
       setNdvWarningLevel(
         ((val) - (5))
       );
@@ -716,7 +716,7 @@ const Dashboard = () => {
                         onChange={() => setFlagLowNdv(!flagLowNdv)}
                       />
                       <label className="form-check-label input-spinner-label">
-                        Low NDV:
+                        Low NDV %:
                         <div className="inputSpinner">
                           <button
                             type="button"
@@ -730,7 +730,7 @@ const Dashboard = () => {
                             type="number"
                             value={ndvWarningLevel}
                             onChange={() => {}}
-                            size={3}
+                            size={2}
                             disabled={true}
                           />
                           <button
@@ -914,6 +914,7 @@ const Dashboard = () => {
                   wallet={wallet}
                   br34pPrice={br34pPrice}
                   editLabels={editLabels}
+                  flagLowNdv={flagLowNdv}
                   ndvWarningLevel={ndvWarningLevel}
                 />
               ))}
