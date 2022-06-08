@@ -58,13 +58,19 @@ const Dashboard = () => {
   const [totalNDV, setTotalNDV] = useState(0);
 
   const [newAddress, setNewAddress] = useState("");
+
+  //form configs
   const [flagAmount, setFlagAmount] = useState(true);
   const [flagPct, setFlagPct] = useState(true);
   const [flagLowBnb, setFlagLowBnb] = useState(true);
+   const [bnbThreshold, setBnbThreshold] = useState(0.05);
+   const [flagLowNdv, setFlagLowNdv] = useState(true);
+   const [ndvWarningLevel, setNdvWarningLevel] = useState(25);
+
   const [editLabels, setEditLabels] = useState(false);
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [dataCopied, setDataCopied] = useState(false);
-  const [bnbThreshold, setBnbThreshold] = useState(0.05);
+ 
   const [expandedTable, setExpandedTable] = useState(false);
   const [hideTableControls, setHideTableControls] = useState(false);
   const [showDollarValues, setShowDollarValues] = useState(false);
@@ -77,6 +83,7 @@ const Dashboard = () => {
   const [startBlock, setStartBlock] = useState();
   const [timer, setTimer] = useState(0);
   const [loading, setLoading] = useState(true);
+  
 
   const TABLE_HEADERS = [
     "#",
@@ -138,6 +145,7 @@ const Dashboard = () => {
       expandedTable = false,
       hideTableControls = false,
       showLastAction = true,
+      ndvWarningLevel = 25
     } = JSON.parse(localStorage.getItem(CONFIGS_KEY)) ?? {};
 
     setFlagAmount(() => flagAmount);
@@ -147,6 +155,7 @@ const Dashboard = () => {
     setExpandedTable(() => expandedTable);
     setHideTableControls(() => hideTableControls);
     setShowLastAction(() => showLastAction);
+    setNdvWarningLevel(() => ndvWarningLevel)
   }, []);
 
   const fetchData = async () => {
@@ -503,6 +512,26 @@ const Dashboard = () => {
     }
   };
 
+
+  const incrementNdvWarning = () => {
+    setFlagLowNdv(true);
+    let val = ndvWarningLevel;
+    if (val < 50) {
+      setNdvWarningLevel(
+      val + 5
+      );
+    }
+  };
+
+  const decrementNdvWarning = () => {
+    setFlagLowNdv(true);
+    let val = (ndvWarningLevel);
+    if (val > 10) {
+      setNdvWarningLevel(
+        ((val) - (5))
+      );
+    }
+  };
   useEffect(() => {
     const config = {
       flagAmount,
@@ -512,6 +541,7 @@ const Dashboard = () => {
       expandedTable,
       hideTableControls,
       showLastAction,
+      ndvWarningLevel
     };
 
     localStorage.setItem(CONFIGS_KEY, JSON.stringify(config));
@@ -523,6 +553,7 @@ const Dashboard = () => {
     expandedTable,
     hideTableControls,
     showLastAction,
+    ndvWarningLevel
   ]);
 
   const deleteRow = (addr) => {
@@ -668,6 +699,44 @@ const Dashboard = () => {
                             type="button"
                             className="btn btn-outline-secondary"
                             onClick={incrementBnbFlag}
+                          >
+                            +
+                          </button>
+                        </div>
+                        <span className="warning"> - yellow</span>
+                      </label>
+                    </div>
+
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        id="ndvWarningLevel"
+                        type="checkbox"
+                        checked={flagLowNdv}
+                        onChange={() => setFlagLowNdv(!flagLowNdv)}
+                      />
+                      <label className="form-check-label input-spinner-label">
+                        Low NDV:
+                        <div className="inputSpinner">
+                          <button
+                            type="button"
+                            className="btn btn-outline-secondary"
+                            onClick={decrementNdvWarning}
+                          >
+                            -
+                          </button>
+                          <input
+                            className="inputSpinner-control"
+                            type="number"
+                            value={ndvWarningLevel}
+                            onChange={() => {}}
+                            size={3}
+                            disabled={true}
+                          />
+                          <button
+                            type="button"
+                            className="btn btn-outline-secondary"
+                            onClick={incrementNdvWarning}
                           >
                             +
                           </button>
@@ -845,6 +914,7 @@ const Dashboard = () => {
                   wallet={wallet}
                   br34pPrice={br34pPrice}
                   editLabels={editLabels}
+                  ndvWarningLevel={ndvWarningLevel}
                 />
               ))}
           </tbody>
