@@ -35,6 +35,7 @@ import {
   shortenAddress,
   backupData,
   findFibIndex,
+  formatNumber,
 } from "../api/utils";
 
 import Web3 from "web3";
@@ -230,7 +231,7 @@ const Dashboard = () => {
     const r = parseFloat(web3.utils.fromWei(userInfo.rolls));
     const c = parseFloat(web3.utils.fromWei(userInfo.payouts));
 
-    const ndv = parseFloat(d + a + r - c).toFixed(3);
+    const ndv = formatNumber(d + a + r - c);
 
     const valid = !!userInfo;
     const referral_bonus =
@@ -464,9 +465,9 @@ const Dashboard = () => {
         w.upline,
         w.uplineCount,
         w.busdBalance,
-        parseFloat(w.br34pBalance).toFixed(2),
+        formatNumber(w.br34pBalance),
         Math.round(w.dripBalance * 10e16) / 10e16,
-        parseFloat(w.bnbBalance).toFixed(3),
+        formatNumber(w.bnbBalance),
         w.available,
         formatPercent(w.available / w.deposits),
         w.deposits,
@@ -795,7 +796,7 @@ const Dashboard = () => {
               </th>
 
               {showLastAction && <th></th>}
-              <th>{parseFloat(totalNDV).toFixed(3)}</th>
+              <th>{formatNumber(totalNDV)}</th>
               <th>
                 {convertTokenToUSD(totalClaimed, dripPrice, showDollarValues)}
               </th>

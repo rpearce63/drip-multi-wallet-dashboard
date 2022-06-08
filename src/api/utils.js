@@ -2,16 +2,16 @@ import axios from "axios";
 
 export const convertDrip = (drip, dripPrice, showDollarValues) => {
   const priceOfDrip = dripPrice || 1;
-  const converted = parseFloat(
+  const converted = formatNumber(
     //new Web3().utils.fromWei(`${drip}`)
     (Math.round((drip / Math.pow(10, 18)) * 1000) / 1000) *
       (showDollarValues ? priceOfDrip : 1)
-  ).toFixed(3);
+  );
   return showDollarValues ? formatCurrency(converted) : converted;
 };
 
 export const convertBnb = (bnbAmt, bnbPrice, showDollarValues) => {
-  const converted = parseFloat(bnbAmt / 10e17).toFixed(3);
+  const converted = formatNumber(bnbAmt / 10e17);
 
   return showDollarValues ? formatCurrency(converted * bnbPrice) : converted;
 };
@@ -43,6 +43,8 @@ export const formatCurrency = (amt) => {
 export const formatPercent = (amt) => {
   return parseFloat(amt * 100).toFixed(2);
 };
+
+export const formatNumber = (amt) => parseFloat(amt).toFixed(3);
 
 export const shortenAddress = (address) =>
   `${address.substr(0, 5)}...${address.slice(-4)}`;
