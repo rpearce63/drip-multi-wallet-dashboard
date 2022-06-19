@@ -7,8 +7,12 @@ import {
   BR34P_ABI,
   BR34P_ADDRESS,
   BASIC_TOKEN_ABI,
+  DROPS_ADDRESS,
 } from "../configs/dripconfig";
+
 import LRU from "lru-cache";
+
+const RESERVOIR_CONTRACT = require("../configs/reservoir_contract.json");
 
 const axios = require("axios");
 const rax = require("retry-axios");
@@ -81,6 +85,12 @@ export const getTokenBalance = async (web3, account, tokenAddress) => {
   const contract = new web3.eth.Contract(BASIC_TOKEN_ABI, tokenAddress);
   const tokenBalance = await contract.methods.balanceOf(account).call();
   return tokenBalance / 10e17;
+};
+
+export const getReservoirBalance = async (web3, account) => {
+  const contract = new web3.eth.Contract(RESERVOIR_CONTRACT, DROPS_ADDRESS);
+  const dropsBalance = await contract.methods.balanceOf(account).call();
+  return dropsBalance / 10e17;
 };
 
 export const getDripPrice = async (web3) => {

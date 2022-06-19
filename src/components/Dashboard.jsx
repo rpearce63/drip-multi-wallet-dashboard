@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import {
   getConnection,
   getUserInfo,
@@ -13,26 +12,23 @@ import {
   getDownlineDepth,
   getAirdrops,
   getTokenBalance,
-  getUnpaidEarnings,
   getStartBlock,
   getLastAction,
-  getShares,
+  getReservoirBalance
 } from "../api/Contract";
 
 import {
   BUSD_TOKEN_ADDRESS,
   DRIP_BUSD_LP_ADDRESS,
   DRIP_TOKEN_ADDR,
-  DRIP_TOKEN,
   CONFIGS_KEY,
-  myWallets,
 } from "../configs/dripconfig";
+
 import Info from "./Info";
 
 import {
   convertTokenToUSD,
   formatPercent,
-  shortenAddress,
   backupData,
   findFibIndex,
   formatNumber,
@@ -57,6 +53,7 @@ const Dashboard = () => {
   const [totalBusd, setTotalBusd] = useState(0);
   const [totalHydrated, setTotalHydrated] = useState(0);
   const [totalNDV, setTotalNDV] = useState(0);
+  const [totalDrops, setTotalDrops] = useState(0)
 
   const [newAddress, setNewAddress] = useState("");
 
@@ -78,8 +75,6 @@ const Dashboard = () => {
   const [bnbPrice, setBnbPrice] = useState(0);
   const [dripPrice, setDripPrice] = useState(0);
   const [br34pPrice, setBr34pPrice] = useState(0);
-  const [totalReflections, setTotalReflections] = useState(0);
-  const [totalUnpaid, setTotalUnpaid] = useState(0);
   const [showLastAction, setShowLastAction] = useState(true);
   const [startBlock, setStartBlock] = useState();
   const [timer, setTimer] = useState(0);
@@ -96,6 +91,7 @@ const Dashboard = () => {
     "BR34P",
     "Drip",
     "BNB",
+    "DROPS",
     "Available",
     "ROI",
     "Deposits",
@@ -248,6 +244,7 @@ const Dashboard = () => {
 
     const lastAction =
       showLastAction && (await getLastAction(startBlock, wallet.addr));
+    const dropsBalance = await getReservoirBalance(web3, wallet.addr);
     return {
       index,
       ...userInfo,
@@ -270,9 +267,9 @@ const Dashboard = () => {
       dripBusdLpBalance,
       lastAction,
       r,
+      dropsBalance
     };
 
-    // setRevPrice(() => revPrice);
   };
   useEffect(() => {
     const validWallets = wallets.filter((wallet) => wallet.valid);
@@ -336,6 +333,7 @@ const Dashboard = () => {
     setTotalNDV(() =>
       validWallets.reduce((total, wallet) => total + parseFloat(wallet.ndv), 0)
     );
+    setTotalDrops(() => validWallets.reduce((total, wallet) => total + parseFloat(wallet.dropsBalance), 0))
   }, [wallets]);
 
   useEffect(() => {
@@ -853,7 +851,11 @@ const Dashboard = () => {
                   )}
                 </th>
               )}
-
+{expandedTable && (
+                <th>
+                  {formatNumber(totalDrops)}
+                </th>
+              )}
               <th>
                 {convertTokenToUSD(totalAvailable, dripPrice, showDollarValues)}
               </th>
