@@ -79,7 +79,7 @@ const TableRow = ({
       )}
       {expandedTable && (
         <>
-          <td className={highlightStyleFor("bnb", wallet)}>
+          <td>
             {(formatNumber( wallet.dropsBalance))}
           </td>
         </>
