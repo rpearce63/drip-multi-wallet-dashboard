@@ -88,7 +88,7 @@ const Dashboard = () => {
     "Buddy",
     "Uplines",
     "BUSD",
-    "BR34P",
+    "BR34P / Levels",
     "Drip",
     "BNB",
     "DROPS",
