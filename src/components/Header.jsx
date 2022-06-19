@@ -150,7 +150,7 @@ const Header = () => {
                 target="_blank"
                 rel="noreferrer"
               >
-                PigV2:
+                AFP:
               </a>{" "}
               {formatCurrency(pigPrice)}
             </div>

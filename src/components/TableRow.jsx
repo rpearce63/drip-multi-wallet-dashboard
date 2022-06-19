@@ -1,4 +1,4 @@
-import { shortenAddress, convertTokenToUSD, formatPercent } from "../api/utils";
+import { shortenAddress, convertTokenToUSD, formatPercent, formatNumber } from "../api/utils";
 import { Link } from "react-router-dom";
 const TableRow = ({
   index,
@@ -14,7 +14,8 @@ const TableRow = ({
   editLabels,
   br34pPrice,
   flagLowNdv,
-  ndvWarningLevel
+  ndvWarningLevel,
+  
 }) => {
   return (
     <tr>
@@ -73,6 +74,13 @@ const TableRow = ({
         <>
           <td className={highlightStyleFor("bnb", wallet)}>
             {convertTokenToUSD(wallet.bnbBalance, bnbPrice, showDollarValues)}
+          </td>
+        </>
+      )}
+      {expandedTable && (
+        <>
+          <td>
+            {(formatNumber( wallet.dropsBalance))}
           </td>
         </>
       )}
