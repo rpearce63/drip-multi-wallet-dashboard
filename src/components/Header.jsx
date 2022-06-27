@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Web3 from "web3";
-import { getBr34pPrice, getDripPcsPrice, getDripPrice } from "../api/Contract";
+import { getBr34pPrice, getDripPrice } from "../api/Contract";
 import { formatCurrency, convertDrip, getLatestVersion } from "../api/utils";
 import { calcPCSPrice } from "../api/tokenPriceApi";
 import { DOGSTokenAddress, DRIP_TOKEN_ADDR, PIGSTokenAddress } from "../configs/dripconfig";
