@@ -212,14 +212,14 @@ export const getDripPcsPrice = async () => {
       .get(
         "https://api.pancakeswap.info/api/v2/tokens/0x20f663cea80face82acdfa3aae6862d246ce0333"
       )
-      .then((result) => result.data.data.price_BNB)
+      .then((result) => result.data.data.price)
       .catch((err) => {
         console.log(`Error getting Drip price from PCS: ${err.message}`);
         return 0;
       });
   const dripPcsPriceBNB = await fetchDripPcsPrice();
-  const bnbPrice = await getBnbprice();
-  return dripPcsPriceBNB * bnbPrice;
+  //const bnbPrice = await getBnbprice();
+  return dripPcsPriceBNB; //* bnbPrice;
 };
 
 export const getJoinDate = async (account) => {
