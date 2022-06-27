@@ -33,7 +33,7 @@ export const convertTokenToUSD = (tokenAmt, tokenPrice, showDollarValues) => {
 export const formatCurrency = (amt) => {
   return (
     "$" +
-    parseFloat(Math.round(amt * 100) / 100)
+    parseFloat(Math.round(amt * 1000) / 1000)
       .toFixed(3)
       .toString()
       .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
