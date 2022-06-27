@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Web3 from "web3";
-import { getBr34pPrice, getDripPcsPrice, getDripPrice } from "../api/Contract";
+import { getBr34pPrice, getDripPrice } from "../api/Contract";
 import { formatCurrency, convertDrip, getLatestVersion } from "../api/utils";
-import { calcFarmPrice } from "../api/tokenPriceApi";
-import { DOGSTokenAddress, PIGSTokenAddress } from "../configs/dripconfig";
+import { calcPCSPrice } from "../api/tokenPriceApi";
+import { DOGSTokenAddress, DRIP_TOKEN_ADDR, PIGSTokenAddress } from "../configs/dripconfig";
 
 import semver from "semver";
 
@@ -50,9 +50,9 @@ const Header = () => {
     const [bnbPrice, dripPriceRaw, tokenBalance] = await getDripPrice(web3);
     const currentDripPrice = dripPriceRaw * bnbPrice;
     const br34pPrice = await getBr34pPrice();
-    const dripPcsPrice = await getDripPcsPrice();
-    const pigPrice = await calcFarmPrice(PIGSTokenAddress);
-    const dogPrice = await calcFarmPrice(DOGSTokenAddress);
+    const dripPcsPrice = await calcPCSPrice(DRIP_TOKEN_ADDR);
+    const pigPrice = await calcPCSPrice(PIGSTokenAddress);
+    const dogPrice = await calcPCSPrice(DOGSTokenAddress);
 
     setDripPrice(() => currentDripPrice);
     setBnbPrice(() => bnbPrice);
