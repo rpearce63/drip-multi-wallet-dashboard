@@ -70,7 +70,7 @@ const Dashboard = () => {
   const [dataCopied, setDataCopied] = useState(false);
  
   const [expandedTable, setExpandedTable] = useState(false);
-  const [hideTableControls, setHideTableControls] = useState(false);
+  const [hideTableControls, setHideTableControls] = useState(true);
   const [showDollarValues, setShowDollarValues] = useState(false);
   const [bnbPrice, setBnbPrice] = useState(0);
   const [dripPrice, setDripPrice] = useState(0);
@@ -161,7 +161,7 @@ const Dashboard = () => {
     //web3 = web3 ?? (await getConnection());
     //contract = contract ?? (await getContract(web3));
     const startBlock = await getStartBlock();
-    setStartBlock(() => startBlock);
+    setStartBlock(() => startBlock - 200000);
 
     let storedWallets = JSON.parse(
       window.localStorage.getItem("dripAddresses")

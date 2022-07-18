@@ -4,8 +4,12 @@ import Web3 from "web3";
 import { getBr34pPrice, getDripPrice } from "../api/Contract";
 import { formatCurrency, convertDrip, getLatestVersion } from "../api/utils";
 import { calcPCSPrice } from "../api/tokenPriceApi";
-import { DOGSTokenAddress, DRIP_TOKEN_ADDR, PIGSTokenAddress, BUSD_TOKEN_ADDRESS } from "../configs/dripconfig";
-
+import {
+  DOGSTokenAddress,
+  DRIP_TOKEN_ADDR,
+  PIGSTokenAddress,
+} from "../configs/dripconfig";
+import BigDripBuys from "./BigDripBuys";
 import semver from "semver";
 
 const Header = () => {
@@ -20,7 +24,7 @@ const Header = () => {
   const [dogPrice, setDogPrice] = useState(0);
   const [version, setVersion] = useState();
 
-  const BUY_SPREAD = 1.2;
+  const BUY_SPREAD = 1.1;
 
   useEffect(() => {
     setWeb3(new Web3("https://bsc-dataseed.binance.org/"));
@@ -103,7 +107,14 @@ const Header = () => {
                     : ""
                 }
               >
-                <a href="https://drip.community/fountain" target="_blank" rel="noreferrer">DEX:</a>{formatCurrency(convertDrip(dripPrice))}
+                <a
+                  href="https://drip.community/fountain"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  DEX:
+                </a>
+                {formatCurrency(convertDrip(dripPrice))}
               </div>
               <div
                 className={
@@ -112,7 +123,13 @@ const Header = () => {
                     : ""
                 }
               >
-                <a href="https://pancakeswap.finance/swap?outputCurrency=0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56&inputCurrency=0x20f663CEa80FaCE82ACDFA3aAE6862d246cE0333" target="_blank" rel="noreferrer">PCS:</a>
+                <a
+                  href="https://pancakeswap.finance/swap?outputCurrency=0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56&inputCurrency=0x20f663CEa80FaCE82ACDFA3aAE6862d246cE0333"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  PCS:
+                </a>
                 {formatCurrency(dripPcsPrice)}
               </div>
             </div>
@@ -180,6 +197,7 @@ const Header = () => {
           ></i>
         </div>
       </div>
+      <BigDripBuys />
     </nav>
   );
 };
