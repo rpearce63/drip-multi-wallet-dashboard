@@ -16,10 +16,10 @@ const RESERVOIR_CONTRACT = require("../configs/reservoir_contract.json");
 
 const axios = require("axios");
 const rax = require("retry-axios");
+// eslint-disable-next-line no-unused-vars
 const interceptorId = rax.attach();
 
 const flatten = require("flat").flatten;
-const memoize = require("lodash.memoize");
 
 const options = {
   max: 500,
@@ -254,7 +254,7 @@ export const getStartBlock = async () => {
     .then((response) => response.data.result);
 
   const latestBlock = parseInt(latestBlockHex, 16);
-  return latestBlock - 200000;
+  return latestBlock;
 };
 
 export const getLastAction = async (startBlock, address) => {
@@ -295,4 +295,25 @@ export const getLastAction = async (startBlock, address) => {
   //console.log(`setting cached value: ${lastAction} for ${address}`);
   cache.set(address, lastAction);
   return lastAction;
+};
+
+export const getBigDripBuys = async () => {
+  const startBlock = await getStartBlock();
+  const response = await axios
+    .get(
+      `https://api.bscscan.com/api?module=account&action=txlist&address=0x4fe59adcf621489ced2d674978132a54d432653a&startblock=${
+        startBlock - 29000
+      }&endblock=999999999&sort=desc&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY`
+    )
+    .then((response) => response.data.result);
+
+  const bigBuys = response
+    .filter((tx) => tx.input.startsWith("0xb5695026") && tx.isError !== "1")
+    .filter((tx) => tx.value > 20000000000000000000)
+    .map((tx) => ({
+      amount: parseFloat(tx.value / 10e17).toFixed(2),
+      date: new Date(tx.timeStamp * 1000).toLocaleString(),
+      transaction: tx.hash,
+    }));
+  return bigBuys;
 };
