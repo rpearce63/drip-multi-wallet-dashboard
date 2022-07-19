@@ -29,7 +29,7 @@ const BigDripBuys = () => {
       {bigBuys.map((bb, index) => (
         <div
           key={index}
-          style={{ color: "white", marginRight: "5px", marginLeft: "5px" }}
+          style={{ color: "white", marginRight: "5px", marginLeft: "10px" }}
         >
           <a
             href={`https://bscscan.com/tx/${bb.transaction}`}
@@ -41,7 +41,9 @@ const BigDripBuys = () => {
           on {bb.date} -{" "}
         </div>
       ))}
-      Updated: {new Date().toLocaleString()}
+      <span style={{ marginRight: "10px" }}>
+        Updated: {new Date().toLocaleString()}
+      </span>
     </Marquee>
   );
 };
