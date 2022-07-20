@@ -16,7 +16,7 @@ const BigDripBuys = () => {
 
   const fetchBigBuys = async () => {
     const data = await getBigDripBuys();
-    setBigBuys([...data]);
+    setBigBuys(data);
     setUpdateTime(new Date().toLocaleString());
   };
 
