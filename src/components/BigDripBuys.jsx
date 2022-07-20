@@ -22,7 +22,7 @@ const BigDripBuys = () => {
 
   return (
     <Marquee
-      gradient={true}
+      gradient={false}
       style={{ color: "white" }}
       pauseOnHover={true}
       speed={40}
