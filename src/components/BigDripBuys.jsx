@@ -4,18 +4,20 @@ import { getBigDripBuys } from "../api/Contract";
 
 const BigDripBuys = () => {
   const [bigBuys, setBigBuys] = useState([]);
+  const [updateTime, setUpdateTime] = useState("");
 
   useEffect(() => {
     fetchBigBuys();
     const interval = setInterval(() => {
       fetchBigBuys();
-    }, 60000);
-    return clearInterval(interval);
+    }, 600000);
+    return () => clearInterval(interval);
   }, []);
 
   const fetchBigBuys = async () => {
     const data = await getBigDripBuys();
     setBigBuys([...data]);
+    setUpdateTime(new Date().toLocaleString());
   };
 
   return (
@@ -25,7 +27,7 @@ const BigDripBuys = () => {
       pauseOnHover={true}
       speed={40}
     >
-      Big Buys in the last 24 hrs:{" "}
+      <span style={{ marginRight: "5px" }}>Big Buys in the last 24 hrs: </span>
       {bigBuys.map((bb, index) => (
         <div
           key={index}
@@ -41,7 +43,7 @@ const BigDripBuys = () => {
           on {bb.date} -{" "}
         </div>
       ))}
-      Updated: {new Date().toLocaleString()}
+      <span style={{ marginRight: "50px" }}>Updated: {updateTime}</span>
     </Marquee>
   );
 };
