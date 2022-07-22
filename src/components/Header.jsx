@@ -69,7 +69,7 @@ const Header = () => {
 
     document.title = `${formatCurrency(
       convertDrip(currentDripPrice)
-    )} - Drip Multi-Wallet Dashboard -`;
+    )} - Drip Multi-Wallet Dashboard`;
   };
   return (
     <nav className="navbar navbar-expand-lg nav-wrap fixed-top navbar-dark bg-dark inverted">
