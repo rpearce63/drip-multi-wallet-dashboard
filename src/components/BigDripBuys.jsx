@@ -38,7 +38,7 @@ const BigDripBuys = () => {
             target="_blank"
             rel="noreferrer"
           >
-            {bb.amount} BNB
+            {bb.amount} BNB {bb.dripAmt && <span>({bb.dripAmt} Drip)</span>}
           </a>{" "}
           on {bb.date} -{" "}
         </div>
