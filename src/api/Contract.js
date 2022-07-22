@@ -351,9 +351,9 @@ const getDripAmtFromLogs = async (
       2
     )}`
   );
-  
+
   if (txLog.data.status === "0" && attempt < 3) {
-    console.log('retrying getDripAmtFromLogs. Attempt ' + attempt + 1)
+    console.log(`retrying getDripAmtFromLogs. Attempt ${attempt + 1}`);
     return await getDripAmtFromLogs(
       transaction,
       blockNumber,
