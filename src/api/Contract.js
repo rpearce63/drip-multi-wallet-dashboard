@@ -11,6 +11,7 @@ import {
 } from "../configs/dripconfig";
 
 import LRU from "lru-cache";
+import { add } from "lodash";
 
 const RESERVOIR_CONTRACT = require("../configs/reservoir_contract.json");
 
@@ -320,26 +321,45 @@ export const getBigDripBuys = async () => {
 
   const bigBuysWithDripAmt = await Promise.all(
     bigBuys.map(async (bb) => {
-      const dripAmt = await getDripAmtFromLogs(
+      const dripAmtRsp = await getDripAmtFromLogs(
         bb.transaction,
         bb.blockNumber,
         bb.from
       );
-      return { ...bb, dripAmt: parseFloat(dripAmt.dripAmt).toFixed(2) };
+      const dripAmt = dripAmtRsp.dripAmt
+        ? parseFloat(dripAmtRsp.dripAmt).toFixed(2)
+        : null;
+      return {
+        ...bb,
+        dripAmt,
+      };
     })
   );
 
   return bigBuysWithDripAmt;
 };
 
-const getDripAmtFromLogs = async (transaction, blockNumber, address) => {
+const getDripAmtFromLogs = async (
+  transaction,
+  blockNumber,
+  address,
+  attempt = 0
+) => {
   await delay(1000);
   const txLog = await axios.get(
     `https://api.bscscan.com/api?module=logs&action=getLogs&fromBlock=${blockNumber}&toBlock=${blockNumber}&address=0x20f663cea80face82acdfa3aae6862d246ce0333&topic0=0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY&topic2=0x000000000000000000000000${address.substr(
       2
     )}`
   );
-
+  console.log("log transaction: " + JSON.stringify(txLog.data.message));
+  if (txLog.data.status === "0" && attempt < 3) {
+    return await getDripAmtFromLogs(
+      transaction,
+      blockNumber,
+      address,
+      attempt + 1
+    );
+  }
   const amount = txLog.data.result[0].data;
   //console.log(amount);
   return { transaction, dripAmt: parseInt(amount, 16) / 10e17 };
