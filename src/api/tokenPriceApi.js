@@ -404,27 +404,43 @@ export async function calcPCSPrice(tokenAddress) {
 
 export async function calcBR34PPrice() {
   const web3 = new Web3("https://bsc-dataseed1.binance.org");
+  const pcsV1Address = "0x05ff2b0db69458a0750badebc4f9e13add608c7f";
+  const pcsV1Abi = [
+    {
+      inputs: [
+        { internalType: "uint256", name: "amountIn", type: "uint256" },
+        { internalType: "address[]", name: "path", type: "address[]" },
+      ],
+      name: "getAmountsOut",
+      outputs: [
+        { internalType: "uint256[]", name: "amounts", type: "uint256[]" },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+  ];
   //const BNBTokenAddress = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"; //BNB
   //const REVTokenAddress = "0x276B440fdB4C54631C882caC9e4317929e751FF8";
-  //const BUSDTokenAddress = "0xe9e7cea3dedca5984780bafc599bd69add087d56";
+  const BUSDTokenAddress = "0xe9e7cea3dedca5984780bafc599bd69add087d56";
   //const USDTokenAddress = "0x55d398326f99059fF775485246999027B3197955"; //USDT
   const WBNBTokenAddress = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
   const BR34PTokenAddress = "0xa86d305A36cDB815af991834B46aD3d7FbB38523";
-  let revToSell = web3.utils.toWei("1", "ether");
-  let amountOut;
+  const inputAmt = 1 * 10e7;
+
   try {
-    let router = await new web3.eth.Contract(
-      pancakeSwapAbi,
-      pancakeSwapContract
-    );
-    amountOut = await router.methods
-      .getAmountsOut(revToSell, [BR34PTokenAddress, WBNBTokenAddress])
+    let router = await new web3.eth.Contract(pcsV1Abi, pcsV1Address);
+    const amountsOut = await router.methods
+      .getAmountsOut(inputAmt, [
+        BR34PTokenAddress,
+        WBNBTokenAddress,
+        BUSDTokenAddress,
+      ])
       .call();
-    amountOut = web3.utils.fromWei(amountOut[1]);
-    //console.log(`amountOut=${amountOut}`);
+    const amountOut = web3.utils.fromWei(amountsOut[2]);
+    //console.log(`amountsOut=${amountsOut}`);
+    if (!amountOut) return 0;
+    return amountOut;
   } catch (error) {
     console.log(`error getting br34p price: ${error}`);
   }
-  if (!amountOut) return 0;
-  return amountOut;
 }

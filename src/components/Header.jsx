@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Web3 from "web3";
 import { getBr34pPrice, getDripPrice } from "../api/Contract";
 import { formatCurrency, convertDrip, getLatestVersion } from "../api/utils";
-import { calcPCSPrice } from "../api/tokenPriceApi";
+import { calcPCSPrice, calcBR34PPrice } from "../api/tokenPriceApi";
 import {
   DOGSTokenAddress,
   DRIP_TOKEN_ADDR,
@@ -53,7 +53,7 @@ const Header = () => {
   const fetchData = async () => {
     const [bnbPrice, dripPriceRaw, tokenBalance] = await getDripPrice(web3);
     const currentDripPrice = dripPriceRaw * bnbPrice;
-    const br34pPrice = await getBr34pPrice();
+    const br34pPrice = await calcBR34PPrice();
     const dripPcsPrice = await calcPCSPrice(DRIP_TOKEN_ADDR);
     const pigPrice = await calcPCSPrice(PIGSTokenAddress);
     const dogPrice = await calcPCSPrice(DOGSTokenAddress);
