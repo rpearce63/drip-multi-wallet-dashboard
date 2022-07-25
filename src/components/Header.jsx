@@ -152,7 +152,7 @@ const Header = () => {
           </div>
           <div className="price stack">
             <a
-              href="https://bscscan.com/token/0xa86d305a36cdb815af991834b46ad3d7fbb38523"
+              href="https://v1exchange.pancakeswap.finance/#/swap?inputCurrency=0xa86d305A36cDB815af991834B46aD3d7FbB38523&outputCurrency=0xe9e7cea3dedca5984780bafc599bd69add087d56"
               target="_blank"
               rel="noreferrer"
             >
