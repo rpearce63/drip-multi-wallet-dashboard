@@ -14,7 +14,7 @@ import {
   getTokenBalance,
   getStartBlock,
   getLastAction,
-  getReservoirBalance
+  getReservoirBalance,
 } from "../api/Contract";
 
 import {
@@ -53,7 +53,7 @@ const Dashboard = () => {
   const [totalBusd, setTotalBusd] = useState(0);
   const [totalHydrated, setTotalHydrated] = useState(0);
   const [totalNDV, setTotalNDV] = useState(0);
-  const [totalDrops, setTotalDrops] = useState(0)
+  const [totalDrops, setTotalDrops] = useState(0);
 
   const [newAddress, setNewAddress] = useState("");
 
@@ -61,14 +61,14 @@ const Dashboard = () => {
   const [flagAmount, setFlagAmount] = useState(true);
   const [flagPct, setFlagPct] = useState(true);
   const [flagLowBnb, setFlagLowBnb] = useState(true);
-   const [bnbThreshold, setBnbThreshold] = useState(0.05);
-   const [flagLowNdv, setFlagLowNdv] = useState(true);
-   const [ndvWarningLevel, setNdvWarningLevel] = useState(25);
+  const [bnbThreshold, setBnbThreshold] = useState(0.05);
+  const [flagLowNdv, setFlagLowNdv] = useState(true);
+  const [ndvWarningLevel, setNdvWarningLevel] = useState(25);
 
   const [editLabels, setEditLabels] = useState(false);
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [dataCopied, setDataCopied] = useState(false);
- 
+
   const [expandedTable, setExpandedTable] = useState(false);
   const [hideTableControls, setHideTableControls] = useState(true);
   const [showDollarValues, setShowDollarValues] = useState(false);
@@ -79,7 +79,6 @@ const Dashboard = () => {
   const [startBlock, setStartBlock] = useState();
   const [timer, setTimer] = useState(0);
   const [loading, setLoading] = useState(true);
-  
 
   const TABLE_HEADERS = [
     "#",
@@ -142,7 +141,7 @@ const Dashboard = () => {
       expandedTable = false,
       hideTableControls = false,
       showLastAction = true,
-      ndvWarningLevel = 25
+      ndvWarningLevel = 25,
     } = JSON.parse(localStorage.getItem(CONFIGS_KEY)) ?? {};
 
     setFlagAmount(() => flagAmount);
@@ -152,7 +151,7 @@ const Dashboard = () => {
     setExpandedTable(() => expandedTable);
     setHideTableControls(() => hideTableControls);
     setShowLastAction(() => showLastAction);
-    setNdvWarningLevel(() => ndvWarningLevel)
+    setNdvWarningLevel(() => ndvWarningLevel);
   }, []);
 
   const fetchData = async () => {
@@ -267,9 +266,8 @@ const Dashboard = () => {
       dripBusdLpBalance,
       lastAction,
       r,
-      dropsBalance
+      dropsBalance,
     };
-
   };
   useEffect(() => {
     const validWallets = wallets.filter((wallet) => wallet.valid);
@@ -333,7 +331,12 @@ const Dashboard = () => {
     setTotalNDV(() =>
       validWallets.reduce((total, wallet) => total + parseFloat(wallet.ndv), 0)
     );
-    setTotalDrops(() => validWallets.reduce((total, wallet) => total + parseFloat(wallet.dropsBalance), 0))
+    setTotalDrops(() =>
+      validWallets.reduce(
+        (total, wallet) => total + parseFloat(wallet.dropsBalance),
+        0
+      )
+    );
   }, [wallets]);
 
   useEffect(() => {
@@ -371,6 +374,30 @@ const Dashboard = () => {
         );
     setAddressList("");
     setWallets([]);
+    fetchData();
+  };
+
+  const updatedAddresses = async (e) => {
+    e.preventDefault();
+    const arrayOfAddresses = [
+      ...new Set(
+        addressList.split(/[\n,]+/).filter((addr) => addr.trim().length === 42)
+      ),
+    ];
+
+    const storedAddresses =
+      JSON.parse(window.localStorage.getItem("dripAddresses")) ?? [];
+
+    arrayOfAddresses.forEach((newAddress) => {
+      if (!storedAddresses.some((sa) => sa.addr === newAddress)) {
+        storedAddresses.push({ addr: newAddress, label: "" });
+      }
+    });
+    window.localStorage.setItem(
+      "dripAddresses",
+      JSON.stringify(storedAddresses)
+    );
+    setAddressList("");
     fetchData();
   };
 
@@ -511,24 +538,19 @@ const Dashboard = () => {
     }
   };
 
-
   const incrementNdvWarning = () => {
     setFlagLowNdv(true);
     let val = ndvWarningLevel;
     if (val < 50) {
-      setNdvWarningLevel(
-      val + 5
-      );
+      setNdvWarningLevel(val + 5);
     }
   };
 
   const decrementNdvWarning = () => {
     setFlagLowNdv(true);
-    let val = (ndvWarningLevel);
+    let val = ndvWarningLevel;
     if (val > 5) {
-      setNdvWarningLevel(
-        ((val) - (5))
-      );
+      setNdvWarningLevel(val - 5);
     }
   };
   useEffect(() => {
@@ -540,7 +562,7 @@ const Dashboard = () => {
       expandedTable,
       hideTableControls,
       showLastAction,
-      ndvWarningLevel
+      ndvWarningLevel,
     };
 
     localStorage.setItem(CONFIGS_KEY, JSON.stringify(config));
@@ -552,7 +574,7 @@ const Dashboard = () => {
     expandedTable,
     hideTableControls,
     showLastAction,
-    ndvWarningLevel
+    ndvWarningLevel,
   ]);
 
   const deleteRow = (addr) => {
@@ -851,11 +873,7 @@ const Dashboard = () => {
                   )}
                 </th>
               )}
-{expandedTable && (
-                <th>
-                  {formatNumber(totalDrops)}
-                </th>
-              )}
+              {expandedTable && <th>{formatNumber(totalDrops)}</th>}
               <th>
                 {convertTokenToUSD(totalAvailable, dripPrice, showDollarValues)}
               </th>
@@ -933,6 +951,17 @@ const Dashboard = () => {
           >
             {addressList.length ? "Save" : "Clear"} List
           </button>
+          {wallets.length && (
+            <button
+              type="button"
+              style={{ marginLeft: 10 }}
+              className="btn btn-primary"
+              onClick={updatedAddresses}
+              disabled={!addressList.length}
+            >
+              Update List
+            </button>
+          )}
           <div>Paste a list of addresses:</div>
           <div>
             <textarea
