@@ -317,6 +317,7 @@ export const getBigDripBuys = async () => {
       amount: parseFloat(tx.value / 10e17).toFixed(2),
       date: new Date(tx.timeStamp * 1000).toLocaleString(),
       transaction: tx.hash,
+      recent: new Date() - new Date(tx.timeStamp * 1000) <= 10 * 60 * 1000,
     }));
 
   const bigBuysWithDripAmt = await Promise.all(
