@@ -20,6 +20,14 @@ const BigDripBuys = () => {
     setUpdateTime(new Date().toLocaleString());
   };
 
+  const recentBuy = (date) => {
+    const txDate = Date.parse(date);
+    const now = new Date();
+    const recent = now - txDate <= 1 * 60 * 60 * 1000;
+    recent && console.log(`${date} is recent`);
+    return recent;
+  };
+
   return (
     <Marquee
       gradient={false}
@@ -31,8 +39,17 @@ const BigDripBuys = () => {
       {bigBuys.map((bb, index) => (
         <div
           key={index}
-          style={{ color: "white", marginRight: "5px", marginLeft: "10px" }}
+          style={{
+            color: "white",
+            marginRight: "5px",
+            marginLeft: "10px",
+          }}
         >
+          {bb.recent && (
+            <span className="blink" style={{ color: "green", marginRight: 5 }}>
+              NEW
+            </span>
+          )}
           <a
             href={`https://bscscan.com/tx/${bb.transaction}`}
             target="_blank"
