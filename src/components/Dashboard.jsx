@@ -618,7 +618,7 @@ const Dashboard = () => {
               style={{ display: hideTableControls ? "block" : "flex" }}
             >
               <div className="form-config">
-                <div className="input-group mb-3 add-address">
+                {/* <div className="input-group mb-3 add-address">
                   <button
                     type="button"
                     className="btn btn-primary"
@@ -635,7 +635,7 @@ const Dashboard = () => {
                     onChange={(e) => setNewAddress(e.target.value)}
                     placeholder="Add additional single wallet"
                   />
-                </div>
+                </div> */}
 
                 {hideTableControls || (
                   <div className="alert">
@@ -962,7 +962,7 @@ const Dashboard = () => {
               Update List
             </button>
           )}
-          <div>Paste a list of addresses:</div>
+          <div>Paste one or more addresses:</div>
           <div>
             <textarea
               className="form-control inverted"
