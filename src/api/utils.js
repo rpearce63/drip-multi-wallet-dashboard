@@ -44,7 +44,10 @@ export const formatPercent = (amt) => {
   return parseFloat(amt * 100).toFixed(2);
 };
 
-export const formatNumber = (amt) => parseFloat(amt).toFixed(3);
+export const formatNumber = (amt) =>
+  parseFloat(amt)
+    .toFixed(3)
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
 export const shortenAddress = (address) =>
   `${address.substr(0, 5)}...${address.slice(-4)}`;
