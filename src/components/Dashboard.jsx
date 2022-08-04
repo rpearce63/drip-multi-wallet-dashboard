@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
-  getConnection,
+  // getConnection,
   getUserInfo,
   claimsAvailable,
   getContract,
@@ -55,7 +55,7 @@ const Dashboard = () => {
   const [totalNDV, setTotalNDV] = useState(0);
   const [totalDrops, setTotalDrops] = useState(0);
 
-  const [newAddress, setNewAddress] = useState("");
+  // const [newAddress, setNewAddress] = useState("");
 
   //form configs
   const [flagAmount, setFlagAmount] = useState(true);
@@ -401,26 +401,26 @@ const Dashboard = () => {
     fetchData();
   };
 
-  const addNewAddress = async (e) => {
-    e.preventDefault();
-    const web3 = await getConnection();
-    if (!web3.utils.isAddress(newAddress)) {
-      alert("Invalid Address");
-      return false;
-    }
-    const storedAddresses =
-      JSON.parse(window.localStorage.getItem("dripAddresses")) ?? [];
-    if (!storedAddresses.some((sa) => sa.addr === newAddress)) {
-      storedAddresses.push({ addr: newAddress, label: "" });
-      window.localStorage.setItem(
-        "dripAddresses",
-        JSON.stringify(storedAddresses)
-      );
+  // const addNewAddress = async (e) => {
+  //   e.preventDefault();
+  //   const web3 = await getConnection();
+  //   if (!web3.utils.isAddress(newAddress)) {
+  //     alert("Invalid Address");
+  //     return false;
+  //   }
+  //   const storedAddresses =
+  //     JSON.parse(window.localStorage.getItem("dripAddresses")) ?? [];
+  //   if (!storedAddresses.some((sa) => sa.addr === newAddress)) {
+  //     storedAddresses.push({ addr: newAddress, label: "" });
+  //     window.localStorage.setItem(
+  //       "dripAddresses",
+  //       JSON.stringify(storedAddresses)
+  //     );
 
-      setNewAddress("");
-      fetchData();
-    }
-  };
+  //     setNewAddress("");
+  //     fetchData();
+  //   }
+  // };
 
   const highlightStyleFor = (col, wallet) => {
     let amount,

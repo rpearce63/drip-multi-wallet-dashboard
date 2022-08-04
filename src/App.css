@@ -57,6 +57,7 @@ textarea.invert {
 .navbar-brand {
   display: flex;
   justify-content: space-between;
+  width: 100%;
 }
 .page-title {
   padding-top: 7rem;
@@ -71,6 +72,15 @@ textarea.invert {
   display: flex;
   flex-direction: column;
 }
+.toggle-prices {
+  visibility: hidden;
+  cursor: pointer;
+  font-size: 32px;
+  line-height: 16px;
+}
+.drip-price-small-screen {
+  display: none;
+}
 /* Small devices (portrait tablets and large phones, 600px and up) */
 @media only screen and (max-width: 700px) {
   .main {
@@ -81,6 +91,24 @@ textarea.invert {
   }
   .navbar {
     max-width: min-content;
+  }
+  .navbar-brand {
+    margin-right: 0px;
+  }
+  .toggle-prices {
+    visibility: visible;
+  }
+  .stack-collapsed {
+    flex-direction: row !important;
+  }
+  .drip-dex-collapsed {
+    margin-right: 10px;
+  }
+  .drip-pcs {
+    color: white;
+  }
+  .drip-price-small-screen {
+    display: flex;
   }
 }
 
@@ -191,6 +219,10 @@ button {
   }
   .price-group {
     flex-direction: column;
+  }
+
+  .hidePrices {
+    display: none;
   }
 
   .beggar {

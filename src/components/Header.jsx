@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Web3 from "web3";
-import { getBr34pPrice, getDripPrice } from "../api/Contract";
+import { getDripPrice } from "../api/Contract";
 import { formatCurrency, convertDrip, getLatestVersion } from "../api/utils";
 import { calcPCSPrice, calcBR34PPrice } from "../api/tokenPriceApi";
 import {
@@ -23,7 +23,7 @@ const Header = () => {
   const [pigPrice, setPigPrice] = useState(0);
   const [dogPrice, setDogPrice] = useState(0);
   const [version, setVersion] = useState();
-
+  const [hidePrices, setHidePrices] = useState(true);
   const BUY_SPREAD = 1.1;
 
   useEffect(() => {
@@ -89,52 +89,32 @@ const Header = () => {
               available. Please refresh page to get updates.
             </div>
           )}
+          <div
+            className="toggle-prices"
+            onClick={(e) => setHidePrices(!hidePrices)}
+            style={{}}
+          >
+            {hidePrices ? "+" : "-"}
+          </div>
         </div>
-        <div className="prices">
+        {hidePrices && (
+          <div className="drip-price-small-screen">
+            <DripPrices
+              dripPcsPrice={dripPcsPrice}
+              BUY_SPREAD={BUY_SPREAD}
+              dripPrice={dripPrice}
+              hidePrices
+            />
+          </div>
+        )}
+
+        <div className={`prices ${hidePrices && "hidePrices"}`}>
           <div className="price-group">
-            <div className="price">
-              <a
-                href="https://bscscan.com/token/0x20f663cea80face82acdfa3aae6862d246ce0333"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Drip:
-              </a>
-              <div className="stack">
-                <div
-                  className={
-                    dripPcsPrice * BUY_SPREAD >= convertDrip(dripPrice)
-                      ? "buy-dex"
-                      : ""
-                  }
-                >
-                  <a
-                    href="https://drip.community/fountain"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    DEX:
-                  </a>
-                  {formatCurrency(convertDrip(dripPrice))}
-                </div>
-                <div
-                  className={
-                    dripPcsPrice * BUY_SPREAD < convertDrip(dripPrice)
-                      ? "buy-pcs"
-                      : ""
-                  }
-                >
-                  <a
-                    href="https://pancakeswap.finance/swap?outputCurrency=0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56&inputCurrency=0x20f663CEa80FaCE82ACDFA3aAE6862d246cE0333"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    PCS:
-                  </a>
-                  {formatCurrency(dripPcsPrice)}
-                </div>
-              </div>
-            </div>
+            <DripPrices
+              dripPcsPrice={dripPcsPrice}
+              BUY_SPREAD={BUY_SPREAD}
+              dripPrice={dripPrice}
+            />
             <div className="price stack">
               <label>BNB/DRIP:</label> {parseFloat(dripBnbPrice).toFixed(5)}
             </div>
@@ -203,6 +183,56 @@ const Header = () => {
       </div>
       <BigDripBuys />
     </nav>
+  );
+};
+
+const DripPrices = ({ dripPcsPrice, BUY_SPREAD, dripPrice, hidePrices }) => {
+  return (
+    <div className="price drip-price">
+      <a
+        href="https://bscscan.com/token/0x20f663cea80face82acdfa3aae6862d246ce0333"
+        target="_blank"
+        rel="noreferrer"
+      >
+        Drip:
+      </a>
+      <div className={`stack ${hidePrices && "stack-collapsed"}`}>
+        <div
+          className={`drip-dex
+            ${
+              dripPcsPrice * BUY_SPREAD >= convertDrip(dripPrice)
+                ? "buy-dex"
+                : ""
+            } ${hidePrices && "drip-dex-collapsed"}`}
+        >
+          <a
+            href="https://drip.community/fountain"
+            target="_blank"
+            rel="noreferrer"
+          >
+            DEX:
+          </a>
+          {formatCurrency(convertDrip(dripPrice))}
+        </div>
+        <div
+          className={`drip-pcs 
+            ${
+              dripPcsPrice * BUY_SPREAD < convertDrip(dripPrice)
+                ? "buy-pcs"
+                : ""
+            }`}
+        >
+          <a
+            href="https://pancakeswap.finance/swap?outputCurrency=0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56&inputCurrency=0x20f663CEa80FaCE82ACDFA3aAE6862d246cE0333"
+            target="_blank"
+            rel="noreferrer"
+          >
+            PCS:
+          </a>
+          {formatCurrency(dripPcsPrice)}
+        </div>
+      </div>
+    </div>
   );
 };
 
