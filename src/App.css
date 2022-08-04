@@ -81,6 +81,12 @@ textarea.invert {
 .drip-price-small-screen {
   display: none;
 }
+
+.drip-pcs,
+.drip-dex {
+  color: white;
+}
+
 /* Small devices (portrait tablets and large phones, 600px and up) */
 @media only screen and (max-width: 700px) {
   .main {
@@ -104,9 +110,7 @@ textarea.invert {
   .drip-dex-collapsed {
     margin-right: 10px;
   }
-  .drip-pcs {
-    color: white;
-  }
+
   .drip-price-small-screen {
     display: flex;
   }

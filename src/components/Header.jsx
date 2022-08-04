@@ -198,12 +198,9 @@ const DripPrices = ({ dripPcsPrice, BUY_SPREAD, dripPrice, hidePrices }) => {
       </a>
       <div className={`stack ${hidePrices && "stack-collapsed"}`}>
         <div
-          className={`drip-dex
-            ${
-              dripPcsPrice * BUY_SPREAD >= convertDrip(dripPrice)
-                ? "buy-dex"
-                : ""
-            } ${hidePrices && "drip-dex-collapsed"}`}
+          className={`drip-dex${
+            dripPcsPrice * BUY_SPREAD >= convertDrip(dripPrice) ? "buy-dex" : ""
+          } ${hidePrices && "drip-dex-collapsed"}`}
         >
           <a
             href="https://drip.community/fountain"
@@ -215,12 +212,9 @@ const DripPrices = ({ dripPcsPrice, BUY_SPREAD, dripPrice, hidePrices }) => {
           {formatCurrency(convertDrip(dripPrice))}
         </div>
         <div
-          className={`drip-pcs 
-            ${
-              dripPcsPrice * BUY_SPREAD < convertDrip(dripPrice)
-                ? "buy-pcs"
-                : ""
-            }`}
+          className={`drip-pcs ${
+            dripPcsPrice * BUY_SPREAD < convertDrip(dripPrice) ? "buy-pcs" : ""
+          }`}
         >
           <a
             href="https://pancakeswap.finance/swap?outputCurrency=0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56&inputCurrency=0x20f663CEa80FaCE82ACDFA3aAE6862d246cE0333"
