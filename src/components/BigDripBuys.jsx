@@ -20,13 +20,13 @@ const BigDripBuys = () => {
     setUpdateTime(new Date().toLocaleString());
   };
 
-  const recentBuy = (date) => {
-    const txDate = Date.parse(date);
-    const now = new Date();
-    const recent = now - txDate <= 1 * 60 * 60 * 1000;
-    recent && console.log(`${date} is recent`);
-    return recent;
-  };
+  // const recentBuy = (date) => {
+  //   const txDate = Date.parse(date);
+  //   const now = new Date();
+  //   const recent = now - txDate <= 1 * 60 * 60 * 1000;
+  //   recent && console.log(`${date} is recent`);
+  //   return recent;
+  // };
 
   return (
     <Marquee

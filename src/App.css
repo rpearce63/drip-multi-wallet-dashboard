@@ -57,6 +57,7 @@ textarea.invert {
 .navbar-brand {
   display: flex;
   justify-content: space-between;
+  width: 100%;
 }
 .page-title {
   padding-top: 7rem;
@@ -71,6 +72,12 @@ textarea.invert {
   display: flex;
   flex-direction: column;
 }
+.toggle-prices {
+  visibility: hidden;
+  cursor:pointer; 
+  font-size: 32px;
+  line-height: 16px;
+}
 /* Small devices (portrait tablets and large phones, 600px and up) */
 @media only screen and (max-width: 700px) {
   .main {
@@ -81,6 +88,9 @@ textarea.invert {
   }
   .navbar {
     max-width: min-content;
+  }
+  .toggle-prices {
+    visibility: visible;
   }
 }
 
@@ -191,6 +201,10 @@ button {
   }
   .price-group {
     flex-direction: column;
+  }
+
+  .hidePrices {
+    display: none
   }
 
   .beggar {

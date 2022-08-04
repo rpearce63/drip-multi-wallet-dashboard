@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Web3 from "web3";
-import { getBr34pPrice, getDripPrice } from "../api/Contract";
+import { getDripPrice } from "../api/Contract";
 import { formatCurrency, convertDrip, getLatestVersion } from "../api/utils";
 import { calcPCSPrice, calcBR34PPrice } from "../api/tokenPriceApi";
 import {
@@ -23,7 +23,7 @@ const Header = () => {
   const [pigPrice, setPigPrice] = useState(0);
   const [dogPrice, setDogPrice] = useState(0);
   const [version, setVersion] = useState();
-
+  const [hidePrices, setHidePrices] = useState(true);
   const BUY_SPREAD = 1.1;
 
   useEffect(() => {
@@ -89,10 +89,17 @@ const Header = () => {
               available. Please refresh page to get updates.
             </div>
           )}
+          <div
+            className="toggle-prices"
+            onClick={(e) => setHidePrices(!hidePrices)}
+            style={{}}
+          >
+            {hidePrices ? "+" : "-"}
+          </div>
         </div>
-        <div className="prices">
+        <div className={`prices ${hidePrices && "hidePrices"}`}>
           <div className="price-group">
-            <div className="price">
+            <div className="price drip-price">
               <a
                 href="https://bscscan.com/token/0x20f663cea80face82acdfa3aae6862d246ce0333"
                 target="_blank"
