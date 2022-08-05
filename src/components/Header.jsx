@@ -198,7 +198,7 @@ const DripPrices = ({ dripPcsPrice, BUY_SPREAD, dripPrice, hidePrices }) => {
       </a>
       <div className={`stack ${hidePrices && "stack-collapsed"}`}>
         <div
-          className={`drip-dex${
+          className={`drip-dex ${
             dripPcsPrice * BUY_SPREAD >= convertDrip(dripPrice) ? "buy-dex" : ""
           } ${hidePrices && "drip-dex-collapsed"}`}
         >
