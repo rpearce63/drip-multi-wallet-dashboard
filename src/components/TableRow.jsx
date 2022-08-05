@@ -1,4 +1,9 @@
-import { shortenAddress, convertTokenToUSD, formatPercent, formatNumber } from "../api/utils";
+import {
+  shortenAddress,
+  convertTokenToUSD,
+  formatPercent,
+  formatNumber,
+} from "../api/utils";
 import { Link } from "react-router-dom";
 const TableRow = ({
   index,
@@ -15,7 +20,6 @@ const TableRow = ({
   br34pPrice,
   flagLowNdv,
   ndvWarningLevel,
-  
 }) => {
   return (
     <tr>
@@ -79,9 +83,7 @@ const TableRow = ({
       )}
       {expandedTable && (
         <>
-          <td>
-            {(formatNumber( wallet.dropsBalance))}
-          </td>
+          <td>{formatNumber(wallet.dropsBalance)}</td>
         </>
       )}
       <td className={highlightStyleFor("amt", wallet)}>
@@ -96,10 +98,12 @@ const TableRow = ({
       {showLastAction && <td>{wallet.lastAction}</td>}
       <td
         className={
-          flagLowNdv && wallet.ndv / wallet.deposits <= ndvWarningLevel / 100 ? "warning inverted" : ""
+          flagLowNdv && wallet.ndv / wallet.deposits <= ndvWarningLevel / 100
+            ? "warning inverted"
+            : ""
         }
       >
-        {wallet.ndv}
+        {formatNumber(wallet.ndv)}
       </td>
       <td>{convertTokenToUSD(wallet.payouts, dripPrice, showDollarValues)}</td>
       {expandedTable && (
