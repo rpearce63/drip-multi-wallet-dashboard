@@ -236,7 +236,6 @@ const Dashboard = () => {
     const c = parseFloat(web3.utils.fromWei(userInfo.payouts));
 
     const ndv = d + a + r - c;
-    console.log(`ndv: ${ndv}`);
     const valid = !!userInfo;
     const referral_bonus =
       parseFloat(userInfo.direct_bonus) + parseFloat(userInfo.match_bonus);
@@ -329,10 +328,7 @@ const Dashboard = () => {
       validWallets.reduce((total, wallet) => total + parseFloat(wallet.r), 0)
     );
     setTotalNDV(() =>
-      validWallets.reduce((total, wallet) => {
-        console.log(total, wallet.ndv);
-        return total + parseFloat(wallet.ndv);
-      }, 0)
+      validWallets.reduce((total, wallet) => total + parseFloat(wallet.ndv), 0)
     );
     setTotalDrops(() =>
       validWallets.reduce(
