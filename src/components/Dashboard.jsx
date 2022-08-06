@@ -950,7 +950,7 @@ const Dashboard = () => {
           >
             {addressList.length ? "Save" : "Clear"} List
           </button>
-          {wallets.length && (
+          {!!wallets.length && (
             <button
               type="button"
               style={{ marginLeft: 10 }}
