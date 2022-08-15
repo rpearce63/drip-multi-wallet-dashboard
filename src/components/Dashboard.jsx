@@ -844,7 +844,9 @@ const Dashboard = () => {
                       h.label !== "Last Action"
                   ).map((h) => (
                     <th
-                      className="table-header"
+                      className={`table-sort-${
+                        sortCol === h.id ? sortOrder : "asc"
+                      }`}
                       key={h.id}
                       onClick={() =>
                         setSortBy(h.id, sortOrder === "asc" ? "desc" : "asc")
