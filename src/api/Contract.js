@@ -309,7 +309,7 @@ export const getBigDripBuys = async () => {
 
   const bigBuys = buyTransactions
     .filter((tx) => tx.input.startsWith("0xb5695026") && tx.isError !== "1")
-    .filter((tx) => tx.value > 20000000000000000000)
+    .filter((tx) => tx.value >= 20000000000000000000)
     .map((tx, index) => ({
       id: index,
       blockNumber: tx.blockNumber,

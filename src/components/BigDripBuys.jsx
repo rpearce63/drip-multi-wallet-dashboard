@@ -35,7 +35,9 @@ const BigDripBuys = () => {
       pauseOnHover={true}
       speed={40}
     >
-      <span style={{ marginRight: "5px" }}>Big Buys in the last 24 hrs: </span>
+      <span style={{ marginRight: "5px" }}>
+        Big Buys in the last 24 hrs: {bigBuys.length} -
+      </span>
       {bigBuys.map((bb, index) => (
         <div
           key={index}
