@@ -214,6 +214,16 @@ button {
   justify-content: space-between;
 }
 
+.table-sort-desc::after {
+  content: "\25bc";
+  
+}
+
+.table-sort-asc::after {
+  content: "\25b2";
+  
+ }
+
 @media only screen and (max-width: 700px) {
   .prices {
     /* font-size: 14px; */
@@ -237,6 +247,8 @@ button {
 .table-info {
   margin-top: 2rem;
 }
+
+
 
 .bi-clipboard:hover,
 .bi-clipboard-check:hover {

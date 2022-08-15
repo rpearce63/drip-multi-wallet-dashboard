@@ -32,6 +32,7 @@ import {
   backupData,
   findFibIndex,
   formatNumber,
+  sortBy,
 } from "../api/utils";
 
 import Web3 from "web3";
@@ -54,7 +55,8 @@ const Dashboard = () => {
   const [totalHydrated, setTotalHydrated] = useState(0);
   const [totalNDV, setTotalNDV] = useState(0);
   const [totalDrops, setTotalDrops] = useState(0);
-
+  const [sortCol, setSortCol] = useState("index");
+  const [sortOrder, setSortOrder] = useState("asc");
   // const [newAddress, setNewAddress] = useState("");
 
   //form configs
@@ -81,42 +83,42 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
 
   const TABLE_HEADERS = [
-    "#",
-    "Address",
-    "Label",
-    "Buddy",
-    "Uplines",
-    "BUSD",
-    "BR34P / Levels",
-    "Drip",
-    "BNB",
-    "DROPS",
-    "Available",
-    "ROI",
-    "Deposits",
-    "Last Action",
-    "NDV",
-    "Claimed",
-    "Hydrated",
-    "Rewarded",
-    "Max Payout",
-    "Team",
-    "Ref Pos",
+    { label: "#", id: "index" },
+    { label: "Address", id: "address" },
+    { label: "Label", id: "label" },
+    { label: "Buddy", id: "upline" },
+    { label: "Uplines", id: "uplineCount" },
+    { label: "BUSD", id: "busdBalance" },
+    { label: "BR34P / Levels", id: "br34pBalance" },
+    { label: "Drip", id: "dripBalance" },
+    { label: "BNB", id: "bnbBalance" },
+    { label: "DROPS", id: "dropsBalance" },
+    { label: "Available", id: "available" },
+    { label: "ROI", id: "roi" },
+    { label: "Deposits", id: "deposits" },
+    { label: "Last Action", id: "lastAction" },
+    { label: "NDV", id: "ndv" },
+    { label: "Claimed", id: "payouts" },
+    { label: "Hydrated", id: "r" },
+    { label: "Rewarded", id: "direct_bonus" },
+    { label: "Max Payout", id: "maxPayout" },
+    { label: "Team", id: "team" },
+    { label: "Ref Pos", id: "ref_claim_pos" },
   ];
   const BASE_HEADERS = [
-    "#",
-    "Address",
-    "Label",
-    "Available",
-    "ROI",
-    "Deposits",
-    "Last Action",
-    "NDV",
-    "Claimed",
-    "Rewarded",
-    "Max Payout",
-    "Team",
-    "Ref Pos",
+    { label: "#", id: "index" },
+    { label: "Address", id: "address" },
+    { label: "Label", id: "label" },
+    { label: "Available", id: "available" },
+    { label: "ROI", id: "roi" },
+    { label: "Deposits", id: "deposits" },
+    { label: "Last Action", id: "lastAction" },
+    { label: "NDV", id: "ndv" },
+    { label: "Claimed", id: "payouts" },
+    { label: "Rewarded", id: "direct_bonus" },
+    { label: "Max Payout", id: "maxPayout" },
+    { label: "Team", id: "team" },
+    { label: "Ref Pos", id: "ref_claim_pos" },
   ];
 
   useEffect(() => {
@@ -186,6 +188,7 @@ const Dashboard = () => {
         return walletData;
       })
     );
+
     setWallets(walletCache);
 
     setDataCopied(false);
@@ -235,7 +238,7 @@ const Dashboard = () => {
     const r = parseFloat(web3.utils.fromWei(userInfo.rolls));
     const c = parseFloat(web3.utils.fromWei(userInfo.payouts));
 
-    const ndv = formatNumber(d + a + r - c);
+    const ndv = d + a + r - c;
 
     const valid = !!userInfo;
     const referral_bonus =
@@ -250,6 +253,7 @@ const Dashboard = () => {
       deposits: userInfo.deposits / 10e17,
       available: available / 10e17,
       payouts: userInfo.payouts / 10e17,
+      maxPayout: (userInfo.deposits * 3.65) / 10e17,
       direct_bonus: referral_bonus / 10e17,
 
       address: wallet.addr,
@@ -587,6 +591,11 @@ const Dashboard = () => {
     localStorage.setItem("dripAddresses", JSON.stringify(stored));
   };
 
+  const setSortBy = (col, order) => {
+    setSortCol(col);
+    setSortOrder(order);
+  };
+
   return (
     <div className="container">
       <div className="main">
@@ -815,14 +824,36 @@ const Dashboard = () => {
               {expandedTable
                 ? TABLE_HEADERS.filter(
                     (h) =>
-                      (h === "Last Action" && showLastAction) ||
-                      h !== "Last Action"
-                  ).map((h) => <th key={h}>{h}</th>)
+                      (h.label === "Last Action" && showLastAction) ||
+                      h.label !== "Last Action"
+                  ).map((h) => (
+                    <th
+                      className={`table-sort-${
+                        sortCol === h.id ? sortOrder : "asc"
+                      }`}
+                      key={h.id}
+                      onClick={() =>
+                        setSortBy(h.id, sortOrder === "asc" ? "desc" : "asc")
+                      }
+                    >
+                      {h.label}
+                    </th>
+                  ))
                 : BASE_HEADERS.filter(
                     (h) =>
-                      (h === "Last Action" && showLastAction) ||
-                      h !== "Last Action"
-                  ).map((h) => <th key={h}>{h}</th>)}
+                      (h.label === "Last Action" && showLastAction) ||
+                      h.label !== "Last Action"
+                  ).map((h) => (
+                    <th
+                      className="table-header"
+                      key={h.id}
+                      onClick={() =>
+                        setSortBy(h.id, sortOrder === "asc" ? "desc" : "asc")
+                      }
+                    >
+                      {h.label}
+                    </th>
+                  ))}
             </tr>
             <tr className="table-success">
               <th> </th>
@@ -918,27 +949,25 @@ const Dashboard = () => {
             </tr>
           </thead>
           <tbody>
-            {wallets
-              .sort((a, b) => a.index - b.index)
-              .map((wallet, index) => (
-                <TableRow
-                  key={index}
-                  index={index}
-                  addLabel={addLabel}
-                  bnbPrice={bnbPrice}
-                  deleteRow={deleteRow}
-                  dripPrice={dripPrice}
-                  expandedTable={expandedTable}
-                  highlightStyleFor={highlightStyleFor}
-                  showDollarValues={showDollarValues}
-                  showLastAction={showLastAction}
-                  wallet={wallet}
-                  br34pPrice={br34pPrice}
-                  editLabels={editLabels}
-                  flagLowNdv={flagLowNdv}
-                  ndvWarningLevel={ndvWarningLevel}
-                />
-              ))}
+            {wallets.sort(sortBy(sortCol, sortOrder)).map((wallet, index) => (
+              <TableRow
+                key={index}
+                index={index}
+                addLabel={addLabel}
+                bnbPrice={bnbPrice}
+                deleteRow={deleteRow}
+                dripPrice={dripPrice}
+                expandedTable={expandedTable}
+                highlightStyleFor={highlightStyleFor}
+                showDollarValues={showDollarValues}
+                showLastAction={showLastAction}
+                wallet={wallet}
+                br34pPrice={br34pPrice}
+                editLabels={editLabels}
+                flagLowNdv={flagLowNdv}
+                ndvWarningLevel={ndvWarningLevel}
+              />
+            ))}
           </tbody>
         </table>
 
