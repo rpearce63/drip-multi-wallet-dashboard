@@ -102,7 +102,7 @@ const Dashboard = () => {
     { label: "Hydrated", id: "r" },
     { label: "Rewarded", id: "direct_bonus" },
     { label: "Max Payout", id: "maxPayout" },
-    { label: "Team", id: "team" },
+    { label: "Team", id: "referrals" },
     { label: "Ref Pos", id: "ref_claim_pos" },
   ];
   const BASE_HEADERS = [
@@ -117,7 +117,7 @@ const Dashboard = () => {
     { label: "Claimed", id: "payouts" },
     { label: "Rewarded", id: "direct_bonus" },
     { label: "Max Payout", id: "maxPayout" },
-    { label: "Team", id: "team" },
+    { label: "Team", id: "referrals" },
     { label: "Ref Pos", id: "ref_claim_pos" },
   ];
 
@@ -270,6 +270,7 @@ const Dashboard = () => {
       lastAction,
       r,
       dropsBalance,
+      referrals: parseInt(userInfo.referrals),
     };
   };
   useEffect(() => {
