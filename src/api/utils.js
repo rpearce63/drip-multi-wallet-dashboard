@@ -77,3 +77,11 @@ export const getLatestVersion = async () => {
 
   return version.replace("v", "");
 };
+
+export const sortBy = (col, order) => {
+  if (order === "asc") {
+    return (a, b) => (a[col] > b[col] ? 1 : -1);
+  } else {
+    return (a, b) => (a[col] < b[col] ? 1 : -1);
+  }
+};

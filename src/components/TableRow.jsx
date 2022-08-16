@@ -121,7 +121,7 @@ const TableRow = ({
                     )} */}
       </td>
       <td>
-        {convertTokenToUSD(wallet.deposits * 3.65, dripPrice, showDollarValues)}
+        {convertTokenToUSD(wallet.maxPayout, dripPrice, showDollarValues)}
       </td>
       <td>
         {wallet.referrals > 0 && (
