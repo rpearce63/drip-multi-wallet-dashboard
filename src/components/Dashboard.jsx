@@ -156,6 +156,10 @@ const Dashboard = () => {
     setNdvWarningLevel(() => ndvWarningLevel);
   }, []);
 
+  useEffect(() => {
+    wallets.sort(sortBy(sortCol, sortOrder));
+  }, [sortCol, sortOrder, wallets]);
+
   const fetchData = async () => {
     //setLoading(true);
     setTimer(60);
@@ -951,7 +955,7 @@ const Dashboard = () => {
             </tr>
           </thead>
           <tbody>
-            {wallets.sort(sortBy(sortCol, sortOrder)).map((wallet, index) => (
+            {wallets.map((wallet, index) => (
               <TableRow
                 key={index}
                 index={index}
