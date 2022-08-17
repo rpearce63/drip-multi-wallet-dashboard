@@ -158,7 +158,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     wallets.sort(sortBy(sortCol, sortOrder));
-  }, [sortCol, sortOrder]);
+  }, [sortCol, sortOrder, wallets]);
 
   const fetchData = async () => {
     //setLoading(true);
@@ -193,7 +193,7 @@ const Dashboard = () => {
       })
     );
 
-    setWallets(walletCache.sort(sortBy(sortCol, sortOrder)));
+    setWallets(walletCache);
 
     setDataCopied(false);
     fetchPrices();
