@@ -193,7 +193,7 @@ const Dashboard = () => {
       })
     );
 
-    setWallets(walletCache);
+    setWallets(walletCache.sort(sortBy(sortCol, sortOrder)));
 
     setDataCopied(false);
     fetchPrices();
