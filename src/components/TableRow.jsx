@@ -24,7 +24,7 @@ const TableRow = ({
   return (
     <tr>
       <td className="rowIndex" onClick={() => deleteRow(wallet.address)}>
-        <span>{wallet.index}</span>
+        <span>{wallet.index + 1}</span>
       </td>
       <td
         className={wallet.valid ? "" : "invalid"}
