@@ -95,9 +95,7 @@ textarea.invert {
   .controls {
     display: block !important;
   }
-  .navbar {
-    max-width: min-content;
-  }
+  
   .navbar-brand {
     margin-right: 0px;
   }
