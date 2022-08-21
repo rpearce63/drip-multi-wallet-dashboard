@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Marquee from "react-fast-marquee";
-import { getBigDripBuys } from "../api/Contract";
+import { getBigDripBuys, getBigBuysFromAWS } from "../api/Contract";
 
 const BigDripBuys = () => {
   const [bigBuys, setBigBuys] = useState([]);
@@ -10,12 +10,12 @@ const BigDripBuys = () => {
     fetchBigBuys();
     const interval = setInterval(() => {
       fetchBigBuys();
-    }, 600000);
+    }, 10000);
     return () => clearInterval(interval);
   }, []);
 
   const fetchBigBuys = async () => {
-    const data = await getBigDripBuys();
+    const data = await getBigBuysFromAWS();
     setBigBuys(data);
     setUpdateTime(new Date().toLocaleString());
   };
