@@ -59,7 +59,7 @@ const BigDripBuys = () => {
           >
             {bb.amount} BNB {bb.dripAmt && <span>({bb.dripAmt} Drip)</span>}
           </a>{" "}
-          on {bb.date} -{" "}
+          on {new Date(bb.timestamp).toLocaleString()} -{" "}
         </div>
       ))}
       <span style={{ marginRight: "50px" }}>Updated: {updateTime}</span>
