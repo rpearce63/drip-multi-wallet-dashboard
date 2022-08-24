@@ -1,32 +1,24 @@
 import React, { useState, useEffect } from "react";
 import Marquee from "react-fast-marquee";
-import { getBigDripBuys, getBigBuysFromAWS } from "../api/Contract";
-
+import { getBigBuysFromAWS } from "../api/Contract";
+import _ from "lodash";
 const BigDripBuys = () => {
   const [bigBuys, setBigBuys] = useState([]);
   const [updateTime, setUpdateTime] = useState("");
 
   useEffect(() => {
+    const fetchBigBuys = async () => {
+      const data = await getBigBuysFromAWS();
+      //update display only if data is updated
+      (data.length && _.isEqual(data, bigBuys)) || setBigBuys(data);
+      setUpdateTime(new Date().toLocaleString());
+    };
     fetchBigBuys();
     const interval = setInterval(() => {
       fetchBigBuys();
     }, 10000);
     return () => clearInterval(interval);
-  }, []);
-
-  const fetchBigBuys = async () => {
-    const data = await getBigBuysFromAWS();
-    setBigBuys(data);
-    setUpdateTime(new Date().toLocaleString());
-  };
-
-  // const recentBuy = (date) => {
-  //   const txDate = Date.parse(date);
-  //   const now = new Date();
-  //   const recent = now - txDate <= 1 * 60 * 60 * 1000;
-  //   recent && console.log(`${date} is recent`);
-  //   return recent;
-  // };
+  }, [bigBuys]);
 
   return (
     <Marquee
@@ -44,7 +36,7 @@ const BigDripBuys = () => {
           style={{
             color: "white",
             marginRight: "5px",
-            marginLeft: "10px",
+            marginLeft: "5px",
           }}
         >
           {bb.recent && (
@@ -59,7 +51,7 @@ const BigDripBuys = () => {
           >
             {bb.amount} BNB {bb.dripAmt && <span>({bb.dripAmt} Drip)</span>}
           </a>{" "}
-          on {new Date(bb.timestamp).toLocaleString()} -{" "}
+          on {new Date(bb.timestamp).toLocaleString()} -
         </div>
       ))}
       <span style={{ marginRight: "50px" }}>Updated: {updateTime}</span>
