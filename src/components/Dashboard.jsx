@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   // getConnection,
   getUserInfo,
@@ -160,7 +160,88 @@ const Dashboard = () => {
     wallets.sort(sortBy(sortCol, sortOrder));
   }, [sortCol, sortOrder, wallets]);
 
-  const fetchData = async () => {
+  const fetchPrices = useCallback(async () => {
+    const [bnbPrice, dripPrice] = await getDripPrice(web3);
+    const br34pPrice = await getBr34pPrice();
+
+    setDripPrice(() => (dripPrice * bnbPrice) / 10e17);
+    setBnbPrice(() => bnbPrice);
+    setBr34pPrice(() => br34pPrice);
+  }, [web3]);
+
+  const fetchWalletData = useCallback(
+    async (wallet, index) => {
+      const userInfo = await getUserInfo(contract, wallet.addr);
+      const available = await claimsAvailable(contract, wallet.addr);
+      const dripBalance = await getTokenBalance(
+        web3,
+        wallet.addr,
+        DRIP_TOKEN_ADDR
+      );
+      const uplineCount = await getUplineCount(contract, wallet.addr);
+      const br34pBalance = await getBr34pBalance(web3, wallet.addr);
+      const bnbBalance = await getBnbBalance(web3, wallet.addr);
+
+      const busdBalance = await getTokenBalance(
+        web3,
+        wallet.addr,
+        BUSD_TOKEN_ADDRESS
+      );
+      const dripBusdLpBalance = await getTokenBalance(
+        web3,
+        wallet.addr,
+        DRIP_BUSD_LP_ADDRESS
+      );
+
+      const coveredDepth = findFibIndex(br34pBalance);
+      const teamDepth =
+        userInfo.referrals > 0 && (await getDownlineDepth(wallet.addr));
+
+      const { airdrops } = await getAirdrops(contract, wallet.addr);
+      const a = parseFloat(web3.utils.fromWei(airdrops));
+      const d = parseFloat(web3.utils.fromWei(userInfo.deposits));
+      const r = parseFloat(web3.utils.fromWei(userInfo.rolls));
+      const c = parseFloat(web3.utils.fromWei(userInfo.payouts));
+
+      const ndv = d + a + r - c;
+      const valid = !!userInfo;
+      const referral_bonus =
+        parseFloat(userInfo.direct_bonus) + parseFloat(userInfo.match_bonus);
+
+      const lastAction =
+        showLastAction && (await getLastAction(startBlock, wallet.addr));
+      const dropsBalance = await getReservoirBalance(web3, wallet.addr);
+      return {
+        index,
+        ...userInfo,
+        deposits: userInfo.deposits / 10e17,
+        available: available / 10e17,
+        payouts: userInfo.payouts / 10e17,
+        maxPayout: (userInfo.deposits * 3.65) / 10e17,
+        direct_bonus: referral_bonus / 10e17,
+
+        address: wallet.addr,
+        label: wallet.label,
+        valid,
+        dripBalance,
+        br34pBalance,
+        uplineCount,
+        bnbBalance,
+        coveredDepth,
+        teamDepth,
+        ndv,
+        busdBalance,
+        dripBusdLpBalance,
+        lastAction,
+        r,
+        dropsBalance,
+        referrals: parseInt(userInfo.referrals),
+      };
+    },
+    [contract, showLastAction, startBlock, web3]
+  );
+
+  const fetchData = useCallback(async () => {
     //setLoading(true);
     setTimer(60);
     //web3 = web3 ?? (await getConnection());
@@ -198,85 +279,7 @@ const Dashboard = () => {
     setDataCopied(false);
     fetchPrices();
     setLoading(false);
-  };
-
-  const fetchPrices = async () => {
-    const [bnbPrice, dripPrice] = await getDripPrice(web3);
-    const br34pPrice = await getBr34pPrice();
-
-    setDripPrice(() => (dripPrice * bnbPrice) / 10e17);
-    setBnbPrice(() => bnbPrice);
-    setBr34pPrice(() => br34pPrice);
-  };
-
-  const fetchWalletData = async (wallet, index) => {
-    const userInfo = await getUserInfo(contract, wallet.addr);
-    const available = await claimsAvailable(contract, wallet.addr);
-    const dripBalance = await getTokenBalance(
-      web3,
-      wallet.addr,
-      DRIP_TOKEN_ADDR
-    );
-    const uplineCount = await getUplineCount(contract, wallet.addr);
-    const br34pBalance = await getBr34pBalance(web3, wallet.addr);
-    const bnbBalance = await getBnbBalance(web3, wallet.addr);
-
-    const busdBalance = await getTokenBalance(
-      web3,
-      wallet.addr,
-      BUSD_TOKEN_ADDRESS
-    );
-    const dripBusdLpBalance = await getTokenBalance(
-      web3,
-      wallet.addr,
-      DRIP_BUSD_LP_ADDRESS
-    );
-
-    const coveredDepth = findFibIndex(br34pBalance);
-    const teamDepth =
-      userInfo.referrals > 0 && (await getDownlineDepth(wallet.addr));
-
-    const { airdrops } = await getAirdrops(contract, wallet.addr);
-    const a = parseFloat(web3.utils.fromWei(airdrops));
-    const d = parseFloat(web3.utils.fromWei(userInfo.deposits));
-    const r = parseFloat(web3.utils.fromWei(userInfo.rolls));
-    const c = parseFloat(web3.utils.fromWei(userInfo.payouts));
-
-    const ndv = d + a + r - c;
-    const valid = !!userInfo;
-    const referral_bonus =
-      parseFloat(userInfo.direct_bonus) + parseFloat(userInfo.match_bonus);
-
-    const lastAction =
-      showLastAction && (await getLastAction(startBlock, wallet.addr));
-    const dropsBalance = await getReservoirBalance(web3, wallet.addr);
-    return {
-      index,
-      ...userInfo,
-      deposits: userInfo.deposits / 10e17,
-      available: available / 10e17,
-      payouts: userInfo.payouts / 10e17,
-      maxPayout: (userInfo.deposits * 3.65) / 10e17,
-      direct_bonus: referral_bonus / 10e17,
-
-      address: wallet.addr,
-      label: wallet.label,
-      valid,
-      dripBalance,
-      br34pBalance,
-      uplineCount,
-      bnbBalance,
-      coveredDepth,
-      teamDepth,
-      ndv,
-      busdBalance,
-      dripBusdLpBalance,
-      lastAction,
-      r,
-      dropsBalance,
-      referrals: parseInt(userInfo.referrals),
-    };
-  };
+  }, [fetchPrices, fetchWalletData]);
   useEffect(() => {
     const validWallets = wallets.filter((wallet) => wallet.valid);
 
@@ -359,7 +362,7 @@ const Dashboard = () => {
       clearInterval(timerInterval);
       clearInterval(interval);
     };
-  }, [web3, contract, autoRefresh]);
+  }, [web3, contract, autoRefresh, fetchData]);
 
   const saveAddresses = (e) => {
     e.preventDefault();

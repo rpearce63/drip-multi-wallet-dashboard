@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import Web3 from "web3";
 import { getDripPrice } from "../api/Contract";
@@ -30,16 +30,6 @@ const Header = () => {
     setWeb3(new Web3("https://bsc-dataseed.binance.org/"));
   }, []);
 
-  useEffect(() => {
-    web3 && fetchData();
-    web3 && getVersion();
-    const interval = setInterval(() => {
-      fetchData();
-      getVersion();
-    }, 30000);
-    return () => clearInterval(interval);
-  }, [web3]);
-
   const getVersion = async () => {
     const ver = await getLatestVersion();
     //console.log(ver);
@@ -50,7 +40,7 @@ const Header = () => {
     if (version) return semver.gt(version, currentVer);
   };
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     const [bnbPrice, dripPriceRaw, tokenBalance] = await getDripPrice(web3);
     const currentDripPrice = dripPriceRaw * bnbPrice;
     const br34pPrice = await calcBR34PPrice();
@@ -70,7 +60,18 @@ const Header = () => {
     document.title = `${formatCurrency(
       convertDrip(currentDripPrice)
     )} - Drip Multi-Wallet Dashboard`;
-  };
+  }, [web3]);
+
+  useEffect(() => {
+    web3 && fetchData();
+    web3 && getVersion();
+    const interval = setInterval(() => {
+      fetchData();
+      getVersion();
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [fetchData, web3]);
+
   return (
     <nav className="navbar navbar-expand-lg nav-wrap fixed-top navbar-dark bg-dark inverted">
       <div className="container-fluid">
