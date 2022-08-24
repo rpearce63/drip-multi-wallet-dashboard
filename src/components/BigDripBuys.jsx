@@ -1,25 +1,24 @@
 import React, { useState, useEffect } from "react";
 import Marquee from "react-fast-marquee";
-import { getBigDripBuys, getBigBuysFromAWS } from "../api/Contract";
+import { getBigBuysFromAWS } from "../api/Contract";
 import _ from "lodash";
 const BigDripBuys = () => {
   const [bigBuys, setBigBuys] = useState([]);
   const [updateTime, setUpdateTime] = useState("");
 
   useEffect(() => {
+    const fetchBigBuys = async () => {
+      const data = await getBigBuysFromAWS();
+      //update display only if data is updated
+      (data.length && _.isEqual(data, bigBuys)) || setBigBuys(data);
+      setUpdateTime(new Date().toLocaleString());
+    };
     fetchBigBuys();
     const interval = setInterval(() => {
       fetchBigBuys();
     }, 10000);
     return () => clearInterval(interval);
-  }, []);
-
-  const fetchBigBuys = async () => {
-    const data = await getBigBuysFromAWS();
-    //update display only if data is updated
-    (data.length && _.isEqual(data, bigBuys)) || setBigBuys(data);
-    setUpdateTime(new Date().toLocaleString());
-  };
+  }, [bigBuys]);
 
   return (
     <Marquee
