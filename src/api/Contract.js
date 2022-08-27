@@ -166,14 +166,13 @@ export const roll = async (account) => {
 };
 
 export const getDownline = async (account) => {
-  const fetchDownline = async (account) =>
-    axios
-      .get(`https://api.drip.community/org/${account}`)
-      //.then((response) => response.json())
-      .then((response) => response.data)
-      .catch((err) => console.log(`Error getting downline: ${err.message}`));
-  const downline = await fetchDownline(account);
-  return downline;
+  try {
+    return await (
+      await fetch(`https://api.drip.community/org/${account}`)
+    ).json();
+  } catch (err) {
+    console.log(`Error getting downline: ${err.message}`);
+  }
 };
 
 export const getBr34pPrice = async () => {
