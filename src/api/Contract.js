@@ -52,6 +52,7 @@ export const claimsAvailable = async (contract, account) => {
     return available;
   } catch (err) {
     console.log(err.message);
+    return 0;
   }
 };
 
@@ -60,6 +61,7 @@ export const getAirdrops = async (contract, account) => {
     return await contract.methods.airdrops(account).call();
   } catch (err) {
     console.log(err.message);
+    return 0;
   }
 };
 
@@ -68,6 +70,7 @@ export const getUserInfo = async (contract, account) => {
     return await contract.methods.users(account).call();
   } catch (err) {
     console.log(err.message);
+    return {};
   }
 };
 
@@ -115,6 +118,7 @@ export const getDripPrice = async (web3) => {
     return [bnbPrice, dripBnbRatio, tokenBalance];
   } catch (err) {
     console.log(err.message);
+    return [0, 0, 0];
   }
 };
 
@@ -172,6 +176,7 @@ export const getDownline = async (account) => {
     ).json();
   } catch (err) {
     console.log(`Error getting downline: ${err.message}`);
+    return {};
   }
 };
 
@@ -179,7 +184,6 @@ export const getBr34pPrice = async () => {
   const fetchBr34PPrice = async () =>
     axios
       .get("https://api.coinpaprika.com/v1/tickers/br34p-br34p/")
-      // .then((response) => response.json())
       .then((response) => response.data);
 
   const br34pData = await fetchBr34PPrice();
@@ -192,7 +196,6 @@ export const getBnbprice = async () => {
       .get(
         "https://api.coingecko.com/api/v3/simple/price?ids=wbnb&vs_currencies=usd"
       )
-      // .then((response) => response.json())
       .then((response) => response.data.wbnb.usd);
   const bnbPrice = await fetchBnbPrice();
   return bnbPrice;
@@ -228,7 +231,6 @@ export const getDripPcsPrice = async () => {
         return 0;
       });
   const dripPcsPriceBNB = await fetchDripPcsPrice();
-  //const bnbPrice = await getBnbprice();
   return dripPcsPriceBNB; //* bnbPrice;
 };
 
