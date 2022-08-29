@@ -380,3 +380,8 @@ export const getBigBuysFromAWS = async () => {
   );
   return bigBuys.data;
 };
+
+export const getBigBuysFromGlitch = async () => {
+  const bigBuys = await axios.get("https://big-drip-buys.glitch.me");
+  return bigBuys.data;
+};
