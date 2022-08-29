@@ -212,17 +212,27 @@ button {
   justify-content: space-between;
 }
 
+.table-sort-none,
 .table-sort-asc,
 .table-sort-desc {
   cursor: pointer;
 }
 
+.table-sort-none::after {
+  content: "\2B26";
+  font-size: 14px;
+}
+
 .table-sort-desc::after {
-  content: "\25bc";
+  content: "\2B19";
+  margin-left: 3px;
+  
 }
 
 .table-sort-asc::after {
-  content: "\25b2";
+  content: "\2B18";
+  margin-left: 3px;
+  
 }
 
 @media only screen and (max-width: 700px) {

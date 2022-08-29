@@ -836,7 +836,7 @@ const Dashboard = () => {
                   ).map((h) => (
                     <th
                       className={`table-sort-${
-                        sortCol === h.id ? sortOrder : "asc"
+                        sortCol === h.id ? sortOrder : "none"
                       }`}
                       key={h.id}
                       onClick={() =>
@@ -853,7 +853,7 @@ const Dashboard = () => {
                   ).map((h) => (
                     <th
                       className={`table-sort-${
-                        sortCol === h.id ? sortOrder : "asc"
+                        sortCol === h.id ? sortOrder : "none"
                       }`}
                       key={h.id}
                       onClick={() =>
