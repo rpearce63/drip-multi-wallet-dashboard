@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import Web3 from "web3";
-import { getDripPrice } from "../api/Contract";
+import { getDripPrice, getDripPriceData } from "../api/Contract";
 import { formatCurrency, convertDrip, getLatestVersion } from "../api/utils";
 import { calcPCSPrice, calcBR34PPrice } from "../api/tokenPriceApi";
 import {
@@ -41,21 +41,22 @@ const Header = () => {
   };
 
   const fetchData = useCallback(async () => {
-    const [bnbPrice, dripPriceRaw, tokenBalance] = await getDripPrice(web3);
-    const currentDripPrice = dripPriceRaw * bnbPrice;
-    const br34pPrice = await calcBR34PPrice();
-    const dripPcsPrice = await calcPCSPrice(DRIP_TOKEN_ADDR);
+    const { bnbPrice, dripBnbRatio, tokenBalance, dripPcsPrice, br34pPrice } =
+      await getDripPriceData();
+    const currentDripPrice = dripBnbRatio * bnbPrice;
+    //const br34pPrice = await calcBR34PPrice();
+    //const dripPcsPrice = dripPrices.dripPcsPrice;
     const pigPrice = await calcPCSPrice(PIGSTokenAddress);
     const dogPrice = await calcPCSPrice(DOGSTokenAddress);
 
-    setDripPrice(() => currentDripPrice);
-    setBnbPrice(() => bnbPrice);
-    setTokenBalance(() => tokenBalance);
-    setBr34pPrice(() => br34pPrice);
-    setDripBnbPrice(() => dripPriceRaw / 10e17);
-    setDripPcsPrice(() => dripPcsPrice);
-    setPigPrice(() => pigPrice);
-    setDogPrice(() => dogPrice);
+    currentDripPrice > 0 && setDripPrice(() => currentDripPrice);
+    bnbPrice > 0 && setBnbPrice(() => bnbPrice);
+    tokenBalance > 0 && setTokenBalance(() => tokenBalance);
+    br34pPrice > 0 && setBr34pPrice(() => br34pPrice);
+    dripBnbRatio > 0 && setDripBnbPrice(() => dripBnbRatio / 10e17);
+    dripPcsPrice > 0 && setDripPcsPrice(() => dripPcsPrice);
+    pigPrice > 0 && setPigPrice(() => pigPrice);
+    dogPrice > 0 && setDogPrice(() => dogPrice);
 
     document.title = `${formatCurrency(
       convertDrip(currentDripPrice)
