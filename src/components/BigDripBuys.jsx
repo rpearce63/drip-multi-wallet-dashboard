@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Marquee from "react-fast-marquee";
-import { getBigBuysFromAWS, getBigBuysFromGlitch } from "../api/Contract";
+import { getBigBuysFromGlitch } from "../api/Contract";
 import _ from "lodash";
 const BigDripBuys = () => {
   const [bigBuys, setBigBuys] = useState([]);

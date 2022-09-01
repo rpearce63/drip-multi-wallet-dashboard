@@ -1,28 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {
-  // getConnection,
-  getUserInfo,
-  claimsAvailable,
-  getContract,
-  getUplineCount,
-  getBr34pBalance,
-  getBnbBalance,
-  getDripPrice,
-  getBr34pPrice,
-  getDownlineDepth,
-  getAirdrops,
-  getTokenBalance,
-  getStartBlock,
-  getLastAction,
-  getReservoirBalance,
-} from "../api/Contract";
+import { getDripPriceData, getAllWalletData } from "../api/Contract";
 
-import {
-  BUSD_TOKEN_ADDRESS,
-  DRIP_BUSD_LP_ADDRESS,
-  DRIP_TOKEN_ADDR,
-  CONFIGS_KEY,
-} from "../configs/dripconfig";
+import { CONFIGS_KEY } from "../configs/dripconfig";
 
 import Info from "./Info";
 
@@ -30,17 +9,13 @@ import {
   convertTokenToUSD,
   formatPercent,
   backupData,
-  findFibIndex,
   formatNumber,
   sortBy,
 } from "../api/utils";
 
-import Web3 from "web3";
 import TableRow from "./TableRow";
 
 const Dashboard = () => {
-  const [web3, setWeb3] = useState();
-  const [contract, setContract] = useState();
   const [wallets, setWallets] = useState([]);
   const [totalDeposits, setTotalDeposits] = useState(0);
   const [totalAvailable, setTotalAvailable] = useState(0);
@@ -57,7 +32,6 @@ const Dashboard = () => {
   const [totalDrops, setTotalDrops] = useState(0);
   const [sortCol, setSortCol] = useState("index");
   const [sortOrder, setSortOrder] = useState("asc");
-  // const [newAddress, setNewAddress] = useState("");
 
   //form configs
   const [flagAmount, setFlagAmount] = useState(true);
@@ -78,7 +52,6 @@ const Dashboard = () => {
   const [dripPrice, setDripPrice] = useState(0);
   const [br34pPrice, setBr34pPrice] = useState(0);
   const [showLastAction, setShowLastAction] = useState(true);
-  const [startBlock, setStartBlock] = useState();
   const [timer, setTimer] = useState(0);
   const [loading, setLoading] = useState(true);
 
@@ -122,19 +95,6 @@ const Dashboard = () => {
   ];
 
   useEffect(() => {
-    const web3 = new Web3("https://bsc-dataseed.binance.org/");
-    web3.eth.net.isListening().then(() => {
-      setWeb3(web3);
-    });
-  }, []);
-
-  useEffect(() => {
-    if (web3) {
-      setContract(getContract(web3));
-    }
-  }, [web3]);
-
-  useEffect(() => {
     const {
       flagAmount = true,
       flagLowBnb = true,
@@ -160,126 +120,41 @@ const Dashboard = () => {
     wallets.sort(sortBy(sortCol, sortOrder));
   }, [sortCol, sortOrder, wallets]);
 
-  const fetchPrices = useCallback(async () => {
-    const [bnbPrice, dripPrice] = await getDripPrice(web3);
-    const br34pPrice = await getBr34pPrice();
+  // useEffect(() => {
+  //   const filtered = wallets.filter((w) => w.deposits > 300);
+  //   setWallets(filtered);
+  // }, [sortCol]);
 
-    setDripPrice(() => (dripPrice * bnbPrice) / 10e17);
+  const fetchPrices = useCallback(async () => {
+    const { bnbPrice, dripBnbRatio, br34pPrice } = await getDripPriceData();
+
+    setDripPrice(() => (dripBnbRatio * bnbPrice) / 10e17);
     setBnbPrice(() => bnbPrice);
     setBr34pPrice(() => br34pPrice);
-  }, [web3]);
-
-  const fetchWalletData = useCallback(
-    async (wallet, index) => {
-      const userInfo = await getUserInfo(contract, wallet.addr);
-      const available = await claimsAvailable(contract, wallet.addr);
-      const dripBalance = await getTokenBalance(
-        web3,
-        wallet.addr,
-        DRIP_TOKEN_ADDR
-      );
-      const uplineCount = await getUplineCount(contract, wallet.addr);
-      const br34pBalance = await getBr34pBalance(web3, wallet.addr);
-      const bnbBalance = await getBnbBalance(web3, wallet.addr);
-
-      const busdBalance = await getTokenBalance(
-        web3,
-        wallet.addr,
-        BUSD_TOKEN_ADDRESS
-      );
-      const dripBusdLpBalance = await getTokenBalance(
-        web3,
-        wallet.addr,
-        DRIP_BUSD_LP_ADDRESS
-      );
-
-      const coveredDepth = findFibIndex(br34pBalance);
-      const teamDepth =
-        userInfo.referrals > 0 && (await getDownlineDepth(wallet.addr));
-
-      const { airdrops } = await getAirdrops(contract, wallet.addr);
-      const a = parseFloat(web3.utils.fromWei(airdrops));
-      const d = parseFloat(web3.utils.fromWei(userInfo.deposits));
-      const r = parseFloat(web3.utils.fromWei(userInfo.rolls));
-      const c = parseFloat(web3.utils.fromWei(userInfo.payouts));
-
-      const ndv = d + a + r - c;
-      const valid = !!userInfo;
-      const referral_bonus =
-        parseFloat(userInfo.direct_bonus) + parseFloat(userInfo.match_bonus);
-
-      const lastAction =
-        showLastAction && (await getLastAction(startBlock, wallet.addr));
-      const dropsBalance = await getReservoirBalance(web3, wallet.addr);
-      return {
-        index,
-        ...userInfo,
-        deposits: userInfo.deposits / 10e17,
-        available: available / 10e17,
-        payouts: userInfo.payouts / 10e17,
-        maxPayout: (userInfo.deposits * 3.65) / 10e17,
-        direct_bonus: referral_bonus / 10e17,
-
-        address: wallet.addr,
-        label: wallet.label,
-        valid,
-        dripBalance,
-        br34pBalance,
-        uplineCount,
-        bnbBalance,
-        coveredDepth,
-        teamDepth,
-        ndv,
-        busdBalance,
-        dripBusdLpBalance,
-        lastAction,
-        r,
-        dropsBalance,
-        referrals: parseInt(userInfo.referrals),
-      };
-    },
-    [contract, showLastAction, startBlock, web3]
-  );
+  }, []);
 
   const fetchData = useCallback(async () => {
-    //setLoading(true);
     setTimer(60);
-    //web3 = web3 ?? (await getConnection());
-    //contract = contract ?? (await getContract(web3));
-    const startBlock = await getStartBlock();
-    setStartBlock(() => startBlock - 200000);
 
     let storedWallets = JSON.parse(
       window.localStorage.getItem("dripAddresses")
     );
-    if (storedWallets && !storedWallets[0].addr) {
-      console.log("converting addresses");
-      const convertedWallets = storedWallets.map((wallet) => ({
-        addr: wallet,
-        label: "",
-      }));
-      localStorage.setItem("dripAddresses", JSON.stringify(convertedWallets));
-      storedWallets = convertedWallets;
-    }
+
     const myWallets =
       storedWallets?.map((wallet) => ({
         addr: wallet.addr.trim().replace("\n", ""),
         label: wallet.label,
       })) ?? [];
 
-    const walletCache = await Promise.all(
-      myWallets.map(async (wallet, index) => {
-        const walletData = await fetchWalletData(wallet, index);
-        return walletData;
-      })
-    );
+    const walletCache = await getAllWalletData(myWallets);
 
-    setWallets(walletCache);
+    setWallets(() => walletCache);
 
     setDataCopied(false);
     fetchPrices();
     setLoading(false);
-  }, [fetchPrices, fetchWalletData]);
+  }, [fetchPrices]);
+
   useEffect(() => {
     const validWallets = wallets.filter((wallet) => wallet.valid);
 
@@ -313,11 +188,7 @@ const Dashboard = () => {
         return total + parseFloat(wallet.direct_bonus);
       }, 0)
     );
-    // setTotalMatch(() =>
-    //   validWallets.reduce((total, wallet) => {
-    //     return total + parseFloat(wallet.match_bonus);
-    //   }, 0)
-    // );
+
     setTotalBr34p(() =>
       validWallets.reduce(
         (total, wallet) => total + parseFloat(wallet.br34pBalance),
@@ -351,7 +222,7 @@ const Dashboard = () => {
   }, [wallets]);
 
   useEffect(() => {
-    web3 && contract && fetchData();
+    fetchData();
     const interval = setInterval(() => {
       autoRefresh && fetchData();
     }, 60000);
@@ -362,7 +233,7 @@ const Dashboard = () => {
       clearInterval(timerInterval);
       clearInterval(interval);
     };
-  }, [web3, contract, autoRefresh, fetchData]);
+  }, [autoRefresh, fetchData]);
 
   const saveAddresses = (e) => {
     e.preventDefault();
@@ -411,27 +282,6 @@ const Dashboard = () => {
     setAddressList("");
     fetchData();
   };
-
-  // const addNewAddress = async (e) => {
-  //   e.preventDefault();
-  //   const web3 = await getConnection();
-  //   if (!web3.utils.isAddress(newAddress)) {
-  //     alert("Invalid Address");
-  //     return false;
-  //   }
-  //   const storedAddresses =
-  //     JSON.parse(window.localStorage.getItem("dripAddresses")) ?? [];
-  //   if (!storedAddresses.some((sa) => sa.addr === newAddress)) {
-  //     storedAddresses.push({ addr: newAddress, label: "" });
-  //     window.localStorage.setItem(
-  //       "dripAddresses",
-  //       JSON.stringify(storedAddresses)
-  //     );
-
-  //     setNewAddress("");
-  //     fetchData();
-  //   }
-  // };
 
   const highlightStyleFor = (col, wallet) => {
     let amount,
@@ -634,25 +484,6 @@ const Dashboard = () => {
               style={{ display: hideTableControls ? "block" : "flex" }}
             >
               <div className="form-config">
-                {/* <div className="input-group mb-3 add-address">
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={addNewAddress}
-                    disabled={!!!newAddress || newAddress.length !== 42}
-                  >
-                    Add
-                  </button>
-                  <input
-                    className="form-control inverted"
-                    id="newAddressTxt"
-                    type="text"
-                    value={newAddress}
-                    onChange={(e) => setNewAddress(e.target.value)}
-                    placeholder="Add additional single wallet"
-                  />
-                </div> */}
-
                 {hideTableControls || (
                   <div className="alert">
                     <div>Available will highlight to indicate when it is</div>
@@ -1022,14 +853,6 @@ const Dashboard = () => {
                 onChange={changeHandler}
               />
             </div>
-
-            {/* <input
-              className="form-control inverted"
-              type="file"
-              name="file"
-              onChange={changeHandler}
-              placeholder="Load from Backup"
-            /> */}
           </div>
         </div>
       </div>
