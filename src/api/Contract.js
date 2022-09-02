@@ -404,7 +404,7 @@ export const getAllWalletData = async (myWallets) => {
   const start = Date.now();
   console.log("getting all wallet data");
   const response = await axios.post(
-    "http://node-express-env.eba-zyb52spn.us-east-1.elasticbeanstalk.com/wallets/all",
+    "https://drip-mw-dashboard-api.herokuapp.com/wallets/all",
     {
       wallets: myWallets,
     }
