@@ -46,12 +46,12 @@ const Header = () => {
     dripBnbRatio > 0 && setDripBnbPrice(() => dripBnbRatio / 10e17);
     dripPcsPrice > 0 && setDripPcsPrice(() => dripPcsPrice);
     afpPrice > 0 && setPigPrice(() => afpPrice);
-    dogPrice > 0 && setDogPrice(() => dogPrice);
+    dogPrice > 0 && setDogPrice(dogPrice);
 
     document.title = `${formatCurrency(
       convertDrip(currentDripPrice)
     )} - Drip Multi-Wallet Dashboard`;
-  }, []);
+  }, [dogPrice]);
 
   useEffect(() => {
     fetchData();
