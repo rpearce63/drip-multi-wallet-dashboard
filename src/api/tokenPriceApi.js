@@ -397,6 +397,7 @@ export async function calcPCSPrice(tokenAddress) {
     //console.log(`amountOut=${amountOut}`);
   } catch (error) {
     console.log(error);
+    return 0;
   }
   if (!amountOut) return 0;
   return amountOut;
@@ -442,5 +443,6 @@ export async function calcBR34PPrice() {
     return amountOut;
   } catch (error) {
     console.log(`error getting br34p price: ${error}`);
+    return 0;
   }
 }
