@@ -312,7 +312,7 @@ export const getLastAction = async (startBlock, address) => {
 
 export const getBigBuysFromAWS = async () => {
   const bigBuys = await axios.get(
-    "https://99j5e99hpe.execute-api.us-east-1.amazonaws.com/default/getDripBigBuys"
+    "https://8kltnjdcw2.execute-api.us-east-1.amazonaws.com/default/getDripBigBuys"
   );
   return bigBuys.data;
 };
