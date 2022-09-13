@@ -318,7 +318,9 @@ export const getBigBuysFromAWS = async () => {
 };
 
 export const getBigBuysFromGlitch = async () => {
-  const bigBuys = await axios.get("https://drip-mw-dashboard-api.glitch.me");
+  const bigBuys = await axios.get(
+    "https://drip-mw-dashboard-api.glitch.me/bigBuys"
+  );
   return bigBuys.data;
 };
 

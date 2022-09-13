@@ -8,7 +8,7 @@ const BigDripBuys = () => {
 
   useEffect(() => {
     const fetchBigBuys = async () => {
-      const data = await getBigBuysFromAWS();
+      const data = await getBigBuysFromGlitch();
       //update display only if data is updated
       (data?.length && _.isEqual(data, bigBuys)) || setBigBuys(data);
       setUpdateTime(new Date().toLocaleString());
