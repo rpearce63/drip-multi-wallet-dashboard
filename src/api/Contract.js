@@ -8,12 +8,14 @@ import {
   BR34P_ADDRESS,
   BASIC_TOKEN_ABI,
   DROPS_ADDRESS,
-  DRIP_TOKEN_ADDR,
-  BUSD_TOKEN_ADDRESS,
-  DRIP_BUSD_LP_ADDRESS,
+  // DRIP_TOKEN_ADDR,
+  // BUSD_TOKEN_ADDRESS,
+  // DRIP_BUSD_LP_ADDRESS,
 } from "../configs/dripconfig";
-import { findFibIndex } from "./utils";
+//import { findFibIndex } from "./utils";
 import LRU from "lru-cache";
+const DMWDAPI = "https://api.drip-mw-dashboard.com";
+
 const BSCSCAN_URL =
   "https://drip-cors-anywhere.herokuapp.com/https://api.bscscan.com";
 const RESERVOIR_CONTRACT = require("../configs/reservoir_contract.json");
@@ -35,9 +37,9 @@ const ROLL_HEX = "0xcd5e3c5d";
 const CLAIM_HEX = "0x4e71d92d";
 const DEPOSIT_HEX = "0x47e7ef24";
 
-const web3 = new Web3(
-  "https://drip-cors-anywhere.herokuapp.com/https://bsc-dataseed.binance.org/"
-);
+// const web3 = new Web3(
+//   "https://drip-cors-anywhere.herokuapp.com/https://bsc-dataseed.binance.org/"
+// );
 
 export const getConnection = () => {
   const web3 = new Web3(
@@ -329,7 +331,7 @@ export const getDripPriceData = async () => {
 
 export const fetchWalletData = async (wallet, index) => {
   //console.log("fetchWalletData");
-  const response = await axios.post(`http://localhost:8080/wallets/`, {
+  const response = await axios.post(`${DMWDAPI}/wallet/`, {
     wallet,
     index,
   });
@@ -403,12 +405,9 @@ export const fetchWalletData = async (wallet, index) => {
 export const getAllWalletData = async (myWallets) => {
   const start = Date.now();
   console.log("getting all wallet data");
-  const response = await axios.post(
-    "https://drip-mw-dashboard-api.herokuapp.com/wallets/all",
-    {
-      wallets: myWallets,
-    }
-  );
+  const response = await axios.post(`${DMWDAPI}/wallets`, {
+    wallets: myWallets,
+  });
   // const walletCache = await Promise.all(
   //   myWallets.map(async (wallet, index) => {
   //     const walletData = await fetchWalletData(wallet, index);
