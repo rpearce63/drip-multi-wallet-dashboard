@@ -15,7 +15,7 @@ import {
 //import { findFibIndex } from "./utils";
 import LRU from "lru-cache";
 const DMWDAPI = "https://api.drip-mw-dashboard.com";
-
+//const DMWDAPI = "https://drip-mw-dashboard-api.glitch.me";
 const BSCSCAN_URL =
   "https://drip-cors-anywhere.herokuapp.com/https://api.bscscan.com";
 const RESERVOIR_CONTRACT = require("../configs/reservoir_contract.json");

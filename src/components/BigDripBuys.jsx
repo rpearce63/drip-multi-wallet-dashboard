@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Marquee from "react-fast-marquee";
-import { getBigBuysFromGlitch } from "../api/Contract";
+import { getBigBuysFromGlitch, getBigBuysFromAWS } from "../api/Contract";
 import _ from "lodash";
 const BigDripBuys = () => {
   const [bigBuys, setBigBuys] = useState([]);
@@ -8,7 +8,7 @@ const BigDripBuys = () => {
 
   useEffect(() => {
     const fetchBigBuys = async () => {
-      const data = await getBigBuysFromGlitch();
+      const data = await getBigBuysFromAWS();
       //update display only if data is updated
       (data?.length && _.isEqual(data, bigBuys)) || setBigBuys(data);
       setUpdateTime(new Date().toLocaleString());
