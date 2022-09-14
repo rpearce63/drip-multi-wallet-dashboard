@@ -1,9 +1,7 @@
 const Web3 = require("web3");
-const web3 = new Web3(
-  Web3.givenProvider || "https://bsc-dataseed.binance.org/"
-);
+const web3 = new Web3("https://bsc-dataseed.binance.org/");
 
-test("it should convert to wei and back", () => {
+test("it should convert to wei and back", async () => {
   const amount = ".05";
   const weiAmt = web3.utils.toWei(amount, "ether");
   expect(weiAmt).toBe("50000000000000000");

@@ -1,6 +1,7 @@
 {
   "name": "drip-multi-wallet-dashboard",
-  "version": "1.10.2",
+  "version": "1.12.2",
+  "type": "module",
   "private": true,
   "dependencies": {
     "@jpmonette/bscscan": "^0.2.3",

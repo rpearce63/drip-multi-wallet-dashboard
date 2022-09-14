@@ -8,11 +8,16 @@ import {
   BR34P_ADDRESS,
   BASIC_TOKEN_ABI,
   DROPS_ADDRESS,
+  // DRIP_TOKEN_ADDR,
+  // BUSD_TOKEN_ADDRESS,
+  // DRIP_BUSD_LP_ADDRESS,
 } from "../configs/dripconfig";
-
+//import { findFibIndex } from "./utils";
 import LRU from "lru-cache";
-// import { add } from "lodash";
-
+const DMWDAPI = "https://api.drip-mw-dashboard.com";
+//const DMWDAPI = "https://drip-mw-dashboard-api.glitch.me";
+const BSCSCAN_URL =
+  "https://drip-cors-anywhere.herokuapp.com/https://api.bscscan.com";
 const RESERVOIR_CONTRACT = require("../configs/reservoir_contract.json");
 
 const axios = require("axios");
@@ -32,8 +37,14 @@ const ROLL_HEX = "0xcd5e3c5d";
 const CLAIM_HEX = "0x4e71d92d";
 const DEPOSIT_HEX = "0x47e7ef24";
 
+// const web3 = new Web3(
+//   "https://drip-cors-anywhere.herokuapp.com/https://bsc-dataseed.binance.org/"
+// );
+
 export const getConnection = () => {
-  const web3 = new Web3("https://bsc-dataseed.binance.org/");
+  const web3 = new Web3(
+    "https://drip-cors-anywhere.herokuapp.com/https://bsc-dataseed.binance.org/"
+  );
   return web3;
 };
 
@@ -52,6 +63,7 @@ export const claimsAvailable = async (contract, account) => {
     return available;
   } catch (err) {
     console.log(err.message);
+    return 0;
   }
 };
 
@@ -60,6 +72,7 @@ export const getAirdrops = async (contract, account) => {
     return await contract.methods.airdrops(account).call();
   } catch (err) {
     console.log(err.message);
+    return 0;
   }
 };
 
@@ -68,6 +81,7 @@ export const getUserInfo = async (contract, account) => {
     return await contract.methods.users(account).call();
   } catch (err) {
     console.log(err.message);
+    return {};
   }
 };
 
@@ -115,6 +129,7 @@ export const getDripPrice = async (web3) => {
     return [bnbPrice, dripBnbRatio, tokenBalance];
   } catch (err) {
     console.log(err.message);
+    return [0, 0, 0];
   }
 };
 
@@ -166,21 +181,20 @@ export const roll = async (account) => {
 };
 
 export const getDownline = async (account) => {
-  const fetchDownline = async (account) =>
-    axios
-      .get(`https://api.drip.community/org/${account}`)
-      //.then((response) => response.json())
-      .then((response) => response.data)
-      .catch((err) => console.log(`Error getting downline: ${err.message}`));
-  const downline = await fetchDownline(account);
-  return downline;
+  try {
+    return await (
+      await fetch(`https://api.drip.community/org/${account}`)
+    ).json();
+  } catch (err) {
+    console.log(`Error getting downline: ${err.message}`);
+    return {};
+  }
 };
 
 export const getBr34pPrice = async () => {
   const fetchBr34PPrice = async () =>
     axios
       .get("https://api.coinpaprika.com/v1/tickers/br34p-br34p/")
-      // .then((response) => response.json())
       .then((response) => response.data);
 
   const br34pData = await fetchBr34PPrice();
@@ -193,7 +207,6 @@ export const getBnbprice = async () => {
       .get(
         "https://api.coingecko.com/api/v3/simple/price?ids=wbnb&vs_currencies=usd"
       )
-      // .then((response) => response.json())
       .then((response) => response.data.wbnb.usd);
   const bnbPrice = await fetchBnbPrice();
   return bnbPrice;
@@ -229,7 +242,6 @@ export const getDripPcsPrice = async () => {
         return 0;
       });
   const dripPcsPriceBNB = await fetchDripPcsPrice();
-  //const bnbPrice = await getBnbprice();
   return dripPcsPriceBNB; //* bnbPrice;
 };
 
@@ -237,7 +249,7 @@ export const getJoinDate = async (account) => {
   const fetchBuddyDate = async () =>
     axios
       .get(
-        `https://api.bscscan.com/api?module=account&action=txlist&address=${account}&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY`
+        `${BSCSCAN_URL}/api?module=account&action=txlist&address=${account}&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY`
       )
       // .then((response) => response.json())
       .then((response) => response.data.result);
@@ -250,7 +262,7 @@ export const getJoinDate = async (account) => {
 export const getStartBlock = async () => {
   const latestBlockHex = await axios
     .get(
-      "https://api.bscscan.com/api?module=proxy&action=eth_blockNumber&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY"
+      `${BSCSCAN_URL}/api?module=proxy&action=eth_blockNumber&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY`
     )
     .then((response) => response.data.result);
 
@@ -265,7 +277,7 @@ export const getLastAction = async (startBlock, address) => {
   }
   const transactions = await axios
     .get(
-      `https://api.bscscan.com/api?module=account&action=txlist&address=${address}&startblock=${startBlock}}&endblock=99999999&sort=asc&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY`
+      `${BSCSCAN_URL}/api?module=account&action=txlist&address=${address}&startblock=${startBlock}&endblock=99999999&sort=asc&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY`
     )
     .then((response) => response.data.result)
     .catch((err) => {
@@ -278,7 +290,7 @@ export const getLastAction = async (startBlock, address) => {
   }
   const lastActionHex =
     transactions
-      .filter((tx) => tx.to === "0xffe811714ab35360b67ee195ace7c10d93f89d8c")
+      .filter((tx) => tx.to === FAUCET_ADDR)
       .filter((result) =>
         [ROLL_HEX, CLAIM_HEX, DEPOSIT_HEX].some((a) =>
           result.input.startsWith(a)
@@ -298,85 +310,113 @@ export const getLastAction = async (startBlock, address) => {
   return lastAction;
 };
 
-// export const getBigDripBuys = async () => {
-//   const startBlock = await getStartBlock();
-//   const response = await axios.get(
-//     `https://api.bscscan.com/api?module=account&action=txlist&address=0x4fe59adcf621489ced2d674978132a54d432653a&startblock=${
-//       startBlock - 29000
-//     }&endblock=999999999&sort=desc&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY`
-//   );
-//   const buyTransactions = response.data.result;
-
-//   const bigBuys = buyTransactions
-//     .filter((tx) => tx.input.startsWith("0xb5695026") && tx.isError !== "1")
-//     .filter((tx) => tx.value >= 20000000000000000000)
-//     .map((tx, index) => ({
-//       id: index,
-//       blockNumber: tx.blockNumber,
-//       from: tx.from,
-//       amount: parseFloat(tx.value / 10e17).toFixed(2),
-//       date: new Date(tx.timeStamp * 1000).toLocaleString(),
-//       transaction: tx.hash,
-//       recent: new Date() - new Date(tx.timeStamp * 1000) <= 60 * 60 * 1000,
-//     }));
-
-//   const bigBuysWithDripAmt = await Promise.all(
-//     bigBuys.map(async (bb) => {
-//       const dripAmtRsp = await getDripAmtFromLogs(
-//         bb.transaction,
-//         bb.blockNumber,
-//         bb.from
-//       );
-//       const dripAmt = dripAmtRsp.dripAmt
-//         ? parseFloat(dripAmtRsp.dripAmt).toFixed(2)
-//         : null;
-//       return {
-//         ...bb,
-//         dripAmt,
-//       };
-//     })
-//   );
-
-//   return bigBuysWithDripAmt;
-// };
-
-// const getDripAmtFromLogs = async (
-//   transaction,
-//   blockNumber,
-//   address,
-//   attempt = 0
-// ) => {
-//   await delay(1000);
-//   const txLog = await axios.get(
-//     `https://api.bscscan.com/api?module=logs&action=getLogs&fromBlock=${blockNumber}&toBlock=${blockNumber}&address=0x20f663cea80face82acdfa3aae6862d246ce0333&topic0=0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY&topic2=0x000000000000000000000000${address.substr(
-//       2
-//     )}`
-//   );
-
-//   if (txLog.data.status === "0" && attempt < 3) {
-//     console.log(`retrying getDripAmtFromLogs. Attempt ${attempt + 1}`);
-//     return await getDripAmtFromLogs(
-//       transaction,
-//       blockNumber,
-//       address,
-//       attempt + 1
-//     );
-//   }
-//   const amount = txLog.data.result[0].data;
-//   //console.log(amount);
-//   return { transaction, dripAmt: parseInt(amount, 16) / 10e17 };
-// };
-
-// function delay(delayInms) {
-//   return new Promise((resolve) => {
-//     setTimeout(() => {
-//       resolve(2);
-//     }, delayInms);
-//   });
-// }
 export const getBigBuysFromAWS = async () => {
   const bigBuys = await axios.get(
-    "https://99j5e99hpe.execute-api.us-east-1.amazonaws.com/default/getDripBigBuys"
+    "https://8kltnjdcw2.execute-api.us-east-1.amazonaws.com/default/getDripBigBuys"
   );
   return bigBuys.data;
+};
+
+export const getBigBuysFromGlitch = async () => {
+  const bigBuys = await axios.get(
+    "https://drip-mw-dashboard-api.glitch.me/bigBuys"
+  );
+  return bigBuys.data;
+};
+
+export const getDripPriceData = async () => {
+  const dripPriceData = await axios.get(
+    "https://drip-mw-dashboard-api.glitch.me/prices"
+  );
+  return dripPriceData.data;
+};
+
+export const fetchWalletData = async (wallet, index) => {
+  //console.log("fetchWalletData");
+  const response = await axios.post(`${DMWDAPI}/wallet/`, {
+    wallet,
+    index,
+  });
+  //console.log(response);
+  return response.data;
+  // const web3 = await getConnection();
+  // const contract = await getContract(web3);
+  // const userInfo = await getUserInfo(contract, wallet.addr);
+  // const available = await claimsAvailable(contract, wallet.addr);
+  // const dripBalance = await getTokenBalance(web3, wallet.addr, DRIP_TOKEN_ADDR);
+  // const uplineCount = await getUplineCount(contract, wallet.addr);
+  // const br34pBalance = await getBr34pBalance(web3, wallet.addr);
+  // const bnbBalance = await getBnbBalance(web3, wallet.addr);
+
+  // const busdBalance = await getTokenBalance(
+  //   web3,
+  //   wallet.addr,
+  //   BUSD_TOKEN_ADDRESS
+  // );
+  // const dripBusdLpBalance = await getTokenBalance(
+  //   web3,
+  //   wallet.addr,
+  //   DRIP_BUSD_LP_ADDRESS
+  // );
+
+  // const coveredDepth = findFibIndex(br34pBalance);
+  // const teamDepth =
+  //   userInfo.referrals > 0 && (await getDownlineDepth(wallet.addr));
+
+  // const { airdrops } = await getAirdrops(contract, wallet.addr);
+  // const a = parseFloat(web3.utils.fromWei(airdrops));
+  // const d = parseFloat(web3.utils.fromWei(userInfo.deposits));
+  // const r = parseFloat(web3.utils.fromWei(userInfo.rolls));
+  // const c = parseFloat(web3.utils.fromWei(userInfo.payouts));
+
+  // const ndv = d + a + r - c;
+  // const valid = !!userInfo;
+  // const referral_bonus =
+  //   parseFloat(userInfo.direct_bonus) + parseFloat(userInfo.match_bonus);
+  // const startBlock = await getStartBlock();
+  // const lastAction = await getLastAction(startBlock - 200000, wallet.addr);
+  // const dropsBalance = await getReservoirBalance(web3, wallet.addr);
+  // return {
+  //   index,
+  //   ...userInfo,
+  //   deposits: userInfo.deposits / 10e17,
+  //   available: available / 10e17,
+  //   payouts: userInfo.payouts / 10e17,
+  //   maxPayout: (userInfo.deposits * 3.65) / 10e17,
+  //   direct_bonus: referral_bonus / 10e17,
+
+  //   address: wallet.addr,
+  //   label: wallet.label,
+  //   valid,
+  //   dripBalance,
+  //   br34pBalance,
+  //   uplineCount,
+  //   bnbBalance,
+  //   coveredDepth,
+  //   teamDepth,
+  //   ndv,
+  //   busdBalance,
+  //   dripBusdLpBalance,
+  //   lastAction,
+  //   r,
+  //   dropsBalance,
+  //   referrals: parseInt(userInfo.referrals),
+  // };
+};
+
+export const getAllWalletData = async (myWallets) => {
+  const start = Date.now();
+  console.log("getting all wallet data");
+  const response = await axios.post(`${DMWDAPI}/wallets`, {
+    wallets: myWallets,
+  });
+  // const walletCache = await Promise.all(
+  //   myWallets.map(async (wallet, index) => {
+  //     const walletData = await fetchWalletData(wallet, index);
+  //     return walletData;
+  //   })
+  // );
+  const end = Date.now();
+  console.log(`got all wallet data: ${(end - start) / 1000} seconds`);
+  return response.data;
 };
