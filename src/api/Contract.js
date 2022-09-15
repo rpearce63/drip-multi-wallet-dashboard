@@ -14,7 +14,7 @@ import {
 } from "../configs/dripconfig";
 //import { findFibIndex } from "./utils";
 import LRU from "lru-cache";
-const DMWDAPI = "https://api.drip-mw-dashboard.com";
+const DMWDAPI = "http://localhost:8080"; //"https://api.drip-mw-dashboard.com";
 //const DMWDAPI = "https://drip-mw-dashboard-api.glitch.me";
 const BSCSCAN_URL =
   "https://drip-cors-anywhere.herokuapp.com/https://api.bscscan.com";
@@ -23,8 +23,25 @@ const RESERVOIR_CONTRACT = require("../configs/reservoir_contract.json");
 const axios = require("axios");
 const rax = require("retry-axios");
 // eslint-disable-next-line no-unused-vars
-const interceptorId = rax.attach();
-
+//const interceptorId = rax.attach();
+axios.interceptors.response.use(undefined, (err) => {
+  const { config, message } = err;
+  if (!config || !config.retry) {
+    return Promise.reject(err);
+  }
+  // retry while Network timeout or Network Error
+  if (!(message.includes("timeout") || message.includes("Network Error"))) {
+    return Promise.reject(err);
+  }
+  config.retry -= 1;
+  const delayRetryRequest = new Promise((resolve) => {
+    setTimeout(() => {
+      console.log("retry the request", config.url);
+      resolve();
+    }, config.retryDelay || 1000);
+  });
+  return delayRetryRequest.then(() => axios(config));
+});
 const flatten = require("flat").flatten;
 
 const options = {
@@ -311,17 +328,27 @@ export const getLastAction = async (startBlock, address) => {
 };
 
 export const getBigBuysFromAWS = async () => {
-  const bigBuys = await axios.get(
-    "https://8kltnjdcw2.execute-api.us-east-1.amazonaws.com/default/getDripBigBuys"
-  );
-  return bigBuys.data;
+  try {
+    const bigBuys = await axios.get(
+      "https://8kltnjdcw2.execute-api.us-east-1.amazonaws.com/default/getDripBigBuys",
+      { timeout: 5000 }
+    );
+    return bigBuys.data;
+  } catch (err) {
+    console.log(`error getting big buys from AWS: ${err.message}`);
+  }
 };
 
 export const getBigBuysFromGlitch = async () => {
-  const bigBuys = await axios.get(
-    "https://drip-mw-dashboard-api.glitch.me/bigBuys"
-  );
-  return bigBuys.data;
+  try {
+    const bigBuys = await axios.get(
+      "https://drip-mw-dashboard-api.glitch.me/bigBuys",
+      { timeout: 5000 }
+    );
+    return bigBuys.data;
+  } catch (err) {
+    console.log(`error getting big buys from glitch: ${err.message}`);
+  }
 };
 
 export const getDripPriceData = async () => {
@@ -407,9 +434,17 @@ export const fetchWalletData = async (wallet, index) => {
 export const getAllWalletData = async (myWallets) => {
   const start = Date.now();
   console.log("getting all wallet data");
-  const response = await axios.post(`${DMWDAPI}/wallets`, {
-    wallets: myWallets,
-  });
+  const response = await axios
+    .post(
+      `${DMWDAPI}/wallets`,
+      {
+        wallets: myWallets,
+      },
+      { timeout: 5000, retry: 3, retryDelay: 1000 }
+    )
+    .catch((err) => {
+      console.log(`error getting wallets: ${err.message}`);
+    });
   // const walletCache = await Promise.all(
   //   myWallets.map(async (wallet, index) => {
   //     const walletData = await fetchWalletData(wallet, index);

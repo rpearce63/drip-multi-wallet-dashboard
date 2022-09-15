@@ -8,17 +8,21 @@ const BigDripBuys = () => {
 
   useEffect(() => {
     const fetchBigBuys = async () => {
-      const data = await getBigBuysFromGlitch();
-      //update display only if data is updated
-      (data?.length && _.isEqual(data, bigBuys)) || setBigBuys(data);
-      setUpdateTime(new Date().toLocaleString());
+      try {
+        const data = await getBigBuysFromGlitch();
+        //update display only if data is updated
+        data && setBigBuys(data);
+        setUpdateTime(new Date().toLocaleString());
+      } catch (err) {
+        console.log(`error getting big buys`);
+      }
     };
     fetchBigBuys();
     const interval = setInterval(() => {
       fetchBigBuys();
     }, 10000);
     return () => clearInterval(interval);
-  }, [bigBuys]);
+  }, []);
 
   return (
     <Marquee
@@ -28,7 +32,7 @@ const BigDripBuys = () => {
       speed={40}
     >
       <span style={{ marginRight: "5px" }}>
-        Big Buys in the last 24 hrs: {bigBuys.length} -
+        Big Buys in the last 24 hrs: {bigBuys?.length} -
       </span>
       {!!bigBuys &&
         bigBuys.map((bb, index) => (

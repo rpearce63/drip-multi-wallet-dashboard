@@ -117,7 +117,15 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    wallets.sort(sortBy(sortCol, sortOrder));
+    if (!wallets || !wallets.length) {
+      console.log(`no wallets to sort`);
+      return;
+    }
+    try {
+      wallets?.length > 1 && wallets?.sort(sortBy(sortCol, sortOrder));
+    } catch (err) {
+      console.log(`error sorting wallets: ${err.message}`);
+    }
   }, [sortCol, sortOrder, wallets]);
 
   // useEffect(() => {
@@ -156,7 +164,11 @@ const Dashboard = () => {
   }, [fetchPrices]);
 
   useEffect(() => {
-    const validWallets = wallets.filter((wallet) => wallet.valid);
+    if (!wallets || !wallets.length) {
+      console.log("no valid wallets");
+      return;
+    }
+    const validWallets = wallets?.filter((wallet) => wallet?.valid);
 
     setTotalDeposits(() =>
       validWallets.reduce((total, wallet) => {

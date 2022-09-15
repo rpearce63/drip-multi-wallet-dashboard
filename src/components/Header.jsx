@@ -36,6 +36,7 @@ const Header = () => {
       dripPcsPrice,
       br34pPrice,
       afpPrice,
+      dogPrice,
     } = await getDripPriceData();
     const currentDripPrice = dripBnbRatio * bnbPrice;
 
@@ -46,11 +47,12 @@ const Header = () => {
     dripBnbRatio > 0 && setDripBnbPrice(() => dripBnbRatio / 10e17);
     dripPcsPrice > 0 && setDripPcsPrice(() => dripPcsPrice);
     afpPrice > 0 && setPigPrice(() => afpPrice);
-    dogPrice > 0 && setDogPrice(dogPrice);
+    dogPrice > 0 && setDogPrice(() => dogPrice);
 
-    document.title = `${formatCurrency(
-      convertDrip(currentDripPrice)
-    )} - Drip Multi-Wallet Dashboard`;
+    currentDripPrice &&
+      (document.title = `${formatCurrency(
+        convertDrip(currentDripPrice)
+      )} - Drip Multi-Wallet Dashboard`);
   }, [dogPrice]);
 
   useEffect(() => {
@@ -142,19 +144,19 @@ const Header = () => {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  AFP:
+                  Pigs/AFP:
                 </a>{" "}
                 {formatCurrency(pigPrice)}
               </div>
               <div>
                 <a
-                  href="https://bscscan.com/address/0xDBdC73B95cC0D5e7E99dC95523045Fc8d075Fb9e"
+                  href="https://poocoin.app/tokens/0x198271b868dae875bfea6e6e4045cdda5d6b9829"
                   target="_blank"
                   rel="noreferrer"
                 >
-                  Dog:
+                  Dogs/AFD:
                 </a>{" "}
-                {formatCurrency(dogPrice)}
+                {formatCurrency(dogPrice * bnbPrice)}
               </div>
             </div>
           </div>

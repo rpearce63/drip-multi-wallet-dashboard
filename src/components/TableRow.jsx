@@ -21,6 +21,7 @@ const TableRow = ({
   flagLowNdv,
   ndvWarningLevel,
 }) => {
+  if (!wallet) return null;
   return (
     <tr>
       <td className="rowIndex" onClick={() => deleteRow(wallet.address)}>
