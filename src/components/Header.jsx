@@ -144,7 +144,7 @@ const Header = () => {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  AFP:
+                  Pigs/AFP:
                 </a>{" "}
                 {formatCurrency(pigPrice)}
               </div>
@@ -154,7 +154,7 @@ const Header = () => {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  Dog:
+                  Dogs/AFD:
                 </a>{" "}
                 {formatCurrency(dogPrice * bnbPrice)}
               </div>
