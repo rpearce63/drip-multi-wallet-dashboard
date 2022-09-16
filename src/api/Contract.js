@@ -8,11 +8,11 @@ import {
   BR34P_ADDRESS,
   BASIC_TOKEN_ABI,
   DROPS_ADDRESS,
-  // DRIP_TOKEN_ADDR,
-  // BUSD_TOKEN_ADDRESS,
-  // DRIP_BUSD_LP_ADDRESS,
+  DRIP_TOKEN_ADDR,
+  BUSD_TOKEN_ADDRESS,
+  DRIP_BUSD_LP_ADDRESS,
 } from "../configs/dripconfig";
-//import { findFibIndex } from "./utils";
+import { findFibIndex } from "./utils";
 import LRU from "lru-cache";
 const DMWDAPI = "https://api.drip-mw-dashboard.com";
 //const DMWDAPI = "https://drip-mw-dashboard-api.glitch.me";
@@ -54,9 +54,10 @@ const ROLL_HEX = "0xcd5e3c5d";
 const CLAIM_HEX = "0x4e71d92d";
 const DEPOSIT_HEX = "0x47e7ef24";
 
-// const web3 = new Web3(
-//   "https://drip-cors-anywhere.herokuapp.com/https://bsc-dataseed.binance.org/"
-// );
+const web3 = new Web3(
+  "https://drip-cors-anywhere.herokuapp.com/https://bsc-dataseed.binance.org/"
+);
+const contract = new web3.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
 
 export const getConnection = () => {
   const web3 = new Web3(
@@ -360,98 +361,84 @@ export const getDripPriceData = async () => {
 
 export const fetchWalletData = async (wallet, index) => {
   //console.log("fetchWalletData");
-  const response = await axios.post(`${DMWDAPI}/wallet/`, {
-    wallet,
-    index,
-  });
-  //console.log(response);
-  return response.data;
   // const web3 = await getConnection();
-  // const contract = await getContract(web3);
-  // const userInfo = await getUserInfo(contract, wallet.addr);
-  // const available = await claimsAvailable(contract, wallet.addr);
-  // const dripBalance = await getTokenBalance(web3, wallet.addr, DRIP_TOKEN_ADDR);
-  // const uplineCount = await getUplineCount(contract, wallet.addr);
-  // const br34pBalance = await getBr34pBalance(web3, wallet.addr);
-  // const bnbBalance = await getBnbBalance(web3, wallet.addr);
+  //const contract = await getContract(web3);
+  const userInfo = await getUserInfo(contract, wallet.addr);
+  if (!userInfo) return;
+  const available = await claimsAvailable(contract, wallet.addr);
+  const dripBalance = await getTokenBalance(web3, wallet.addr, DRIP_TOKEN_ADDR);
+  const uplineCount = await getUplineCount(contract, wallet.addr);
+  const br34pBalance = await getBr34pBalance(web3, wallet.addr);
+  const bnbBalance = await getBnbBalance(web3, wallet.addr);
 
-  // const busdBalance = await getTokenBalance(
-  //   web3,
-  //   wallet.addr,
-  //   BUSD_TOKEN_ADDRESS
-  // );
-  // const dripBusdLpBalance = await getTokenBalance(
-  //   web3,
-  //   wallet.addr,
-  //   DRIP_BUSD_LP_ADDRESS
-  // );
+  const busdBalance = await getTokenBalance(
+    web3,
+    wallet.addr,
+    BUSD_TOKEN_ADDRESS
+  );
+  const dripBusdLpBalance = await getTokenBalance(
+    web3,
+    wallet.addr,
+    DRIP_BUSD_LP_ADDRESS
+  );
 
-  // const coveredDepth = findFibIndex(br34pBalance);
-  // const teamDepth =
-  //   userInfo.referrals > 0 && (await getDownlineDepth(wallet.addr));
+  const coveredDepth = findFibIndex(br34pBalance);
+  const teamDepth =
+    userInfo.referrals > 0 && (await getDownlineDepth(wallet.addr));
 
-  // const { airdrops } = await getAirdrops(contract, wallet.addr);
-  // const a = parseFloat(web3.utils.fromWei(airdrops));
-  // const d = parseFloat(web3.utils.fromWei(userInfo.deposits));
-  // const r = parseFloat(web3.utils.fromWei(userInfo.rolls));
-  // const c = parseFloat(web3.utils.fromWei(userInfo.payouts));
+  const { airdrops } = await getAirdrops(contract, wallet.addr);
+  const a = parseFloat(web3.utils.fromWei(airdrops));
+  const d = parseFloat(web3.utils.fromWei(userInfo.deposits));
+  const r = parseFloat(web3.utils.fromWei(userInfo.rolls));
+  const c = parseFloat(web3.utils.fromWei(userInfo.payouts));
 
-  // const ndv = d + a + r - c;
-  // const valid = !!userInfo;
-  // const referral_bonus =
-  //   parseFloat(userInfo.direct_bonus) + parseFloat(userInfo.match_bonus);
-  // const startBlock = await getStartBlock();
-  // const lastAction = await getLastAction(startBlock - 200000, wallet.addr);
-  // const dropsBalance = await getReservoirBalance(web3, wallet.addr);
-  // return {
-  //   index,
-  //   ...userInfo,
-  //   deposits: userInfo.deposits / 10e17,
-  //   available: available / 10e17,
-  //   payouts: userInfo.payouts / 10e17,
-  //   maxPayout: (userInfo.deposits * 3.65) / 10e17,
-  //   direct_bonus: referral_bonus / 10e17,
+  const ndv = d + a + r - c;
+  const valid = !!userInfo;
+  const referral_bonus =
+    parseFloat(userInfo.direct_bonus) + parseFloat(userInfo.match_bonus);
+  const startBlock = await getStartBlock();
+  //console.log("startBlock: " + startBlock);
+  const lastAction = await getLastAction(startBlock - 200000, wallet.addr);
+  const dropsBalance = await getReservoirBalance(web3, wallet.addr);
+  return {
+    index,
+    ...userInfo,
+    deposits: userInfo.deposits / 10e17,
+    available: available / 10e17,
+    payouts: userInfo.payouts / 10e17,
+    maxPayout: (userInfo.deposits * 3.65) / 10e17,
+    direct_bonus: referral_bonus / 10e17,
 
-  //   address: wallet.addr,
-  //   label: wallet.label,
-  //   valid,
-  //   dripBalance,
-  //   br34pBalance,
-  //   uplineCount,
-  //   bnbBalance,
-  //   coveredDepth,
-  //   teamDepth,
-  //   ndv,
-  //   busdBalance,
-  //   dripBusdLpBalance,
-  //   lastAction,
-  //   r,
-  //   dropsBalance,
-  //   referrals: parseInt(userInfo.referrals),
-  // };
+    address: wallet.addr,
+    label: wallet.label,
+    valid,
+    dripBalance,
+    br34pBalance,
+    uplineCount,
+    bnbBalance,
+    coveredDepth,
+    teamDepth,
+    ndv,
+    busdBalance,
+    dripBusdLpBalance,
+    lastAction,
+    r,
+    dropsBalance,
+    referrals: parseInt(userInfo.referrals),
+  };
 };
 
 export const getAllWalletData = async (myWallets) => {
-  const start = Date.now();
-  console.log("getting all wallet data");
-  const response = await axios
-    .post(
-      `${DMWDAPI}/wallets`,
-      {
-        wallets: myWallets,
-      },
-      { timeout: 5000, retry: 3, retryDelay: 1000 }
-    )
-    .catch((err) => {
-      console.log(`error getting wallets: ${err.message}`);
-    });
-  // const walletCache = await Promise.all(
-  //   myWallets.map(async (wallet, index) => {
-  //     const walletData = await fetchWalletData(wallet, index);
-  //     return walletData;
-  //   })
-  // );
-  const end = Date.now();
-  console.log(`got all wallet data: ${(end - start) / 1000} seconds`);
-  return response.data;
+  const start = new Date();
+  console.log("getting wallet data");
+  const startBlock = await getStartBlock();
+  const walletCache = await Promise.all(
+    myWallets.map(async (wallet, index) => {
+      const walletData = await fetchWalletData(wallet, index);
+      return walletData;
+    })
+  );
+  const end = new Date();
+  console.log(`got wallet data in ${(end - start) / 1000} seconds`);
+  return walletCache;
 };
