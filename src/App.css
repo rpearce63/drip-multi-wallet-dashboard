@@ -95,7 +95,7 @@ textarea.invert {
   .controls {
     display: block !important;
   }
-  
+
   .navbar-brand {
     margin-right: 0px;
   }
@@ -226,13 +226,11 @@ button {
 .table-sort-desc::after {
   content: "\2B19";
   margin-left: 3px;
-  
 }
 
 .table-sort-asc::after {
   content: "\2B18";
   margin-left: 3px;
-  
 }
 
 @media only screen and (max-width: 700px) {
@@ -564,5 +562,23 @@ span.spinCtrl:after {
 @-webkit-keyframes blink-animation {
   to {
     visibility: hidden;
+  }
+}
+
+/* loading dots */
+
+.dotloading:after {
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: bottom;
+  animation: ellipsis steps(4, end) 900ms infinite;
+  content: "...";
+  /* ascii code for the ellipsis character */
+  width: 0px;
+}
+
+@keyframes ellipsis {
+  to {
+    width: 40px;
   }
 }

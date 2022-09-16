@@ -20,7 +20,7 @@ const BSCSCAN_URL = "https://api.bscscan.com";
 const RESERVOIR_CONTRACT = require("../configs/reservoir_contract.json");
 
 const axios = require("axios");
-const rax = require("retry-axios");
+//const rax = require("retry-axios");
 // eslint-disable-next-line no-unused-vars
 //const interceptorId = rax.attach();
 axios.interceptors.response.use(undefined, (err) => {
@@ -29,7 +29,13 @@ axios.interceptors.response.use(undefined, (err) => {
     return Promise.reject(err);
   }
   // retry while Network timeout or Network Error
-  if (!(message.includes("timeout") || message.includes("Network Error"))) {
+  if (
+    !(
+      message.includes("timeout") ||
+      message.includes("Network Error") ||
+      message.includes("retry")
+    )
+  ) {
     return Promise.reject(err);
   }
   config.retry -= 1;
@@ -55,6 +61,8 @@ const DEPOSIT_HEX = "0x47e7ef24";
 
 const web3 = new Web3("https://bsc-dataseed.binance.org/");
 const contract = new web3.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
+
+let startBlock;
 
 export const getConnection = () => {
   const web3 = new Web3("https://bsc-dataseed.binance.org/");
@@ -273,10 +281,9 @@ export const getJoinDate = async (account) => {
 };
 
 export const getStartBlock = async () => {
+  const url = `${BSCSCAN_URL}/api?module=proxy&action=eth_blockNumber&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY`;
   const latestBlockHex = await axios
-    .get(
-      `${BSCSCAN_URL}/api?module=proxy&action=eth_blockNumber&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY`
-    )
+    .get(url)
     .then((response) => response.data.result);
 
   const latestBlock = parseInt(latestBlockHex, 16);
@@ -285,13 +292,13 @@ export const getStartBlock = async () => {
 
 export const getLastAction = async (startBlock, address) => {
   if (cache.has(address)) {
-    //console.log(`returning cached value for ${address}`);
+    console.log(`returning cached value for ${address}`);
     return cache.get(address);
   }
+
+  const url = `${BSCSCAN_URL}/api?module=account&action=txlist&address=${address}&startblock=${startBlock}&endblock=99999999&sort=asc&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY`;
   const transactions = await axios
-    .get(
-      `${BSCSCAN_URL}/api?module=account&action=txlist&address=${address}&startblock=${startBlock}&endblock=99999999&sort=asc&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY`
-    )
+    .get(url, { retry: 3, retryDelay: 1000 })
     .then((response) => response.data.result)
     .catch((err) => {
       console.log(`error getting last action: ${err.message}`);
@@ -299,11 +306,11 @@ export const getLastAction = async (startBlock, address) => {
     });
   if (!Array.isArray(transactions)) {
     console.log(`transactions is not an array: ${transactions}`);
-    return null;
+    return "error";
   }
   const lastActionHex =
     transactions
-      .filter((tx) => tx.to === FAUCET_ADDR)
+      .filter((tx) => tx.to.toLowerCase() === FAUCET_ADDR.toLowerCase())
       .filter((result) =>
         [ROLL_HEX, CLAIM_HEX, DEPOSIT_HEX].some((a) =>
           result.input.startsWith(a)
@@ -318,8 +325,10 @@ export const getLastAction = async (startBlock, address) => {
       : lastActionHex.startsWith(DEPOSIT_HEX)
       ? "Deposit"
       : "";
-  //console.log(`setting cached value: ${lastAction} for ${address}`);
-  cache.set(address, lastAction);
+
+  // if (lastAction) {
+  //   cache.set(address, lastAction);
+  // }
   return lastAction;
 };
 
@@ -391,9 +400,9 @@ export const fetchWalletData = async (wallet, index) => {
   const valid = !!userInfo;
   const referral_bonus =
     parseFloat(userInfo.direct_bonus) + parseFloat(userInfo.match_bonus);
-  const startBlock = await getStartBlock();
+  //const startBlock = await getStartBlock();
   //console.log("startBlock: " + startBlock);
-  const lastAction = await getLastAction(startBlock - 200000, wallet.addr);
+  //const lastAction = await getLastAction(startBlock - 200000, wallet.addr);
   const dropsBalance = await getReservoirBalance(web3, wallet.addr);
   return {
     index,
@@ -416,7 +425,7 @@ export const fetchWalletData = async (wallet, index) => {
     ndv,
     busdBalance,
     dripBusdLpBalance,
-    lastAction,
+    //lastAction,
     r,
     dropsBalance,
     referrals: parseInt(userInfo.referrals),
@@ -426,7 +435,7 @@ export const fetchWalletData = async (wallet, index) => {
 export const getAllWalletData = async (myWallets) => {
   const start = new Date();
   console.log("getting wallet data");
-  const startBlock = await getStartBlock();
+  startBlock = await getStartBlock();
   const walletCache = await Promise.all(
     myWallets.map(async (wallet, index) => {
       const walletData = await fetchWalletData(wallet, index);
