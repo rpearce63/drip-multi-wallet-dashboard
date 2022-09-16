@@ -14,7 +14,7 @@ import {
 } from "../configs/dripconfig";
 //import { findFibIndex } from "./utils";
 import LRU from "lru-cache";
-const DMWDAPI = "http://localhost:8080"; //"https://api.drip-mw-dashboard.com";
+const DMWDAPI = "https://api.drip-mw-dashboard.com";
 //const DMWDAPI = "https://drip-mw-dashboard-api.glitch.me";
 const BSCSCAN_URL =
   "https://drip-cors-anywhere.herokuapp.com/https://api.bscscan.com";
