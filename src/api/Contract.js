@@ -16,8 +16,7 @@ import { findFibIndex } from "./utils";
 import LRU from "lru-cache";
 const DMWDAPI = "https://api.drip-mw-dashboard.com";
 //const DMWDAPI = "https://drip-mw-dashboard-api.glitch.me";
-const BSCSCAN_URL =
-  "https://drip-cors-anywhere.herokuapp.com/https://api.bscscan.com";
+const BSCSCAN_URL = "https://api.bscscan.com";
 const RESERVOIR_CONTRACT = require("../configs/reservoir_contract.json");
 
 const axios = require("axios");
@@ -54,15 +53,11 @@ const ROLL_HEX = "0xcd5e3c5d";
 const CLAIM_HEX = "0x4e71d92d";
 const DEPOSIT_HEX = "0x47e7ef24";
 
-const web3 = new Web3(
-  "https://drip-cors-anywhere.herokuapp.com/https://bsc-dataseed.binance.org/"
-);
+const web3 = new Web3("https://bsc-dataseed.binance.org/");
 const contract = new web3.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
 
 export const getConnection = () => {
-  const web3 = new Web3(
-    "https://drip-cors-anywhere.herokuapp.com/https://bsc-dataseed.binance.org/"
-  );
+  const web3 = new Web3("https://bsc-dataseed.binance.org/");
   return web3;
 };
 
