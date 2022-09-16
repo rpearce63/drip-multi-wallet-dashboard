@@ -5,6 +5,8 @@ import {
   formatNumber,
 } from "../api/utils";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import { getLastAction, getStartBlock } from "../api/Contract";
 const TableRow = ({
   index,
   wallet,
@@ -21,7 +23,33 @@ const TableRow = ({
   flagLowNdv,
   ndvWarningLevel,
 }) => {
-  if (!wallet) return null;
+  const [lastAction, setLastAction] = useState();
+  const [loading, setLoading] = useState(false);
+
+  const fetchLastAction = async () => {
+    setLoading(true);
+    setLastAction(" ");
+    // await new Promise((resolve) =>
+    //   setTimeout(() => {
+    //     resolve(true);
+    //   }, 5000)
+    // );
+    const startBlock = await getStartBlock();
+    const response = await getLastAction(startBlock - 200000, wallet.address);
+    if (response === "error") {
+      await new Promise((resolve) =>
+        setTimeout(() => {
+          resolve(true);
+        }, 1000)
+      );
+      await fetchLastAction();
+    } else {
+      response && setLastAction(response);
+      setLoading(false);
+    }
+  };
+
+  if (!wallet) return <></>;
   return (
     <tr>
       <td className="rowIndex" onClick={() => deleteRow(wallet.address)}>
@@ -96,7 +124,15 @@ const TableRow = ({
       </td>
 
       <td>{convertTokenToUSD(wallet.deposits, dripPrice, showDollarValues)}</td>
-      {showLastAction && <td>{wallet.lastAction}</td>}
+      {showLastAction && (
+        <td
+          onClick={fetchLastAction}
+          style={{ cursor: "pointer", textAlign: "center" }}
+          className={loading ? "dotloading" : ""}
+        >
+          {lastAction || "-"}
+        </td>
+      )}
       <td
         className={
           flagLowNdv && wallet.ndv / wallet.deposits <= ndvWarningLevel / 100

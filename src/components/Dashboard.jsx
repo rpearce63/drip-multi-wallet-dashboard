@@ -767,7 +767,7 @@ const Dashboard = () => {
                 {convertTokenToUSD(totalDeposits, dripPrice, showDollarValues)}
               </th>
 
-              {showLastAction && <th></th>}
+              {showLastAction && <th>Click row</th>}
               <th>{formatNumber(totalNDV)}</th>
               <th>
                 {convertTokenToUSD(totalClaimed, dripPrice, showDollarValues)}
