@@ -5,7 +5,7 @@ import {
   formatNumber,
 } from "../api/utils";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getLastAction, getStartBlock } from "../api/Contract";
 const TableRow = ({
   index,
@@ -28,7 +28,7 @@ const TableRow = ({
 
   const fetchLastAction = async () => {
     setLoading(true);
-    setLastAction(" ");
+    //setLastAction(" ");
     // await new Promise((resolve) =>
     //   setTimeout(() => {
     //     resolve(true);
@@ -44,10 +44,20 @@ const TableRow = ({
       );
       await fetchLastAction();
     } else {
-      response && setLastAction(response);
+      setLastAction(response);
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    setLastAction("-");
+  }, [wallet.address]);
+
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     fetchLastAction();
+  //   }, 1000 * index);
+  // }, [fetchLastAction, index]);
 
   if (!wallet) return <></>;
   return (
@@ -130,7 +140,7 @@ const TableRow = ({
           style={{ cursor: "pointer", textAlign: "center" }}
           className={loading ? "dotloading" : ""}
         >
-          {lastAction || "-"}
+          {lastAction}
         </td>
       )}
       <td
