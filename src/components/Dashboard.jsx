@@ -122,7 +122,9 @@ const Dashboard = () => {
       return;
     }
     try {
-      wallets?.length > 1 && wallets?.sort(sortBy(sortCol, sortOrder));
+      if (wallets?.length > 1) {
+        wallets?.sort(sortBy(sortCol, sortOrder));
+      }
     } catch (err) {
       console.log(`error sorting wallets: ${err.message}`);
     }

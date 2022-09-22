@@ -29,7 +29,7 @@ const TableRow = ({
 
   const fetchLastAction = async () => {
     setLoading(true);
-    setLastAction(" ");
+    //setLastAction(" ");
     // await new Promise((resolve) =>
     //   setTimeout(() => {
     //     resolve(true);
@@ -45,7 +45,7 @@ const TableRow = ({
       );
       await fetchLastAction();
     } else {
-      response && setLastAction(response);
+      setLastAction(response);
       setLoading(false);
     }
   };
@@ -142,7 +142,7 @@ const TableRow = ({
           style={{ cursor: "pointer", textAlign: "center" }}
           className={loading ? "dotloading" : ""}
         >
-          {lastAction || "-"}
+          {lastAction}
         </td>
       )}
       <td
