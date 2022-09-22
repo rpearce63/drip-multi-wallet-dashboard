@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Marquee from "react-fast-marquee";
-import { getBigBuysFromGlitch, getBigBuysFromAWS } from "../api/Contract";
-import _ from "lodash";
+import { getBigBuysFromGlitch } from "../api/Contract";
+//import _ from "lodash";
 const BigDripBuys = () => {
   const [bigBuys, setBigBuys] = useState([]);
   const [updateTime, setUpdateTime] = useState("");
@@ -10,8 +10,17 @@ const BigDripBuys = () => {
     const fetchBigBuys = async () => {
       try {
         const data = await getBigBuysFromGlitch();
+        data.sort((a, b) => b.timestamp - a.timestamp);
+
         //update display only if data is updated
-        data && setBigBuys(data);
+        if (
+          (data?.length && !bigBuys.length) || //initial load
+          bigBuys.length !== data.length || // number of buys is different
+          JSON.stringify(bigBuys[0]) !== JSON.stringify(data[0]) // latest transaction is different
+        ) {
+          console.log("updating bigBuys");
+          setBigBuys(data);
+        }
         setUpdateTime(new Date().toLocaleString());
       } catch (err) {
         console.log(`error getting big buys`);
@@ -22,7 +31,7 @@ const BigDripBuys = () => {
       fetchBigBuys();
     }, 10000);
     return () => clearInterval(interval);
-  }, []);
+  }, [bigBuys]);
 
   return (
     <Marquee

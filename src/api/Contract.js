@@ -14,7 +14,7 @@ import {
 } from "../configs/dripconfig";
 import { findFibIndex } from "./utils";
 import LRU from "lru-cache";
-const DMWDAPI = "https://api.drip-mw-dashboard.com";
+//const DMWDAPI = "https://api.drip-mw-dashboard.com";
 //const DMWDAPI = "https://drip-mw-dashboard-api.glitch.me";
 const BSCSCAN_URL = "https://api.bscscan.com";
 const RESERVOIR_CONTRACT = require("../configs/reservoir_contract.json");
@@ -62,7 +62,7 @@ const DEPOSIT_HEX = "0x47e7ef24";
 const web3 = new Web3("https://bsc-dataseed.binance.org/");
 const contract = new web3.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
 
-let startBlock;
+//let startBlock;
 
 export const getConnection = () => {
   const web3 = new Web3("https://bsc-dataseed.binance.org/");
@@ -435,7 +435,7 @@ export const fetchWalletData = async (wallet, index) => {
 export const getAllWalletData = async (myWallets) => {
   const start = new Date();
   console.log("getting wallet data");
-  startBlock = await getStartBlock();
+  //const startBlock = await getStartBlock();
   const walletCache = await Promise.all(
     myWallets.map(async (wallet, index) => {
       const walletData = await fetchWalletData(wallet, index);
