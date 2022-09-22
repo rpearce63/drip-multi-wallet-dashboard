@@ -13,7 +13,7 @@ const Header = () => {
   const [dripBnbPrice, setDripBnbPrice] = useState(0);
   const [dripPcsPrice, setDripPcsPrice] = useState(0);
   const [pigPrice, setPigPrice] = useState(0);
-  const [dogPrice, setDogPrice] = useState(0);
+  const [dogsPrice, setDogsPrice] = useState(0);
   const [version, setVersion] = useState();
   const [hidePrices, setHidePrices] = useState(true);
   const BUY_SPREAD = 1.1;
@@ -36,7 +36,8 @@ const Header = () => {
       dripPcsPrice,
       br34pPrice,
       afpPrice,
-      dogPrice,
+      //dogPrice,
+      dogsPrice,
     } = await getDripPriceData();
     const currentDripPrice = dripBnbRatio * bnbPrice;
 
@@ -47,13 +48,13 @@ const Header = () => {
     dripBnbRatio > 0 && setDripBnbPrice(() => dripBnbRatio / 10e17);
     dripPcsPrice > 0 && setDripPcsPrice(() => dripPcsPrice);
     afpPrice > 0 && setPigPrice(() => afpPrice);
-    dogPrice > 0 && setDogPrice(() => dogPrice);
+    dogsPrice > 0 && setDogsPrice(() => dogsPrice);
 
     currentDripPrice &&
       (document.title = `${formatCurrency(
         convertDrip(currentDripPrice)
       )} - Drip Multi-Wallet Dashboard`);
-  }, [dogPrice]);
+  }, []);
 
   useEffect(() => {
     fetchData();
@@ -156,7 +157,7 @@ const Header = () => {
                 >
                   Dogs/AFD:
                 </a>{" "}
-                {formatCurrency(dogPrice * bnbPrice)}
+                {formatCurrency(dogsPrice)}
               </div>
             </div>
           </div>
