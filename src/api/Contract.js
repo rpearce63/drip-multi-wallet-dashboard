@@ -13,8 +13,9 @@ import {
   DRIP_BUSD_LP_ADDRESS,
 } from "../configs/dripconfig";
 import { findFibIndex } from "./utils";
+
 import LRU from "lru-cache";
-const DMWDAPI = "https://api.drip-mw-dashboard.com";
+//const DMWDAPI = "https://api.drip-mw-dashboard.com";
 //const DMWDAPI = "https://drip-mw-dashboard-api.glitch.me";
 const BSCSCAN_URL = "https://api.bscscan.com";
 const RESERVOIR_CONTRACT = require("../configs/reservoir_contract.json");
@@ -360,7 +361,7 @@ export const getDripPriceData = async () => {
   const dripPriceData = await axios.get(
     "https://drip-mw-dashboard-api.glitch.me/prices"
   );
-  return dripPriceData.data;
+  return { ...dripPriceData.data };
 };
 
 export const fetchWalletData = async (wallet, index) => {
