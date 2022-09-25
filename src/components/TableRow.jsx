@@ -5,8 +5,9 @@ import {
   formatNumber,
 } from "../api/utils";
 import { Link } from "react-router-dom";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { getLastAction, getStartBlock } from "../api/Contract";
+//import { useCallback } from "react";
 const TableRow = ({
   index,
   wallet,
@@ -54,10 +55,11 @@ const TableRow = ({
   }, [wallet.address]);
 
   // useEffect(() => {
+  //   setLastAction("-");
   //   setTimeout(() => {
   //     fetchLastAction();
-  //   }, 1000 * index);
-  // }, [fetchLastAction, index]);
+  //   }, 500 * index);
+  // }, [fetchLastAction, wallet.index]);
 
   if (!wallet) return <></>;
   return (

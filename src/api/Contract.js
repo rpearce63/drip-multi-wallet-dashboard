@@ -63,7 +63,7 @@ const DEPOSIT_HEX = "0x47e7ef24";
 const web3 = new Web3("https://bsc-dataseed.binance.org/");
 const contract = new web3.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
 
-let startBlock;
+//let startBlock;
 
 export const getConnection = () => {
   const web3 = new Web3("https://bsc-dataseed.binance.org/");
@@ -436,7 +436,7 @@ export const fetchWalletData = async (wallet, index) => {
 export const getAllWalletData = async (myWallets) => {
   const start = new Date();
   console.log("getting wallet data");
-  startBlock = await getStartBlock();
+  //const startBlock = await getStartBlock();
   const walletCache = await Promise.all(
     myWallets.map(async (wallet, index) => {
       const walletData = await fetchWalletData(wallet, index);
