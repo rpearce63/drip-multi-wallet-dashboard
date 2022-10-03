@@ -102,7 +102,7 @@ export const getUserInfo = async (contract, account) => {
   try {
     return await contract.methods.users(account).call();
   } catch (err) {
-    console.log(err.message);
+    console.log("Error getting UserInfo: ", err.message);
     return {};
   }
 };
@@ -186,7 +186,7 @@ export const getUplineCount = async (contract, wallet) => {
   do {
     const uplineInfo = await getUserInfo(contract, upline);
     upline = uplineInfo.upline;
-    if (upline.startsWith("0x000")) {
+    if (!upline || upline.startsWith("0x000")) {
       stop = true;
     }
     count++;
