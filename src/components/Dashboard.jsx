@@ -636,26 +636,6 @@ const Dashboard = () => {
                         <span className="warning"> - yellow</span>
                       </label>
                     </div>
-                    <div className="formCheck">
-                      Filter deposits &gt;{" "}
-                      <input
-                        type="text"
-                        size={10}
-                        value={depositFilter}
-                        onChange={(e) => {
-                          let numeric = e.target.value.replace(/\D/g, "");
-                          if (!numeric) numeric = 0;
-                          const maxDeposit = Math.max(
-                            ...fullList.map((w) => w.deposits)
-                          );
-                          if (numeric > maxDeposit) {
-                            numeric = depositFilter;
-                          }
-
-                          setDepositFilter(parseInt(numeric));
-                        }}
-                      />
-                    </div>
                   </div>
                 )}
               </div>
@@ -667,14 +647,18 @@ const Dashboard = () => {
           <div className="loading">Loading...</div>
         ) : (
           <div className="table-options">
-            <button
-              className="btn-copy btn btn-outline-secondary"
-              onClick={copyTableData}
-            >
-              <i className={`bi bi-clipboard${dataCopied ? "-check" : ""}`}></i>
-              Copy table
-            </button>
-            <div className="form-check">
+            <div className="table-options-ctrl">
+              <button
+                className="btn-copy btn btn-outline-secondary"
+                onClick={copyTableData}
+              >
+                <i
+                  className={`bi bi-clipboard${dataCopied ? "-check" : ""}`}
+                ></i>
+                Copy table
+              </button>
+            </div>
+            <div className="form-check table-options-ctrl">
               <input
                 id="expandedTable"
                 className="form-check-input"
@@ -686,7 +670,7 @@ const Dashboard = () => {
                 Expanded Table
               </label>
             </div>
-            <div className="form-check form-switch">
+            <div className="form-check form-switch table-options-ctrl">
               <input
                 id="showDollarValues"
                 className="form-check-input"
@@ -697,6 +681,26 @@ const Dashboard = () => {
               <label htmlFor="showDollarValues" className="form-check-label">
                 $
               </label>
+            </div>
+            <div className="table-options-ctrl">
+              Filter deposits &gt;{" "}
+              <input
+                type="text"
+                size={10}
+                value={depositFilter}
+                onChange={(e) => {
+                  let numeric = e.target.value.replace(/\D/g, "");
+                  if (!numeric) numeric = 0;
+                  const maxDeposit = Math.max(
+                    ...fullList.map((w) => w.deposits)
+                  );
+                  if (numeric > maxDeposit) {
+                    numeric = depositFilter;
+                  }
+
+                  setDepositFilter(parseInt(numeric));
+                }}
+              />
             </div>
           </div>
         )}

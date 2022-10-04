@@ -313,8 +313,10 @@ span.spinCtrl:after {
 
 .table-options {
   display: flex;
-  justify-content: space-between;
-  max-width: 20rem;
+  justify-content: flex-start;
+}
+.table-options-ctrl {
+  margin-right: 1em;
 }
 
 .nav-wrap {
