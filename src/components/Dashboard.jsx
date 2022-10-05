@@ -183,6 +183,7 @@ const Dashboard = () => {
           .map((w) => w.group)
           .join(",")
           .split(",")
+          .map((g) => g.trim())
           .filter((g) => g.trim().length)
       ),
     ];
