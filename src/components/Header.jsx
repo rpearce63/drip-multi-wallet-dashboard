@@ -38,6 +38,7 @@ const Header = () => {
       afpPrice,
       dogsPrice,
     } = await getDripPriceData();
+
     const currentDripPrice = dripBnbRatio * bnbPrice;
 
     currentDripPrice > 0 && setDripPrice(() => currentDripPrice);
@@ -83,12 +84,15 @@ const Header = () => {
               available. Please refresh page to get updates.
             </div>
           )}
-          <div
-            className="toggle-prices"
-            onClick={(e) => setHidePrices(!hidePrices)}
-            style={{}}
-          >
-            {hidePrices ? "+" : "-"}
+          <div>
+            {/* <span class="reload-icon">&#10227;</span> */}
+            <span
+              className="toggle-prices"
+              onClick={(e) => setHidePrices(!hidePrices)}
+              style={{}}
+            >
+              {hidePrices ? "+" : "-"}
+            </span>
           </div>
         </div>
         {hidePrices && (

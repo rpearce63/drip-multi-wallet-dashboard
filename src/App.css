@@ -584,3 +584,8 @@ span.spinCtrl:after {
     width: 40px;
   }
 }
+
+.reload-icon {
+  font-size: 1em;
+  color: white;
+}

@@ -416,6 +416,7 @@ export const fetchWalletData = async (wallet, index) => {
 
     address: wallet.addr,
     label: wallet.label,
+    group: wallet.group,
     valid,
     dripBalance,
     br34pBalance,

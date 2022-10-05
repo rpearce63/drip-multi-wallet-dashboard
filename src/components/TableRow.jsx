@@ -16,6 +16,7 @@ const TableRow = ({
   showLastAction,
   deleteRow,
   addLabel,
+  addGroup,
   dripPrice,
   bnbPrice,
   highlightStyleFor,
@@ -77,12 +78,22 @@ const TableRow = ({
       </td>
       <td>
         {editLabels ? (
-          <input
-            size={8}
-            type="text"
-            value={wallet.label}
-            onChange={(e) => addLabel(wallet.index, e.target.value)}
-          />
+          <>
+            <input
+              size={8}
+              type="text"
+              placeholder="Label"
+              value={wallet.label}
+              onChange={(e) => addLabel(wallet.index, e.target.value)}
+            />
+            <input
+              type="text"
+              size={8}
+              placeholder="Group"
+              value={wallet.group === "none" ? "" : wallet.group}
+              onChange={(e) => addGroup(wallet.index, e.target.value)}
+            />
+          </>
         ) : (
           wallet.label
         )}
