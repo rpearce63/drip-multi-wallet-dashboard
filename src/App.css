@@ -15,7 +15,13 @@
 /* #root {
   width: fit-content;
 } */
-
+body {
+  font-family: var(--bs-body-font-family) !important;
+  line-height: var(--bs-body-line-height) !important;
+}
+a {
+  text-decoration: underline !important;
+}
 .center {
   position: absolute;
   left: 50%;

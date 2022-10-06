@@ -38,7 +38,7 @@ const BigDripBuys = () => {
       gradient={false}
       style={{ color: "white" }}
       pauseOnHover={true}
-      speed={40}
+      speed={20}
     >
       <span style={{ marginRight: "5px" }}>
         Big Buys in the last 24 hrs: {bigBuys?.length} -

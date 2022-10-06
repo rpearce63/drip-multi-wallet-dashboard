@@ -4,6 +4,7 @@ import { getDripPriceData, getAllWalletData } from "../api/Contract";
 import { CONFIGS_KEY } from "../configs/dripconfig";
 
 import Info from "./Info";
+import PopupHelp from "./PopupHelp";
 
 import {
   convertTokenToUSD,
@@ -764,6 +765,7 @@ const Dashboard = () => {
                   </option>
                 ))}
               </select>
+              <PopupHelp />
             </div>
           </div>
         )}
