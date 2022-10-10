@@ -114,7 +114,7 @@ const Dashboard = () => {
       flagPct = true,
       bnbThreshold = 0.05,
       expandedTable = false,
-      furioEnabled = true,
+      furioEnabled = false,
       hideTableControls = false,
       showLastAction = true,
       ndvWarningLevel = 25,
