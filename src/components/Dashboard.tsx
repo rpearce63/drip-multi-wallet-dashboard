@@ -678,7 +678,7 @@ const Dashboard = () => {
                         size={10}
                         value={depositFilter}
                         onChange={(e) => {
-                          let numeric = e.target.value.replace(/\D/g, "");
+                          let numeric = parseInt(e.target.value.replace(/\D/g, ""));
                           if (!numeric) numeric = 0;
                           const maxDeposit = Math.max(
                             ...fullList.map((w) => w.deposits)
@@ -687,7 +687,7 @@ const Dashboard = () => {
                             numeric = depositFilter;
                           }
 
-                          setDepositFilter(parseInt(numeric));
+                          setDepositFilter(numeric);
                         }}
                       />
                     </div>

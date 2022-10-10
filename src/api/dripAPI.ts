@@ -41,9 +41,9 @@ export const getDripAirdrops = async (account) => {
 
 export const getDripUserInfo = async (account) => {
     try {
-        return dripContract.methods.users(account).call();
+        return await dripContract.methods.users(account).call();
     } catch (err) {
-        console.log(err.message);
+        console.log("Error getting UserInfo: ", err.message);
         return {};
     }
 };
@@ -61,7 +61,7 @@ export const getUplineCount = async (wallet) => {
     do {
         const uplineInfo = await getDripUserInfo(upline);
         upline = uplineInfo.upline;
-        if (upline.startsWith("0x000")) {
+        if (!upline || upline.startsWith("0x000")) {
             stop = true;
         }
         count++;

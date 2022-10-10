@@ -12,6 +12,7 @@ import React from "react";
 import {Wallet} from "../types/types";
 //import { useCallback } from "react";
 export interface TableRowProps {
+    index: number,
     wallet:Wallet,
     expandedTable: boolean,
     furioEnabled: boolean,
