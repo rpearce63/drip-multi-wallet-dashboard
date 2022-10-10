@@ -383,7 +383,7 @@ export async function calcPCSPrice(tokenAddress) {
   //const USDTokenAddress = "0x55d398326f99059fF775485246999027B3197955"; //USDT
   //const WBNBTokenAddress = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
   //const BR34PTokenAddress = "0xa86d305A36cDB815af991834B46aD3d7FbB38523";
-  let revToSell = web3.utils.toWei("1", "ether");
+  let amountIn = web3.utils.toWei("1", "ether");
   let amountOut;
   try {
     let router = await new web3.eth.Contract(
@@ -391,10 +391,10 @@ export async function calcPCSPrice(tokenAddress) {
       pancakeSwapContract
     );
     amountOut = await router.methods
-      .getAmountsOut(revToSell, [tokenAddress, BUSDTokenAddress])
+      .getAmountsIn(amountIn, [BUSDTokenAddress, tokenAddress])
       .call();
-    amountOut = web3.utils.fromWei(amountOut[1]);
-    //console.log(`amountOut=${amountOut}`);
+    //console.log(`amountOuts=${amountOut}`);
+    amountOut = web3.utils.fromWei(amountOut[0]);
   } catch (error) {
     console.log(error);
     return 0;

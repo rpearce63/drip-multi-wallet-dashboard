@@ -19,6 +19,7 @@ import {getDripPriceData, getFurioPriceData} from "../api/pricingAPI";
 
 const Dashboard = () => {
   const [wallets, setWallets] = useState([] as Wallet[]);
+  const [fullList, setFullList] = useState([]);
   const [totalDeposits, setTotalDeposits] = useState(0);
   const [totalAvailable, setTotalAvailable] = useState(0);
   const [totalClaimed, setTotalClaimed] = useState(0);
@@ -42,6 +43,7 @@ const Dashboard = () => {
   const [bnbThreshold, setBnbThreshold] = useState(0.05);
   const [flagLowNdv, setFlagLowNdv] = useState(true);
   const [ndvWarningLevel, setNdvWarningLevel] = useState(25);
+  const [depositFilter, setDepositFilter] = useState(0);
 
   const [editLabels, setEditLabels] = useState(false);
   const [autoRefresh, setAutoRefresh] = useState(true);
@@ -143,10 +145,10 @@ const Dashboard = () => {
     }
   }, [sortCol, sortOrder, wallets]);
 
-  // useEffect(() => {
-  //   const filtered = wallets.filter((w) => w.deposits > 300);
-  //   setWallets(filtered);
-  // }, [sortCol]);
+  useEffect(() => {
+    const filtered = fullList.filter((w) => w.deposits >= depositFilter);
+    setWallets(filtered);
+  }, [depositFilter, fullList]);
 
   const fetchPrices = useCallback(async () => {
     const { bnbPrice, dripBnbRatio, br34pPrice } = await getDripPriceData();
@@ -157,6 +159,14 @@ const Dashboard = () => {
     setBnbPrice(() => bnbPrice);
     setBr34pPrice(() => br34pPrice);
   }, []);
+
+  const getStoredWallets = () => {
+    const storedWallets = JSON.parse(
+      window.localStorage.getItem("dripAddresses")
+    );
+    console.log(storedWallets);
+    return storedWallets;
+  };
 
   const fetchData = useCallback(async () => {
     setTimer(60);
@@ -172,7 +182,7 @@ const Dashboard = () => {
       })) ?? [];
 
     const walletCache = await getAllWalletData(myWallets);
-
+    setFullList(walletCache);
     setWallets(() => walletCache);
 
     setDataCopied(false);
@@ -660,6 +670,26 @@ const Dashboard = () => {
                         </div>
                         <span className="warning"> - yellow</span>
                       </label>
+                    </div>
+                    <div className="formCheck">
+                      Filter deposits &gt;{" "}
+                      <input
+                        type="text"
+                        size={10}
+                        value={depositFilter}
+                        onChange={(e) => {
+                          let numeric = e.target.value.replace(/\D/g, "");
+                          if (!numeric) numeric = 0;
+                          const maxDeposit = Math.max(
+                            ...fullList.map((w) => w.deposits)
+                          );
+                          if (numeric > maxDeposit) {
+                            numeric = depositFilter;
+                          }
+
+                          setDepositFilter(parseInt(numeric));
+                        }}
+                      />
                     </div>
                   </div>
                 )}

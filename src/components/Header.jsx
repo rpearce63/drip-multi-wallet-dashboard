@@ -36,7 +36,6 @@ const Header = () => {
       dripPcsPrice,
       br34pPrice,
       afpPrice,
-      //dogPrice,
       dogsPrice,
     } = await getDripPriceData();
     const currentDripPrice = dripBnbRatio * bnbPrice;
