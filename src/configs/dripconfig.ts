@@ -1,9 +1,11 @@
+import {AbiItem} from "web3-utils";
+
 export const CONFIGS_KEY = "dripDashboard-config";
 export const DRIP_BUSD_LP_ADDRESS =
   "0xa0feb3c81a36e885b6608df7f0ff69db97491b58";
 export const BUSD_TOKEN_ADDRESS = "0xe9e7cea3dedca5984780bafc599bd69add087d56";
 export const DROPS_ADDRESS = "0xB486857fac4254A7ffb3B1955EE0C0A2B2ca75AB";
-export const FAUCET_ABI = [
+export const FAUCET_ABI: AbiItem[] | AbiItem = [
   {
     anonymous: false,
     inputs: [
@@ -1134,6 +1136,7 @@ export const DRIP_TOKEN_ABI = [
   },
 ];
 export const DRIP_TOKEN_ADDR = "0x20f663CEa80FaCE82ACDFA3aAE6862d246cE0333";
+export const FURIO_TOKEN_ADDR = "0x48378891d6E459ca9a56B88b406E8F4eAB2e39bF";
 
 export const FOUNTAIN_ABI = [
   {
@@ -1994,7 +1997,7 @@ export const BR34P_ABI = [
 
 export const BNB_TOKEN_ADDRESS = "0xB8c77482e45F1F44dE1745F52C74426C631bDD52";
 
-export const BASIC_TOKEN_ABI = [
+export const BASIC_TOKEN_ABI: AbiItem[] | AbiItem = [
   // balanceOf
   {
     constant: true,

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { getDripPriceData, getAllWalletData } from "../api/Contract";
+import {getAllWalletData} from "../api/Contract";
 
 import { CONFIGS_KEY } from "../configs/dripconfig";
 
@@ -14,9 +14,11 @@ import {
 } from "../api/utils";
 
 import TableRow from "./TableRow";
+import {Wallet} from "../types/types";
+import {getDripPriceData, getFurioPriceData} from "../api/pricingAPI";
 
 const Dashboard = () => {
-  const [wallets, setWallets] = useState([]);
+  const [wallets, setWallets] = useState([] as Wallet[]);
   const [totalDeposits, setTotalDeposits] = useState(0);
   const [totalAvailable, setTotalAvailable] = useState(0);
   const [totalClaimed, setTotalClaimed] = useState(0);
@@ -46,10 +48,12 @@ const Dashboard = () => {
   const [dataCopied, setDataCopied] = useState(false);
 
   const [expandedTable, setExpandedTable] = useState(false);
+  const [furioEnabled, enableFurio] = useState(false);
   const [hideTableControls, setHideTableControls] = useState(true);
   const [showDollarValues, setShowDollarValues] = useState(false);
   const [bnbPrice, setBnbPrice] = useState(0);
   const [dripPrice, setDripPrice] = useState(0);
+  const [furioPrice, setFurioPrice] = useState(0);
   const [br34pPrice, setBr34pPrice] = useState(0);
   const [showLastAction, setShowLastAction] = useState(true);
   const [timer, setTimer] = useState(0);
@@ -78,6 +82,13 @@ const Dashboard = () => {
     { label: "Team", id: "referrals" },
     { label: "Ref Pos", id: "ref_claim_pos" },
   ];
+  const FURIO_HEADERS = [
+    { label: "Furio", id: "furioBalance" },
+    { label: "Vault", id: "furioVaultBalance" },
+    { label: "Avail", id: "furioAvailable" },
+    { label: "Rate", id: "furioRewardRate" },
+    { label: "AutoComp Rem/Tot", id: "furioAutoCompound" },
+  ];
   const BASE_HEADERS = [
     { label: "#", id: "index" },
     { label: "Address", id: "address" },
@@ -101,6 +112,7 @@ const Dashboard = () => {
       flagPct = true,
       bnbThreshold = 0.05,
       expandedTable = false,
+      furioEnabled = true,
       hideTableControls = false,
       showLastAction = true,
       ndvWarningLevel = 25,
@@ -111,6 +123,7 @@ const Dashboard = () => {
     setFlagPct(() => flagPct);
     setBnbThreshold(() => bnbThreshold);
     setExpandedTable(() => expandedTable);
+    enableFurio(() => furioEnabled);
     setHideTableControls(() => hideTableControls);
     setShowLastAction(() => showLastAction);
     setNdvWarningLevel(() => ndvWarningLevel);
@@ -137,8 +150,10 @@ const Dashboard = () => {
 
   const fetchPrices = useCallback(async () => {
     const { bnbPrice, dripBnbRatio, br34pPrice } = await getDripPriceData();
+    const { furioBnbRatio } = await getFurioPriceData();
 
     setDripPrice(() => (dripBnbRatio * bnbPrice) / 10e17);
+    setFurioPrice(() => (furioBnbRatio * bnbPrice) / 10e17);
     setBnbPrice(() => bnbPrice);
     setBr34pPrice(() => br34pPrice);
   }, []);
@@ -174,62 +189,62 @@ const Dashboard = () => {
 
     setTotalDeposits(() =>
       validWallets.reduce((total, wallet) => {
-        return total + parseFloat(wallet.deposits);
+        return total + wallet.deposits;
       }, 0)
     );
     setTotalDripHeld(() =>
       validWallets.reduce((total, wallet) => {
-        return total + parseFloat(wallet.dripBalance);
+        return total + wallet.dripBalance;
       }, 0)
     );
     setTotalBnbBalance(() =>
       validWallets.reduce((total, wallet) => {
-        return total + parseFloat(wallet.bnbBalance);
+        return total + wallet.bnbBalance;
       }, 0)
     );
     setTotalAvailable(() =>
       validWallets.reduce((total, wallet) => {
-        return total + parseFloat(wallet.available);
+        return total + wallet.available;
       }, 0)
     );
     setTotalClaimed(() =>
       validWallets.reduce((total, wallet) => {
-        return total + parseFloat(wallet.payouts);
+        return total + wallet.payouts;
       }, 0)
     );
     setTotalDirectBonus(() =>
       validWallets.reduce((total, wallet) => {
-        return total + parseFloat(wallet.direct_bonus);
+        return total + wallet.direct_bonus;
       }, 0)
     );
 
     setTotalBr34p(() =>
       validWallets.reduce(
-        (total, wallet) => total + parseFloat(wallet.br34pBalance),
+        (total, wallet) => total + wallet.br34pBalance,
         0
       )
     );
     setTotalTeam(() =>
       validWallets.reduce(
-        (total, wallet) => total + parseFloat(wallet.referrals),
+        (total, wallet) => total + wallet.referrals,
         0
       )
     );
     setTotalBusd(() =>
       validWallets.reduce(
-        (total, wallet) => total + parseFloat(wallet.busdBalance),
+        (total, wallet) => total + wallet.busdBalance,
         0
       )
     );
     setTotalHydrated(() =>
-      validWallets.reduce((total, wallet) => total + parseFloat(wallet.r), 0)
+      validWallets.reduce((total, wallet) => total + wallet.r, 0)
     );
     setTotalNDV(() =>
-      validWallets.reduce((total, wallet) => total + parseFloat(wallet.ndv), 0)
+      validWallets.reduce((total, wallet) => total + wallet.ndv, 0)
     );
     setTotalDrops(() =>
       validWallets.reduce(
-        (total, wallet) => total + parseFloat(wallet.dropsBalance),
+        (total, wallet) => total + wallet.dropsBalance,
         0
       )
     );
@@ -297,7 +312,7 @@ const Dashboard = () => {
     fetchData();
   };
 
-  const highlightStyleFor = (col, wallet) => {
+  const highlightStyleFor = (col, wallet: Wallet) => {
     let amount,
       percent,
       style = "";
@@ -315,7 +330,7 @@ const Dashboard = () => {
         return style;
       case "pct":
         if (flagPct) {
-          percent = parseFloat(wallet.available / wallet.deposits);
+          percent = parseFloat(`${wallet.available / wallet.deposits}`);
           style =
             percent >= 0.01
               ? "hydrate inverted"
@@ -328,6 +343,19 @@ const Dashboard = () => {
         return flagLowBnb && wallet.bnbBalance < bnbThreshold
           ? "warning inverted"
           : "";
+      case "furioPct":
+        percent = wallet.furioAvailable /(wallet.furioVaultBalance * wallet.furioRewardRate);
+        style =
+            percent >= 1
+                ? "hydrate inverted"
+                : percent >= 0.5
+                    ? "prepare inverted"
+                    : "";
+        return style;
+      case "furioAutoComp":
+        return wallet.furioAutoCompoundEnabled && wallet.furioAutoCompoundsLeft < 2
+            ? "warning inverted"
+            : "";
       default:
         return "";
     }
@@ -336,7 +364,7 @@ const Dashboard = () => {
   const addLabel = (index, label) => {
     let walletAddr;
     const newWallets = wallets.map((wallet) => {
-      if (parseInt(wallet.index) === index) {
+      if (wallet.index === index) {
         walletAddr = wallet.address;
         return { ...wallet, label };
       } else {
@@ -347,7 +375,7 @@ const Dashboard = () => {
     let storedWallets = JSON.parse(
       window.localStorage.getItem("dripAddresses")
     );
-    storedWallets = storedWallets.map((wallet, index) => {
+    storedWallets = storedWallets.map((wallet) => {
       if (walletAddr === wallet.addr) {
         return { addr: wallet.addr, label };
       } else {
@@ -362,7 +390,7 @@ const Dashboard = () => {
     event.target.files[0].text().then((t) => {
       localStorage.setItem("dripAddresses", t);
     });
-    window.location.reload(true);
+    window.location.reload();
   };
 
   const copyTableData = () => {
@@ -395,20 +423,20 @@ const Dashboard = () => {
 
   const incrementBnbFlag = () => {
     setFlagLowBnb(true);
-    let val = parseFloat(bnbThreshold);
+    let val = parseFloat(`${bnbThreshold}`);
     if (val < 0.1) {
       setBnbThreshold(
-        parseFloat(parseFloat(val) + parseFloat(0.01)).toFixed(2)
+        Number(parseFloat(`${parseFloat(`${val}`) + 0.01}`).toFixed(2))
       );
     }
   };
 
   const decrementBnbFlag = () => {
     setFlagLowBnb(true);
-    let val = parseFloat(bnbThreshold);
+    let val = parseFloat(`${bnbThreshold}`);
     if (val > 0.01) {
       setBnbThreshold(
-        parseFloat(parseFloat(val) - parseFloat(0.01)).toFixed(2)
+        Number(parseFloat(`${parseFloat(`${val}`) - 0.01}`).toFixed(2))
       );
     }
   };
@@ -447,6 +475,7 @@ const Dashboard = () => {
     flagPct,
     bnbThreshold,
     expandedTable,
+    furioEnabled,
     hideTableControls,
     showLastAction,
     ndvWarningLevel,
@@ -467,6 +496,12 @@ const Dashboard = () => {
     setSortOrder(order);
   };
 
+  const getHeaders = () => {
+    let headers = expandedTable ? TABLE_HEADERS : BASE_HEADERS;
+    headers = furioEnabled ? [...headers, ...FURIO_HEADERS] : headers;
+    return headers;
+  }
+
   return (
     <div className="container">
       <div className="main">
@@ -480,7 +515,7 @@ const Dashboard = () => {
                 marginBottom: 5,
                 transition: `width 1s linear`,
               }}
-            ></div>
+            />
             <div className="hideControlsBtn">
               <input
                 id="hideControls"
@@ -488,7 +523,7 @@ const Dashboard = () => {
                 className="btn-check"
                 autoComplete="off"
                 onChange={() => setHideTableControls(!hideTableControls)}
-              ></input>
+              />
               <label htmlFor="hideControls" className="btn btn-primary btn-sm">
                 {hideTableControls ? "Show" : "Hide"} Form Config
               </label>
@@ -641,7 +676,7 @@ const Dashboard = () => {
               className="btn-copy btn btn-outline-secondary"
               onClick={copyTableData}
             >
-              <i className={`bi bi-clipboard${dataCopied ? "-check" : ""}`}></i>
+              <i className={`bi bi-clipboard${dataCopied ? "-check" : ""}`}/>
               Copy table
             </button>
             <div className="form-check">
@@ -654,6 +689,18 @@ const Dashboard = () => {
               />
               <label htmlFor="expandedTable" className="form-check-label">
                 Expanded Table
+              </label>
+            </div>
+            <div className="form-check">
+              <input
+                  id="furioEnabled"
+                  className="form-check-input"
+                  type="checkbox"
+                  checked={furioEnabled}
+                  onChange={() => enableFurio(!furioEnabled)}
+              />
+              <label htmlFor="furioEnabled" className="form-check-label">
+                Furio Enabled
               </label>
             </div>
             <div className="form-check form-switch">
@@ -673,25 +720,8 @@ const Dashboard = () => {
         <table className="table">
           <thead className="table-light">
             <tr>
-              {expandedTable
-                ? TABLE_HEADERS.filter(
-                    (h) =>
-                      (h.label === "Last Action" && showLastAction) ||
-                      h.label !== "Last Action"
-                  ).map((h) => (
-                    <th
-                      className={`table-sort-${
-                        sortCol === h.id ? sortOrder : "none"
-                      }`}
-                      key={h.id}
-                      onClick={() =>
-                        setSortBy(h.id, sortOrder === "asc" ? "desc" : "asc")
-                      }
-                    >
-                      {h.label}
-                    </th>
-                  ))
-                : BASE_HEADERS.filter(
+              {
+                getHeaders().filter(
                     (h) =>
                       (h.label === "Last Action" && showLastAction) ||
                       h.label !== "Last Action"
@@ -729,8 +759,8 @@ const Dashboard = () => {
                 )}
                 {editLabels && <small>autorefresh paused</small>}
               </th>
-              {expandedTable && <th></th>}
-              {expandedTable && <th></th>}
+              {expandedTable && <th/>}
+              {expandedTable && <th/>}
               {expandedTable && (
                 <th>{convertTokenToUSD(totalBusd, 1, showDollarValues)}</th>
               )}
@@ -799,7 +829,7 @@ const Dashboard = () => {
                 )}
               </th>
               <th>Directs: {totalTeam}</th>
-              <th></th>
+              <th/>
             </tr>
           </thead>
           <tbody>
@@ -811,7 +841,9 @@ const Dashboard = () => {
                 bnbPrice={bnbPrice}
                 deleteRow={deleteRow}
                 dripPrice={dripPrice}
+                furioPrice={furioPrice}
                 expandedTable={expandedTable}
+                furioEnabled={furioEnabled}
                 highlightStyleFor={highlightStyleFor}
                 showDollarValues={showDollarValues}
                 showLastAction={showLastAction}

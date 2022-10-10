@@ -6,27 +6,48 @@ import {
 } from "../api/utils";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { getLastAction, getStartBlock } from "../api/Contract";
+import { getLastAction } from "../api/dripAPI";
+import { getStartBlock } from "../api/utils.js"
+import React from "react";
+import {Wallet} from "../types/types";
 //import { useCallback } from "react";
+export interface TableRowProps {
+    wallet:Wallet,
+    expandedTable: boolean,
+    furioEnabled: boolean,
+    showDollarValues: boolean,
+    showLastAction: boolean,
+    deleteRow: Function,
+    addLabel: Function,
+    dripPrice?: number,
+    furioPrice?: number,
+    bnbPrice?: number,
+    highlightStyleFor: Function,
+    editLabels: boolean,
+    br34pPrice?:number,
+    flagLowNdv: boolean,
+    ndvWarningLevel: number
+}
 const TableRow = ({
-  index,
   wallet,
   expandedTable,
+  furioEnabled,
   showDollarValues,
   showLastAction,
   deleteRow,
   addLabel,
   dripPrice,
+  furioPrice,
   bnbPrice,
   highlightStyleFor,
   editLabels,
   br34pPrice,
   flagLowNdv,
   ndvWarningLevel,
-}) => {
-  const [lastAction, setLastAction] = useState();
+}: TableRowProps) => {
+  const [lastAction, setLastAction] = useState("");
   const [loading, setLoading] = useState(false);
-
+  const furioWallet = wallet.furioStatus === 'enabled';
   const fetchLastAction = async () => {
     setLoading(true);
     //setLastAction(" ");
@@ -69,7 +90,7 @@ const TableRow = ({
       </td>
       <td
         className={wallet.valid ? "" : "invalid"}
-        onClick={(e) => navigator.clipboard.writeText(wallet.address)}
+        onClick={() => navigator.clipboard.writeText(wallet.address)}
       >
         <Link to={`/upline/${wallet.address}`}>
           {shortenAddress(wallet.address)}
@@ -182,6 +203,31 @@ const TableRow = ({
       <td className={wallet.ref_claim_pos === "0" ? "hydrate inverted" : ""}>
         {wallet.ref_claim_pos}
       </td>
+        {furioEnabled && (
+            <td>
+                {furioWallet ? convertTokenToUSD(wallet.furioBalance, furioPrice, showDollarValues): ''}
+            </td>
+        )}
+        {furioEnabled && (
+            <td>
+                {furioWallet ? convertTokenToUSD(wallet.furioVaultBalance, furioPrice, showDollarValues): ''}
+            </td>
+        )}
+        {furioEnabled && (
+            <td  className={highlightStyleFor("furioPct", wallet)}>
+                {furioWallet ? convertTokenToUSD(wallet.furioAvailable, furioPrice, showDollarValues): ''}
+            </td>
+        )}
+        {furioEnabled && (
+            <td>
+                {furioWallet ? `${formatPercent(wallet.furioRewardRate)}%` : ''}
+            </td>
+        )}
+        {furioEnabled && (
+            <td  className={highlightStyleFor("furioAutoComp", wallet)}>
+                {furioWallet ? `${wallet.furioAutoCompoundsLeft}/${wallet.furioTotalAutoCompounds}` : ''}
+            </td>
+        )}
     </tr>
   );
 };

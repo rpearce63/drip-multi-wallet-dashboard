@@ -1,5 +1,7 @@
 import axios from "axios";
 
+export const BSCSCAN_URL = "https://api.bscscan.com";
+
 export const convertDrip = (drip, dripPrice, showDollarValues) => {
   const priceOfDrip = dripPrice || 1;
   const converted = formatNumber(
@@ -23,17 +25,15 @@ export const convertREV = (revAmt, revPrice, showDollarValues) => {
 };
 
 export const convertTokenToUSD = (tokenAmt, tokenPrice, showDollarValues) => {
-  const value = showDollarValues
-    ? formatCurrency(tokenAmt * tokenPrice)
-    : parseFloat(tokenAmt).toLocaleString();
-
-  return value;
+  return showDollarValues
+      ? formatCurrency(tokenAmt * tokenPrice)
+      : parseFloat(tokenAmt).toLocaleString();
 };
 
 export const formatCurrency = (amt) => {
   return (
     "$" +
-    parseFloat(Math.round(amt * 1000) / 1000)
+    parseFloat(`${Math.round(amt * 1000) / 1000}`)
       .toFixed(3)
       .toString()
       .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
@@ -64,8 +64,7 @@ export const backupData = () => {
 
 export const findFibIndex = (n) => {
   const br34p = [2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597];
-  const level = br34p.filter((b) => b <= n).length;
-  return level;
+  return br34p.filter((b) => b <= n).length;
 };
 
 export const getLatestVersion = async () => {
@@ -85,3 +84,13 @@ export const sortBy = (col, order) => {
     return (a, b) => (a[col] < b[col] ? 1 : -1);
   }
 };
+
+
+export const getStartBlock = async () => {
+  const url = `${BSCSCAN_URL}/api?module=proxy&action=eth_blockNumber&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY`;
+  const latestBlockHex = await axios
+      .get(url)
+      .then((response) => response.data.result);
+  return parseInt(`${latestBlockHex}`, 16);
+};
+

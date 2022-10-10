@@ -1,15 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-
-import {
-  getDownline,
-  getUserInfo,
-  getContract,
-  getConnection,
-  getJoinDate,
-} from "../api/Contract";
-
+import { getConnection, getJoinDate } from "../api/Contract";
 import format from "date-fns/format";
+import {getDownline, getDRIPContract, getDripUserInfo} from "../api/dripAPI";
 const flatten = require("flat").flatten;
 
 function getObjectDepth(obj) {
@@ -39,7 +32,7 @@ const Downline = () => {
     const getWeb3 = async () => {
       const web3 = await getConnection();
       setWeb3(() => web3);
-      const contract = await getContract(web3);
+      const contract = await getDRIPContract(web3);
       setContract(() => contract);
     };
     getWeb3();
@@ -55,10 +48,10 @@ const Downline = () => {
   }, [account]);
 
   const getUserData = async (childId) => {
-    navigator.clipboard.writeText(childId);
+    await navigator.clipboard.writeText(childId);
     //console.log("getUserData for: " + childId);
 
-    const userInfo = await getUserInfo(contract, childId);
+    const userInfo = await getDripUserInfo(contract, childId);
     const buddyDate = await getJoinDate(childId);
 
     //console.log(connection.utils.fromWei(userInfo.deposits));
@@ -74,8 +67,7 @@ const Downline = () => {
           "yyy-MM-dd"
         )}",`
       );
-      const updated = JSON.parse(dStr);
-      return updated;
+      return JSON.parse(dStr);
     });
   };
 

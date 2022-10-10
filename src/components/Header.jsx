@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { getDripPriceData } from "../api/Contract";
+import { getDripPriceData } from "../api/pricingAPI";
 import { formatCurrency, convertDrip, getLatestVersion } from "../api/utils";
 import BigDripBuys from "./BigDripBuys";
 import semver from "semver";
@@ -86,7 +86,7 @@ const Header = () => {
           )}
           <div
             className="toggle-prices"
-            onClick={(e) => setHidePrices(!hidePrices)}
+            onClick={() => setHidePrices(!hidePrices)}
             style={{}}
           >
             {hidePrices ? "+" : "-"}
@@ -173,7 +173,7 @@ const Header = () => {
                 "0x645Dc8a64046FD877b82caB077BF929c299D5A7a"
               )
             }
-          ></i>
+          />
         </div>
       </div>
       <BigDripBuys />
