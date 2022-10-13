@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { getDripPriceData, getAllWalletData } from "../api/Contract";
 
 import { CONFIGS_KEY } from "../configs/dripconfig";
+import * as MESSAGES from "../configs/messages";
 
 import Info from "./Info";
 import PopupHelp from "./PopupHelp";
@@ -109,6 +110,8 @@ const Dashboard = () => {
       hideTableControls = false,
       showLastAction = true,
       ndvWarningLevel = 25,
+      selectedGroup = "*",
+      depositFilter = 0,
     } = JSON.parse(localStorage.getItem(CONFIGS_KEY)) ?? {};
 
     setFlagAmount(() => flagAmount);
@@ -119,6 +122,8 @@ const Dashboard = () => {
     setHideTableControls(() => hideTableControls);
     setShowLastAction(() => showLastAction);
     setNdvWarningLevel(() => ndvWarningLevel);
+    setSelectedGroup(() => selectedGroup);
+    setDepositFilter(() => depositFilter);
   }, []);
 
   useEffect(() => {
@@ -497,6 +502,8 @@ const Dashboard = () => {
       hideTableControls,
       showLastAction,
       ndvWarningLevel,
+      selectedGroup,
+      depositFilter,
     };
 
     localStorage.setItem(CONFIGS_KEY, JSON.stringify(config));
@@ -509,6 +516,8 @@ const Dashboard = () => {
     hideTableControls,
     showLastAction,
     ndvWarningLevel,
+    selectedGroup,
+    depositFilter,
   ]);
 
   const deleteRow = (addr) => {
@@ -765,7 +774,7 @@ const Dashboard = () => {
                   </option>
                 ))}
               </select>
-              <PopupHelp />
+              <PopupHelp message={MESSAGES.GROUP_FILTER_MESSAGE} />
             </div>
           </div>
         )}

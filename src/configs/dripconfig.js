@@ -2,7 +2,7 @@ export const CONFIGS_KEY = "dripDashboard-config";
 export const DRIP_BUSD_LP_ADDRESS =
   "0xa0feb3c81a36e885b6608df7f0ff69db97491b58";
 export const BUSD_TOKEN_ADDRESS = "0xe9e7cea3dedca5984780bafc599bd69add087d56";
-export const DROPS_ADDRESS = "0xB486857fac4254A7ffb3B1955EE0C0A2B2ca75AB";
+export const RESERVOIR_ADDRESS = "0xB486857fac4254A7ffb3B1955EE0C0A2B2ca75AB";
 export const FAUCET_ABI = [
   {
     anonymous: false,
