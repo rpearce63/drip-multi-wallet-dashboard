@@ -29,9 +29,10 @@ const Downline = () => {
 
   useEffect(() => {
     const fetchDownline = async () => {
-      const downline = await getDownline(account);
-      setDepth(() => getObjectDepth(downline));
-      setDownline(() => downline);
+      const downline = (await getDownline(account)).data;
+
+      setDepth(getObjectDepth(downline));
+      setDownline(downline);
     };
     fetchDownline();
   }, [account]);

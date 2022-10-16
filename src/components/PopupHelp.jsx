@@ -2,10 +2,9 @@ import React from "react";
 import { Icon, Popup } from "semantic-ui-react";
 import "semantic-ui-css/semantic.min.css";
 
-const PopupHelp = () => (
+const PopupHelp = ({ message }) => (
   <Popup
-    content="Edit the Label column and add one or more group names, separated by a comma. 
-    Then filter the list by selecting a group.  Ex:  [Mine] or [Mine,Family]"
+    content={message}
     trigger={<Icon circular name="help" size="small" />}
   />
 );

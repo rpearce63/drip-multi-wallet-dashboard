@@ -12,7 +12,7 @@ const App = () => (
     <Header />
     <Routes>
       <Route path="/drip-mw-dashboard" element={<Dashboard />}></Route>
-      <Route path="/upline/:buddy" element={<Upline />} />
+      <Route path="/upline/:buddyId" element={<Upline />} />
       <Route path="/downline/:account" element={<Downline />} />
       <Route index element={<Dashboard />}></Route>
       <Route path="/tokens" element={<WalletTokens />} />
