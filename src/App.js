@@ -5,6 +5,7 @@ import Upline from "./components/Upline";
 import Downline from "./components/Downline";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import WalletTokens from "./components/WalletTokens";
 
 const App = () => (
   <Router>
@@ -14,6 +15,7 @@ const App = () => (
       <Route path="/upline/:buddy" element={<Upline />} />
       <Route path="/downline/:account" element={<Downline />} />
       <Route index element={<Dashboard />}></Route>
+      <Route path="/tokens" element={<WalletTokens />} />
     </Routes>
     <Footer />
   </Router>

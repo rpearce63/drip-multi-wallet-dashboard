@@ -12,6 +12,8 @@ import {
   BUSD_TOKEN_ADDRESS,
   DRIP_BUSD_LP_ADDRESS,
 } from "../configs/dripconfig";
+import ERC20_ABI from "../configs/erc20_abi.json";
+
 import { findFibIndex } from "./utils";
 
 import LRU from "lru-cache";
@@ -79,7 +81,7 @@ export const getContract = (web3) => {
   return contract;
 };
 
-export const claimsAvailable = async (contract, account) => {
+export const claimsAvailable = async (account) => {
   try {
     const available = await contract.methods.claimsAvailable(account).call();
     return available;
@@ -89,7 +91,7 @@ export const claimsAvailable = async (contract, account) => {
   }
 };
 
-export const getAirdrops = async (contract, account) => {
+export const getAirdrops = async (account) => {
   try {
     return await contract.methods.airdrops(account).call();
   } catch (err) {
@@ -98,13 +100,20 @@ export const getAirdrops = async (contract, account) => {
   }
 };
 
-export const getUserInfo = async (contract, account) => {
+export const getUserInfo = async (account) => {
   try {
     return await contract.methods.users(account).call();
   } catch (err) {
     console.log("Error getting UserInfo: ", err.message);
-    return {};
+    return await getUserInfo(account);
   }
+};
+
+export const getUplineInfo = async (account) => {
+  const uplineInfo = await getUserInfo(account);
+  const isEligible = await contract.methods.isNetPositive(account).call();
+  const balanceLevel = await contract.methods.balanceLevel(account).call();
+  return { ...uplineInfo, isEligible, balanceLevel };
 };
 
 export const getBr34pBalance = async (web3, account) => {
@@ -179,12 +188,12 @@ export const getDogPrice = async () => {
   return dogPrice;
 };
 
-export const getUplineCount = async (contract, wallet) => {
+export const getUplineCount = async (wallet) => {
   let upline = wallet,
     count = 0,
     stop = false;
   do {
-    const uplineInfo = await getUserInfo(contract, upline);
+    const uplineInfo = await getUserInfo(upline);
     upline = uplineInfo.upline;
     if (!upline || upline.startsWith("0x000")) {
       stop = true;
@@ -282,12 +291,15 @@ export const getJoinDate = async (account) => {
 };
 
 export const getStartBlock = async () => {
-  const url = `${BSCSCAN_URL}/api?module=proxy&action=eth_blockNumber&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY`;
-  const latestBlockHex = await axios
-    .get(url)
-    .then((response) => response.data.result);
+  const latestBlock = (await web3.eth.getBlock("latest")).number;
 
-  const latestBlock = parseInt(latestBlockHex, 16);
+  // const url = `${BSCSCAN_URL}/api?module=proxy&action=eth_blockNumber&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY`;
+  // const latestBlockHex = await axios
+  //   .get(url)
+  //   .then((response) => response.data.result);
+
+  // const latestBlock = parseInt(latestBlockHex, 16);
+  // console.log(`latest block: ${currentBlock}, ${latestBlock}`);
   return latestBlock;
 };
 
@@ -368,11 +380,11 @@ export const fetchWalletData = async (wallet, index) => {
   //console.log("fetchWalletData");
   // const web3 = await getConnection();
   //const contract = await getContract(web3);
-  const userInfo = await getUserInfo(contract, wallet.addr);
+  const userInfo = await getUserInfo(wallet.addr);
   if (!userInfo) return;
-  const available = await claimsAvailable(contract, wallet.addr);
+  const available = await claimsAvailable(wallet.addr);
   const dripBalance = await getTokenBalance(web3, wallet.addr, DRIP_TOKEN_ADDR);
-  const uplineCount = await getUplineCount(contract, wallet.addr);
+  const uplineCount = await getUplineCount(wallet.addr);
   const br34pBalance = await getBr34pBalance(web3, wallet.addr);
   const bnbBalance = await getBnbBalance(web3, wallet.addr);
 
@@ -391,7 +403,7 @@ export const fetchWalletData = async (wallet, index) => {
   const teamDepth =
     userInfo.referrals > 0 && (await getDownlineDepth(wallet.addr));
 
-  const { airdrops } = await getAirdrops(contract, wallet.addr);
+  const { airdrops } = await getAirdrops(wallet.addr);
   const a = parseFloat(web3.utils.fromWei(airdrops));
   const d = parseFloat(web3.utils.fromWei(userInfo.deposits));
   const r = parseFloat(web3.utils.fromWei(userInfo.rolls));
@@ -447,4 +459,48 @@ export const getAllWalletData = async (myWallets) => {
   const end = new Date();
   console.log(`got wallet data in ${(end - start) / 1000} seconds`);
   return walletCache;
+};
+
+// run this multiple times by putting in its own function
+export async function getTokenInfo(addressOfToken) {
+  // run this just once, as part of initialisation
+  const tokenContract = new web3.eth.Contract(ERC20_ABI, addressOfToken);
+
+  const symbol = await tokenContract.methods.symbol().call();
+  const decimals = await tokenContract.methods.decimals().call();
+  const name = await tokenContract.methods.name().call();
+
+  return { decimals, name, symbol };
+}
+
+export const getWalletTokens = async (address) => {
+  const response = await axios.get(
+    "https://api.bscscan.com/api?module=account&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY&action=tokentx&address=0x1ff661243cb97384102a69a466c887b4cC12d72a&startblock=0&endblock=999999999&sort=asc"
+  );
+  const allTokens = response.data;
+  const tokens = allTokens.result
+    .map((tx) => ({
+      tokenSymbol: tx.tokenSymbol,
+      contractAddress: tx.contractAddress,
+    }))
+    .filter((token) => !token.tokenSymbol.includes("."));
+  let symbols = [];
+  let uniq = [];
+  tokens.forEach((token) => {
+    if (!symbols.includes(token.tokenSymbol)) {
+      symbols.push(token.tokenSymbol);
+      uniq.push(token);
+    }
+  });
+  let tokensWithBalance = [];
+  for (const token of uniq) {
+    const tokenBalance = await getTokenBalance(
+      web3,
+      address,
+      token.contractAddress
+    );
+    tokensWithBalance.push({ ...token, tokenBalance });
+  }
+
+  return tokensWithBalance;
 };

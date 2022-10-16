@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getConnection, getContract, getUserInfo } from "../api/Contract";
+import { getUplineInfo } from "../api/Contract";
 
 const Upline = () => {
   let { buddy: buddyId } = useParams();
@@ -10,30 +10,18 @@ const Upline = () => {
 
   useEffect(() => {
     const getUplineData = async () => {
-      const web3 = await getConnection();
-      const contract = await getContract(web3);
-      //const userInfo = await getUserInfo(contract, buddyId);
-      //setBuddyInfo(() => ({ ...userInfo, address: buddyId }));
       let atDevWallet = false;
       let uplineAddress = buddyId;
 
       do {
-        const uplineInfo = await getUserInfo(contract, uplineAddress);
+        const uplineInfo = await getUplineInfo(uplineAddress);
         const currentAddress = uplineAddress;
-        const isEligible = await contract.methods
-          .isNetPositive(uplineAddress)
-          .call();
-        const balanceLevel = await contract.methods
-          .balanceLevel(uplineAddress)
-          .call();
 
         setUplineData((uplineData) => [
           ...uplineData,
           {
             ...uplineInfo,
             address: currentAddress,
-            isEligible,
-            balanceLevel,
           },
         ]);
         uplineAddress = uplineInfo.upline;
