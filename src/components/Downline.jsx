@@ -42,6 +42,7 @@ const Downline = () => {
     //console.log("getUserData for: " + childId);
 
     const userInfo = await getUserInfo(childId);
+    console.log(userInfo);
     const buddyDate = await getJoinDate(childId);
 
     //console.log(connection.utils.fromWei(userInfo.deposits));
@@ -51,9 +52,9 @@ const Downline = () => {
       dStr = dStr.replace(
         `"id":"${childId}",`,
         `"id":"${childId}","deposits":"${parseFloat(
-          userInfo.deposits / 10e17
+          buddyDate.originalDeposit
         ).toFixed(2)}","buddyDate":"${format(
-          new Date(buddyDate * 1000),
+          new Date(buddyDate.buddyDate * 1000),
           "yyy-MM-dd"
         )}",`
       );
