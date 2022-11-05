@@ -4,7 +4,11 @@
   "type": "module",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
     "@jpmonette/bscscan": "^0.2.3",
+    "@mui/icons-material": "^5.10.9",
+    "@mui/material": "^5.10.12",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",

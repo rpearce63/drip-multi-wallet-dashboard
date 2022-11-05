@@ -21,7 +21,8 @@ import LRU from "lru-cache";
 //const DMWDAPI = "https://drip-mw-dashboard-api.glitch.me";
 const BSCSCAN_URL = "https://api.bscscan.com";
 const RESERVOIR_CONTRACT = require("../configs/reservoir_contract.json");
-
+export const RPC_URL = "https://bsc-dataseed.binance.org/";
+//export const RPC_URL = "https://node.theanimal.farm/";
 const axios = require("axios");
 //const rax = require("retry-axios");
 // eslint-disable-next-line no-unused-vars
@@ -62,7 +63,7 @@ const ROLL_HEX = "0xcd5e3c5d";
 const CLAIM_HEX = "0x4e71d92d";
 const DEPOSIT_HEX = "0x47e7ef24";
 
-const web3 = new Web3("https://bsc-dataseed.binance.org/");
+const web3 = new Web3(RPC_URL);
 const faucetContract = new web3.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
 const fountainContract = new web3.eth.Contract(FOUNTAIN_ABI, FOUNTAIN_ADDR);
 //let startBlock;
@@ -302,8 +303,14 @@ export const getJoinDate = async (account) => {
       .then((response) => response.data.result);
 
   const txHistory = await fetchBuddyDate();
-  const buddyDate = txHistory.find((tx) => tx.input?.startsWith("0x17fed96f"));
-  return buddyDate.timeStamp;
+  const buddyDate = txHistory.find((tx) => tx.input?.startsWith(DEPOSIT_HEX));
+  const amount = buddyDate.input.slice(-64);
+
+  console.log(parseInt(amount, 16));
+  return {
+    buddyDate: buddyDate.timeStamp,
+    originalDeposit: web3.utils.fromWei(parseInt(amount, 16).toString()),
+  };
 };
 
 export const getStartBlock = async () => {

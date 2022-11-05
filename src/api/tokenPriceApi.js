@@ -356,6 +356,7 @@ let pancakeSwapAbi = [
 ];
 
 const Web3 = require("web3");
+const { RPC_URL } = require("./Contract.js");
 
 /*
 Required Node.js
@@ -376,7 +377,7 @@ let pancakeSwapContract =
   "0x10ED43C718714eb63d5aA57B78B54704E256024E".toLowerCase();
 
 export async function calcPCSPrice(tokenAddress) {
-  const web3 = new Web3("https://bsc-dataseed1.binance.org");
+  const web3 = new Web3(RPC_URL);
   //const BNBTokenAddress = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"; //BNB
   //const PIGSTokenAddress = "0x3A4C15F96B3b058ab3Fb5FAf1440Cc19E7AE07ce";
   const BUSDTokenAddress = "0xe9e7cea3dedca5984780bafc599bd69add087d56";
@@ -404,7 +405,7 @@ export async function calcPCSPrice(tokenAddress) {
 }
 
 export async function calcBR34PPrice() {
-  const web3 = new Web3("https://bsc-dataseed1.binance.org");
+  const web3 = new Web3(RPC_URL);
   const pcsV1Address = "0x05ff2b0db69458a0750badebc4f9e13add608c7f";
   const pcsV1Abi = [
     {
