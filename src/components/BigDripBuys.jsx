@@ -80,18 +80,7 @@ const BigDripBuys = () => {
             valueLabelDisplay="auto"
             step={5}
             min={5}
-            max={30}
-            marks={[
-              {
-                value: 5,
-                label: "5",
-              },
-              { value: 10, label: "10" },
-              { value: 15, label: "15" },
-              { value: 20, label: "20" },
-              { value: 25, label: "25" },
-              { value: 30, label: "30" },
-            ]}
+            max={60}
             getAriaValueText={valuetext}
           />
         </div>
