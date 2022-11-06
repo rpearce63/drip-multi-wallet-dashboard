@@ -224,6 +224,7 @@ export const roll = async (account) => {
 export const getDownline = async (account) => {
   try {
     return await await axios.get(`https://api.drip.community/org/${account}`, {
+      timeout: 1000,
       retry: 2,
       retryDelay: 1000,
     });
@@ -324,7 +325,7 @@ export const getStartBlock = async () => {
   //   .get(url)
   //   .then((response) => response.data.result);
 
-  // const latestBlock = parseInt(latestBlockHex, 16);
+  const latestBlock = parseInt(latestBlockHex, 16);
   // console.log(`latest block: ${currentBlock}, ${latestBlock}`);
   return latestBlock;
 };
