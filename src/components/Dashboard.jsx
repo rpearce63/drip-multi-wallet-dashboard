@@ -16,6 +16,7 @@ import {
 } from "../api/utils";
 
 import TableRow from "./TableRow";
+import ConfigValueSelector from "./ConfigValueSelector";
 
 const Dashboard = () => {
   const [wallets, setWallets] = useState([]);
@@ -38,7 +39,11 @@ const Dashboard = () => {
 
   //form configs
   const [flagAmount, setFlagAmount] = useState(true);
+  const [amtWarningLevel, setAmtWarningLevel] = useState(0.5);
+  const [amtReadyLevel, setAmtReadyLevel] = useState(1.0);
   const [flagPct, setFlagPct] = useState(true);
+  const [pctWarningLevel, setPctWarningLevel] = useState(0.009);
+  const [pctReadyLevel, setPctReadyLevel] = useState(0.01);
   const [flagLowBnb, setFlagLowBnb] = useState(true);
   const [bnbThreshold, setBnbThreshold] = useState(0.05);
   const [flagLowNdv, setFlagLowNdv] = useState(true);
@@ -344,10 +349,11 @@ const Dashboard = () => {
       case "amt":
         if (flagAmount) {
           amount = parseFloat(convertTokenToUSD(wallet.available));
+          //console.log(`amount: ${amount}, amtReadyLevel: ${amtReadyLevel}, ${amount >= amtReadyLevel}`);
           style =
-            amount >= 1.0
+            amount >= amtReadyLevel
               ? "hydrate inverted"
-              : amount >= 0.5
+              : amount >= amtWarningLevel
               ? "prepare inverted"
               : "";
         }
@@ -356,9 +362,9 @@ const Dashboard = () => {
         if (flagPct) {
           percent = parseFloat(wallet.available / wallet.deposits);
           style =
-            percent >= 0.01
+            percent >= pctReadyLevel
               ? "hydrate inverted"
-              : percent >= 0.009
+              : percent >= pctWarningLevel
               ? "prepare inverted"
               : "";
         }
@@ -595,14 +601,24 @@ const Dashboard = () => {
                         checked={flagAmount}
                         onChange={() => setFlagAmount(!flagAmount)}
                       />
-                      <label
+                      {/* <label
                         className="form-check-label"
                         htmlFor="flagAmountChk"
                       >
                         Amount -{" "}
                         <span className="prepare">light green = .5+</span>,{" "}
                         <span className="hydrate">green = 1+</span>
-                      </label>
+                      </label> */}
+                      <ConfigValueSelector
+                        label="Amount: "
+                        decrementAction={() =>
+                          setAmtReadyLevel(amtReadyLevel - 0.1)
+                        }
+                        valueThreshold={amtReadyLevel}
+                        incrementAction={() =>
+                          setAmtReadyLevel(amtReadyLevel + 0.1)
+                        }
+                      />
                     </div>
                     <div className="form-check">
                       <input
