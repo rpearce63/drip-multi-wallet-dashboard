@@ -8,8 +8,12 @@ import { getBigBuysFromGlitch } from "../api/Contract";
 const BigDripBuys = () => {
   const [bigBuys, setBigBuys] = useState([]);
   const [updateTime, setUpdateTime] = useState("");
-  const [speed, setSpeed] = useState(20);
+  const [speed, setSpeed] = useState(30);
   const [anchorEl, setAnchorEl] = useState(null);
+  const marks = Array.from({ length: 13 }, (_, i) => ({
+    value: i * 5,
+    label: i * 5,
+  }));
 
   useEffect(() => {
     const fetchBigBuys = async () => {
@@ -50,6 +54,7 @@ const BigDripBuys = () => {
       <IconButton
         onClick={(e) => setAnchorEl(e.currentTarget)}
         title="Change Speed"
+        sx={{ padding: "2px 8px" }}
       >
         <SettingsApplicationsOutlinedIcon color="primary" />
       </IconButton>
@@ -68,7 +73,7 @@ const BigDripBuys = () => {
           style={{
             padding: "1em",
             paddingLeft: "3em",
-            height: "200px",
+            height: "300px",
             overflow: "hidden",
           }}
         >
@@ -81,6 +86,7 @@ const BigDripBuys = () => {
             step={5}
             min={5}
             max={60}
+            marks={marks}
             getAriaValueText={valuetext}
           />
         </div>
