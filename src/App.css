@@ -378,6 +378,9 @@ span.spinCtrl:after {
   width: 100%;
   padding: 0 4rem;
 }
+.group-of-3 {
+  width: 66%;
+}
 
 .stack {
   display: flex;
