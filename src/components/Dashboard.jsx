@@ -2,8 +2,10 @@ import React, { useState, useEffect, useCallback } from "react";
 import { getDripPriceData, getAllWalletData } from "../api/Contract";
 
 import { CONFIGS_KEY } from "../configs/dripconfig";
+import * as MESSAGES from "../configs/messages";
 
 import Info from "./Info";
+import PopupHelp from "./PopupHelp";
 
 import {
   convertTokenToUSD,
@@ -14,6 +16,7 @@ import {
 } from "../api/utils";
 
 import TableRow from "./TableRow";
+import ConfigValueSelector from "./ConfigValueSelector";
 
 const Dashboard = () => {
   const [wallets, setWallets] = useState([]);
@@ -36,12 +39,18 @@ const Dashboard = () => {
 
   //form configs
   const [flagAmount, setFlagAmount] = useState(true);
+  const [amtWarningLevel, setAmtWarningLevel] = useState(0.5);
+  const [amtReadyLevel, setAmtReadyLevel] = useState(1.0);
   const [flagPct, setFlagPct] = useState(true);
+  const [pctWarningLevel, setPctWarningLevel] = useState(0.009);
+  const [pctReadyLevel, setPctReadyLevel] = useState(0.01);
   const [flagLowBnb, setFlagLowBnb] = useState(true);
   const [bnbThreshold, setBnbThreshold] = useState(0.05);
   const [flagLowNdv, setFlagLowNdv] = useState(true);
   const [ndvWarningLevel, setNdvWarningLevel] = useState(25);
   const [depositFilter, setDepositFilter] = useState(0);
+  const [groups, setGroups] = useState([]);
+  const [selectedGroup, setSelectedGroup] = useState("*");
 
   const [editLabels, setEditLabels] = useState(false);
   const [autoRefresh, setAutoRefresh] = useState(true);
@@ -106,6 +115,8 @@ const Dashboard = () => {
       hideTableControls = false,
       showLastAction = true,
       ndvWarningLevel = 25,
+      selectedGroup = "*",
+      depositFilter = 0,
     } = JSON.parse(localStorage.getItem(CONFIGS_KEY)) ?? {};
 
     setFlagAmount(() => flagAmount);
@@ -116,6 +127,8 @@ const Dashboard = () => {
     setHideTableControls(() => hideTableControls);
     setShowLastAction(() => showLastAction);
     setNdvWarningLevel(() => ndvWarningLevel);
+    setSelectedGroup(() => selectedGroup);
+    setDepositFilter(() => depositFilter);
   }, []);
 
   useEffect(() => {
@@ -134,8 +147,24 @@ const Dashboard = () => {
 
   useEffect(() => {
     const filtered = fullList.filter((w) => w.deposits >= depositFilter);
-    setWallets(filtered);
-  }, [depositFilter, fullList]);
+    if (selectedGroup === "*") {
+      setWallets(filtered);
+      return;
+    }
+    const filteredByGroup = filtered.filter((w) =>
+      w.group.includes(selectedGroup)
+    );
+    setWallets(filteredByGroup);
+  }, [depositFilter, selectedGroup, fullList]);
+
+  // useEffect(() => {
+  //   if (selectedGroup === "*") {
+  //     setWallets(fullList);
+  //     return;
+  //   }
+  //   const filteredByGroup = fullList.filter((w) => w.group === selectedGroup);
+  //   setWallets(filteredByGroup);
+  // }, [selectedGroup, fullList]);
 
   const fetchPrices = useCallback(async () => {
     const { bnbPrice, dripBnbRatio, br34pPrice } = await getDripPriceData();
@@ -144,14 +173,6 @@ const Dashboard = () => {
     setBnbPrice(() => bnbPrice);
     setBr34pPrice(() => br34pPrice);
   }, []);
-
-  const getStoredWallets = () => {
-    const storedWallets = JSON.parse(
-      window.localStorage.getItem("dripAddresses")
-    );
-    console.log(storedWallets);
-    return storedWallets;
-  };
 
   const fetchData = useCallback(async () => {
     setTimer(60);
@@ -164,7 +185,20 @@ const Dashboard = () => {
       storedWallets?.map((wallet) => ({
         addr: wallet.addr.trim().replace("\n", ""),
         label: wallet.label,
+        group: wallet.group || "none",
       })) ?? [];
+    const groups = [
+      ...new Set(
+        myWallets
+          .filter((w) => w.group && w.group !== "none")
+          .map((w) => w.group)
+          .join(",")
+          .split(",")
+          .map((g) => g.trim())
+          .filter((g) => g.trim().length)
+      ),
+    ];
+    setGroups(groups);
 
     const walletCache = await getAllWalletData(myWallets);
     setFullList(walletCache);
@@ -315,10 +349,11 @@ const Dashboard = () => {
       case "amt":
         if (flagAmount) {
           amount = parseFloat(convertTokenToUSD(wallet.available));
+          //console.log(`amount: ${amount}, amtReadyLevel: ${amtReadyLevel}, ${amount >= amtReadyLevel}`);
           style =
-            amount >= 1.0
+            amount >= amtReadyLevel
               ? "hydrate inverted"
-              : amount >= 0.5
+              : amount >= amtWarningLevel
               ? "prepare inverted"
               : "";
         }
@@ -327,9 +362,9 @@ const Dashboard = () => {
         if (flagPct) {
           percent = parseFloat(wallet.available / wallet.deposits);
           style =
-            percent >= 0.01
+            percent >= pctReadyLevel
               ? "hydrate inverted"
-              : percent >= 0.009
+              : percent >= pctWarningLevel
               ? "prepare inverted"
               : "";
         }
@@ -359,7 +394,32 @@ const Dashboard = () => {
     );
     storedWallets = storedWallets.map((wallet, index) => {
       if (walletAddr === wallet.addr) {
-        return { addr: wallet.addr, label };
+        return { addr: wallet.addr, label, group: wallet.group };
+      } else {
+        return { ...wallet };
+      }
+    });
+    window.localStorage.setItem("dripAddresses", JSON.stringify(storedWallets));
+    setWallets(newWallets);
+  };
+
+  const addGroup = (index, group) => {
+    let walletAddr;
+    const newWallets = wallets.map((wallet) => {
+      if (parseInt(wallet.index) === index) {
+        walletAddr = wallet.address;
+        return { ...wallet, group };
+      } else {
+        return { ...wallet };
+      }
+    });
+
+    let storedWallets = JSON.parse(
+      window.localStorage.getItem("dripAddresses")
+    );
+    storedWallets = storedWallets.map((wallet, index) => {
+      if (walletAddr === wallet.addr) {
+        return { addr: wallet.addr, label: wallet.label, group };
       } else {
         return { ...wallet };
       }
@@ -448,6 +508,8 @@ const Dashboard = () => {
       hideTableControls,
       showLastAction,
       ndvWarningLevel,
+      selectedGroup,
+      depositFilter,
     };
 
     localStorage.setItem(CONFIGS_KEY, JSON.stringify(config));
@@ -460,6 +522,8 @@ const Dashboard = () => {
     hideTableControls,
     showLastAction,
     ndvWarningLevel,
+    selectedGroup,
+    depositFilter,
   ]);
 
   const deleteRow = (addr) => {
@@ -545,6 +609,13 @@ const Dashboard = () => {
                         <span className="prepare">light green = .5+</span>,{" "}
                         <span className="hydrate">green = 1+</span>
                       </label>
+                      {/* <ConfigValueSelector 
+                      label="Amount: " decrementAction=
+                      {() => setAmtReadyLevel(amtReadyLevel - 0.1)}
+                      valueThreshold={amtReadyLevel}
+                      incrementAction=
+                      {() => setAmtReadyLevel(amtReadyLevel + 0.1)}
+                      /> */}
                     </div>
                     <div className="form-check">
                       <input
@@ -636,26 +707,6 @@ const Dashboard = () => {
                         <span className="warning"> - yellow</span>
                       </label>
                     </div>
-                    <div className="formCheck">
-                      Filter deposits &gt;{" "}
-                      <input
-                        type="text"
-                        size={10}
-                        value={depositFilter}
-                        onChange={(e) => {
-                          let numeric = e.target.value.replace(/\D/g, "");
-                          if (!numeric) numeric = 0;
-                          const maxDeposit = Math.max(
-                            ...fullList.map((w) => w.deposits)
-                          );
-                          if (numeric > maxDeposit) {
-                            numeric = depositFilter;
-                          }
-
-                          setDepositFilter(parseInt(numeric));
-                        }}
-                      />
-                    </div>
                   </div>
                 )}
               </div>
@@ -667,14 +718,18 @@ const Dashboard = () => {
           <div className="loading">Loading...</div>
         ) : (
           <div className="table-options">
-            <button
-              className="btn-copy btn btn-outline-secondary"
-              onClick={copyTableData}
-            >
-              <i className={`bi bi-clipboard${dataCopied ? "-check" : ""}`}></i>
-              Copy table
-            </button>
-            <div className="form-check">
+            <div className="table-options-ctrl">
+              <button
+                className="btn-copy btn btn-outline-secondary"
+                onClick={copyTableData}
+              >
+                <i
+                  className={`bi bi-clipboard${dataCopied ? "-check" : ""}`}
+                ></i>
+                Copy table
+              </button>
+            </div>
+            <div className="form-check table-options-ctrl">
               <input
                 id="expandedTable"
                 className="form-check-input"
@@ -686,7 +741,7 @@ const Dashboard = () => {
                 Expanded Table
               </label>
             </div>
-            <div className="form-check form-switch">
+            <div className="form-check form-switch table-options-ctrl">
               <input
                 id="showDollarValues"
                 className="form-check-input"
@@ -697,6 +752,42 @@ const Dashboard = () => {
               <label htmlFor="showDollarValues" className="form-check-label">
                 $
               </label>
+            </div>
+            <div className="table-options-ctrl">
+              Filter deposits &gt;{" "}
+              <input
+                type="text"
+                size={10}
+                value={depositFilter}
+                onChange={(e) => {
+                  let numeric = e.target.value.replace(/\D/g, "");
+                  if (!numeric) numeric = 0;
+                  const maxDeposit = Math.max(
+                    ...wallets.map((w) => w.deposits)
+                  );
+                  if (numeric > maxDeposit) {
+                    numeric = depositFilter;
+                  }
+
+                  setDepositFilter(parseInt(numeric));
+                }}
+              />
+            </div>
+            <div className="table-options-ctrl">
+              Group:{" "}
+              <select
+                value={selectedGroup}
+                onChange={(e) => setSelectedGroup(e.target.value)}
+              >
+                <option value="*">All</option>
+                <option value="none">None</option>
+                {groups.map((g) => (
+                  <option key={g} value={g}>
+                    {g}
+                  </option>
+                ))}
+              </select>
+              <PopupHelp message={MESSAGES.GROUP_FILTER_MESSAGE} />
             </div>
           </div>
         )}
@@ -838,6 +929,7 @@ const Dashboard = () => {
                 key={index}
                 index={index}
                 addLabel={addLabel}
+                addGroup={addGroup}
                 bnbPrice={bnbPrice}
                 deleteRow={deleteRow}
                 dripPrice={dripPrice}

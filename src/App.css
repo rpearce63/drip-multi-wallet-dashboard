@@ -15,7 +15,14 @@
 /* #root {
   width: fit-content;
 } */
-
+body {
+  font-family: var(--bs-body-font-family) !important;
+  line-height: var(--bs-body-line-height) !important;
+  overflow-x: auto !important;
+}
+a {
+  text-decoration: underline !important;
+}
 .center {
   position: absolute;
   left: 50%;
@@ -67,7 +74,7 @@ textarea.invert {
 }
 
 .main {
-  margin-top: 12rem;
+  margin-top: 13rem;
   margin-bottom: 5rem;
   display: flex;
   flex-direction: column;
@@ -313,8 +320,10 @@ span.spinCtrl:after {
 
 .table-options {
   display: flex;
-  justify-content: space-between;
-  max-width: 20rem;
+  justify-content: flex-start;
+}
+.table-options-ctrl {
+  margin-right: 1em;
 }
 
 .nav-wrap {
@@ -581,4 +590,9 @@ span.spinCtrl:after {
   to {
     width: 40px;
   }
+}
+
+.reload-icon {
+  font-size: 1em;
+  color: white;
 }

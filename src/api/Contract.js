@@ -7,11 +7,13 @@ import {
   BR34P_ABI,
   BR34P_ADDRESS,
   BASIC_TOKEN_ABI,
-  DROPS_ADDRESS,
+  RESERVOIR_ADDRESS,
   DRIP_TOKEN_ADDR,
   BUSD_TOKEN_ADDRESS,
   DRIP_BUSD_LP_ADDRESS,
 } from "../configs/dripconfig";
+import ERC20_ABI from "../configs/erc20_abi.json";
+
 import { findFibIndex } from "./utils";
 
 import LRU from "lru-cache";
@@ -19,7 +21,8 @@ import LRU from "lru-cache";
 //const DMWDAPI = "https://drip-mw-dashboard-api.glitch.me";
 const BSCSCAN_URL = "https://api.bscscan.com";
 const RESERVOIR_CONTRACT = require("../configs/reservoir_contract.json");
-
+export const RPC_URL = "https://bsc-dataseed.binance.org/";
+//export const RPC_URL = "https://node.theanimal.farm/";
 const axios = require("axios");
 //const rax = require("retry-axios");
 // eslint-disable-next-line no-unused-vars
@@ -60,28 +63,30 @@ const ROLL_HEX = "0xcd5e3c5d";
 const CLAIM_HEX = "0x4e71d92d";
 const DEPOSIT_HEX = "0x47e7ef24";
 
-const web3 = new Web3("https://bsc-dataseed.binance.org/");
-const contract = new web3.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
-
+const web3 = new Web3(RPC_URL);
+const faucetContract = new web3.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
+const fountainContract = new web3.eth.Contract(FOUNTAIN_ABI, FOUNTAIN_ADDR);
 //let startBlock;
 
-export const getConnection = () => {
-  const web3 = new Web3("https://bsc-dataseed.binance.org/");
-  return web3;
-};
+// export const getConnection = () => {
+//   const web3 = new Web3("https://bsc-dataseed.binance.org/");
+//   return web3;
+// };
 
-export const getAccounts = async (web3) => {
-  return await web3.eth.getAccounts();
-};
+// export const getAccounts = async (web3) => {
+//   return await web3.eth.getAccounts();
+// };
 
-export const getContract = (web3) => {
-  const contract = new web3.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
-  return contract;
-};
+// export const getContract = (web3) => {
+//   const contract = new web3.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
+//   return contract;
+// };
 
-export const claimsAvailable = async (contract, account) => {
+export const claimsAvailable = async (account) => {
   try {
-    const available = await contract.methods.claimsAvailable(account).call();
+    const available = await faucetContract.methods
+      .claimsAvailable(account)
+      .call();
     return available;
   } catch (err) {
     console.log(err.message);
@@ -89,60 +94,72 @@ export const claimsAvailable = async (contract, account) => {
   }
 };
 
-export const getAirdrops = async (contract, account) => {
+export const getAirdrops = async (account) => {
   try {
-    return await contract.methods.airdrops(account).call();
+    return await faucetContract.methods.airdrops(account).call();
   } catch (err) {
     console.log(err.message);
     return 0;
   }
 };
 
-export const getUserInfo = async (contract, account) => {
+export const getUserInfo = async (account, isRetry = false) => {
   try {
-    return await contract.methods.users(account).call();
+    return await faucetContract.methods.users(account).call();
   } catch (err) {
     console.log("Error getting UserInfo: ", err.message);
-    return {};
+    if (isRetry) return {};
+    await new Promise((resolve) =>
+      setTimeout(() => {
+        resolve(1);
+      }, 1000)
+    );
+    console.log("retrying getUserInfo");
+    return getUserInfo(account, true);
   }
 };
 
-export const getBr34pBalance = async (web3, account) => {
-  const contract = new web3.eth.Contract(BR34P_ABI, BR34P_ADDRESS);
-  const tokenBalance = await contract.methods.balanceOf(account).call();
+export const getBr34pBalance = async (account) => {
+  const br34pContract = new web3.eth.Contract(BR34P_ABI, BR34P_ADDRESS);
+  const tokenBalance = await br34pContract.methods.balanceOf(account).call();
   return tokenBalance / 10e7;
 };
 
-export const getBnbBalance = async (web3, account) => {
+export const getBnbBalance = async (account) => {
   const balance = await web3.eth.getBalance(account);
   return balance / 10e17;
 };
 
-export const getTokenBalance = async (web3, account, tokenAddress) => {
-  const contract = new web3.eth.Contract(BASIC_TOKEN_ABI, tokenAddress);
-  const tokenBalance = await contract.methods.balanceOf(account).call();
+export const getTokenBalance = async (account, tokenAddress) => {
+  const tokenContract = new web3.eth.Contract(BASIC_TOKEN_ABI, tokenAddress);
+  const tokenBalance = await tokenContract.methods.balanceOf(account).call();
   return tokenBalance / 10e17;
 };
 
-export const getReservoirBalance = async (web3, account) => {
-  const contract = new web3.eth.Contract(RESERVOIR_CONTRACT, DROPS_ADDRESS);
-  const dropsBalance = await contract.methods.balanceOf(account).call();
+export const getReservoirBalance = async (account) => {
+  const reservoirContract = new web3.eth.Contract(
+    RESERVOIR_CONTRACT,
+    RESERVOIR_ADDRESS
+  );
+  const dropsBalance = await reservoirContract.methods
+    .balanceOf(account)
+    .call();
   return dropsBalance / 10e17;
 };
 
-export const getDripPrice = async (web3) => {
-  const contract = new web3.eth.Contract(FOUNTAIN_ABI, FOUNTAIN_ADDR);
+export const getDripPrice = async () => {
   try {
-    const dripBnbRatio = await contract.methods
+    const dripBnbRatio = await fountainContract.methods
       .getTokenToBnbInputPrice(1000000000000000000n)
       .call();
 
-    const tokenBalance = await contract.methods.tokenBalance().call();
+    const tokenBalance = await fountainContract.methods.tokenBalance().call();
 
     const fetchBnbPrice = async () =>
       axios
         .get(
-          "https://api.coingecko.com/api/v3/simple/price?ids=wbnb&vs_currencies=usd"
+          "https://api.coingecko.com/api/v3/simple/price?ids=wbnb&vs_currencies=usd",
+          { retry: 2, retryDelay: 1000 }
         )
         //.then((response) => response.json())
         .then((response) => response.data.wbnb.usd);
@@ -159,7 +176,8 @@ export const getPigPrice = async () => {
   const fetchPigPrice = async () =>
     axios
       .get(
-        "https://api.pancakeswap.info/api/v2/tokens/0x3A4C15F96B3b058ab3Fb5FAf1440Cc19E7AE07ce"
+        "https://api.pancakeswap.info/api/v2/tokens/0x3A4C15F96B3b058ab3Fb5FAf1440Cc19E7AE07ce",
+        { retry: 2, retryDelay: 1000 }
       )
       //.then((response) => response.json())
       .then((response) => response.data.data.price);
@@ -171,7 +189,8 @@ export const getDogPrice = async () => {
   const fetchDogPrice = async () =>
     axios
       .get(
-        "https://api.pancakeswap.info/api/v2/tokens/0xDBdC73B95cC0D5e7E99dC95523045Fc8d075Fb9e"
+        "https://api.pancakeswap.info/api/v2/tokens/0xDBdC73B95cC0D5e7E99dC95523045Fc8d075Fb9e",
+        { retry: 2, retryDelay: 1000 }
       )
       // .then((response) => response.json())
       .then((response) => response.data.data.price);
@@ -179,12 +198,12 @@ export const getDogPrice = async () => {
   return dogPrice;
 };
 
-export const getUplineCount = async (contract, wallet) => {
+export const getUplineCount = async (wallet) => {
   let upline = wallet,
     count = 0,
     stop = false;
   do {
-    const uplineInfo = await getUserInfo(contract, upline);
+    const uplineInfo = await getUserInfo(upline);
     upline = uplineInfo.upline;
     if (!upline || upline.startsWith("0x000")) {
       stop = true;
@@ -197,16 +216,18 @@ export const getUplineCount = async (contract, wallet) => {
 
 export const roll = async (account) => {
   console.log(account);
-  const web3 = await getConnection();
-  const contract = await getContract(web3);
-  await contract.methods.roll().send({ from: account });
+  //const web3 = await getConnection();
+  //const faucetContract = await getContract(web3);
+  await faucetContract.methods.roll().send({ from: account });
 };
 
 export const getDownline = async (account) => {
   try {
-    return await (
-      await fetch(`https://api.drip.community/org/${account}`)
-    ).json();
+    return await await axios.get(`https://api.drip.community/org/${account}`, {
+      timeout: 1000,
+      retry: 2,
+      retryDelay: 1000,
+    });
   } catch (err) {
     console.log(`Error getting downline: ${err.message}`);
     return {};
@@ -216,7 +237,10 @@ export const getDownline = async (account) => {
 export const getBr34pPrice = async () => {
   const fetchBr34PPrice = async () =>
     axios
-      .get("https://api.coinpaprika.com/v1/tickers/br34p-br34p/")
+      .get("https://api.coinpaprika.com/v1/tickers/br34p-br34p/", {
+        retry: 2,
+        retryDelay: 1000,
+      })
       .then((response) => response.data);
 
   const br34pData = await fetchBr34PPrice();
@@ -227,7 +251,8 @@ export const getBnbprice = async () => {
   const fetchBnbPrice = async () =>
     axios
       .get(
-        "https://api.coingecko.com/api/v3/simple/price?ids=wbnb&vs_currencies=usd"
+        "https://api.coingecko.com/api/v3/simple/price?ids=wbnb&vs_currencies=usd",
+        { retry: 2, retryDelay: 1000 }
       )
       .then((response) => response.data.wbnb.usd);
   const bnbPrice = await fetchBnbPrice();
@@ -256,7 +281,8 @@ export const getDripPcsPrice = async () => {
   const fetchDripPcsPrice = async () =>
     axios
       .get(
-        "https://api.pancakeswap.info/api/v2/tokens/0x20f663cea80face82acdfa3aae6862d246ce0333"
+        "https://api.pancakeswap.info/api/v2/tokens/0x20f663cea80face82acdfa3aae6862d246ce0333",
+        { retry: 2, retryDelay: 1000 }
       )
       .then((result) => result.data.data.price)
       .catch((err) => {
@@ -271,23 +297,36 @@ export const getJoinDate = async (account) => {
   const fetchBuddyDate = async () =>
     axios
       .get(
-        `${BSCSCAN_URL}/api?module=account&action=txlist&address=${account}&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY`
+        `${BSCSCAN_URL}/api?module=account&action=txlist&address=${account}&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY`,
+        { retry: 2, retryDelay: 1000 }
       )
       // .then((response) => response.json())
       .then((response) => response.data.result);
 
   const txHistory = await fetchBuddyDate();
-  const buddyDate = txHistory.find((tx) => tx.input?.startsWith("0x17fed96f"));
-  return buddyDate.timeStamp;
+  const buddyDate = txHistory.find((tx) => tx.input?.startsWith(DEPOSIT_HEX));
+  const amount = buddyDate.input.slice(-64);
+
+  console.log(parseInt(amount, 16));
+  return {
+    buddyDate: buddyDate.timeStamp,
+    originalDeposit: web3.utils.fromWei(parseInt(amount, 16).toString()),
+  };
 };
 
 export const getStartBlock = async () => {
   const url = `${BSCSCAN_URL}/api?module=proxy&action=eth_blockNumber&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY`;
   const latestBlockHex = await axios
-    .get(url)
+    .get(url, { retry: 2, retryDelay: 1000 })
     .then((response) => response.data.result);
 
+  // const url = `${BSCSCAN_URL}/api?module=proxy&action=eth_blockNumber&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY`;
+  // const latestBlockHex = await axios
+  //   .get(url)
+  //   .then((response) => response.data.result);
+
   const latestBlock = parseInt(latestBlockHex, 16);
+  // console.log(`latest block: ${currentBlock}, ${latestBlock}`);
   return latestBlock;
 };
 
@@ -337,7 +376,7 @@ export const getBigBuysFromAWS = async () => {
   try {
     const bigBuys = await axios.get(
       "https://8kltnjdcw2.execute-api.us-east-1.amazonaws.com/default/getDripBigBuys",
-      { timeout: 5000 }
+      { timeout: 5000, retry: 2, retryDelay: 1000 }
     );
     return bigBuys.data;
   } catch (err) {
@@ -349,7 +388,7 @@ export const getBigBuysFromGlitch = async () => {
   try {
     const bigBuys = await axios.get(
       "https://drip-mw-dashboard-api.glitch.me/bigBuys",
-      { timeout: 5000 }
+      { timeout: 5000, retry: 2, retryDelay: 1000 }
     );
     return bigBuys.data;
   } catch (err) {
@@ -359,7 +398,8 @@ export const getBigBuysFromGlitch = async () => {
 
 export const getDripPriceData = async () => {
   const dripPriceData = await axios.get(
-    "https://drip-mw-dashboard-api.glitch.me/prices"
+    "https://drip-mw-dashboard-api.glitch.me/prices",
+    { retry: 2, retryDelay: 1000 }
   );
   return { ...dripPriceData.data };
 };
@@ -368,21 +408,16 @@ export const fetchWalletData = async (wallet, index) => {
   //console.log("fetchWalletData");
   // const web3 = await getConnection();
   //const contract = await getContract(web3);
-  const userInfo = await getUserInfo(contract, wallet.addr);
+  const userInfo = await getUserInfo(wallet.addr);
   if (!userInfo) return;
-  const available = await claimsAvailable(contract, wallet.addr);
-  const dripBalance = await getTokenBalance(web3, wallet.addr, DRIP_TOKEN_ADDR);
-  const uplineCount = await getUplineCount(contract, wallet.addr);
-  const br34pBalance = await getBr34pBalance(web3, wallet.addr);
-  const bnbBalance = await getBnbBalance(web3, wallet.addr);
+  const available = await claimsAvailable(wallet.addr);
+  const dripBalance = await getTokenBalance(wallet.addr, DRIP_TOKEN_ADDR);
+  const uplineCount = await getUplineCount(wallet.addr);
+  const br34pBalance = await getBr34pBalance(wallet.addr);
+  const bnbBalance = await getBnbBalance(wallet.addr);
 
-  const busdBalance = await getTokenBalance(
-    web3,
-    wallet.addr,
-    BUSD_TOKEN_ADDRESS
-  );
+  const busdBalance = await getTokenBalance(wallet.addr, BUSD_TOKEN_ADDRESS);
   const dripBusdLpBalance = await getTokenBalance(
-    web3,
     wallet.addr,
     DRIP_BUSD_LP_ADDRESS
   );
@@ -391,7 +426,7 @@ export const fetchWalletData = async (wallet, index) => {
   const teamDepth =
     userInfo.referrals > 0 && (await getDownlineDepth(wallet.addr));
 
-  const { airdrops } = await getAirdrops(contract, wallet.addr);
+  const { airdrops } = await getAirdrops(wallet.addr);
   const a = parseFloat(web3.utils.fromWei(airdrops));
   const d = parseFloat(web3.utils.fromWei(userInfo.deposits));
   const r = parseFloat(web3.utils.fromWei(userInfo.rolls));
@@ -404,7 +439,7 @@ export const fetchWalletData = async (wallet, index) => {
   //const startBlock = await getStartBlock();
   //console.log("startBlock: " + startBlock);
   //const lastAction = await getLastAction(startBlock - 200000, wallet.addr);
-  const dropsBalance = await getReservoirBalance(web3, wallet.addr);
+  const dropsBalance = await getReservoirBalance(wallet.addr);
   return {
     index,
     ...userInfo,
@@ -416,6 +451,7 @@ export const fetchWalletData = async (wallet, index) => {
 
     address: wallet.addr,
     label: wallet.label,
+    group: wallet.group,
     valid,
     dripBalance,
     br34pBalance,
@@ -446,4 +482,73 @@ export const getAllWalletData = async (myWallets) => {
   const end = new Date();
   console.log(`got wallet data in ${(end - start) / 1000} seconds`);
   return walletCache;
+};
+
+// run this multiple times by putting in its own function
+export async function getTokenInfo(addressOfToken) {
+  // run this just once, as part of initialisation
+  const tokenContract = new web3.eth.Contract(ERC20_ABI, addressOfToken);
+
+  const symbol = await tokenContract.methods.symbol().call();
+  const decimals = await tokenContract.methods.decimals().call();
+  const name = await tokenContract.methods.name().call();
+
+  return { decimals, name, symbol };
+}
+
+export const getWalletTokens = async (address) => {
+  const response = await axios.get(
+    "https://api.bscscan.com/api?module=account&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY&action=tokentx&address=0x1ff661243cb97384102a69a466c887b4cC12d72a&startblock=0&endblock=999999999&sort=asc"
+  );
+  const allTokens = response.data;
+  const tokens = allTokens.result
+    .map((tx) => ({
+      tokenSymbol: tx.tokenSymbol,
+      contractAddress: tx.contractAddress,
+    }))
+    .filter((token) => !token.tokenSymbol.includes("."));
+  let symbols = [];
+  let uniq = [];
+  tokens.forEach((token) => {
+    if (!symbols.includes(token.tokenSymbol)) {
+      symbols.push(token.tokenSymbol);
+      uniq.push(token);
+    }
+  });
+  let tokensWithBalance = [];
+  for (const token of uniq) {
+    const tokenBalance = await getTokenBalance(
+      web3,
+      address,
+      token.contractAddress
+    );
+    tokensWithBalance.push({ ...token, tokenBalance });
+  }
+
+  return tokensWithBalance;
+};
+
+export const getUplineTree = async (address, upline = []) => {
+  //console.log("getting upline for ", address);
+  const userInfo = await getUserInfo(address);
+  const uplineAddress = userInfo.upline;
+
+  const isEligible = await faucetContract.methods.isNetPositive(address).call();
+  const balanceLevel = await faucetContract.methods
+    .balanceLevel(address)
+    .call();
+  const updatedUpline = [
+    ...upline,
+    {
+      address,
+      isEligible,
+      balanceLevel,
+      referrals: userInfo.referrals,
+      total_structure: userInfo.total_structure,
+    },
+  ];
+  if (uplineAddress.startsWith("0x000")) {
+    return updatedUpline;
+  }
+  return getUplineTree(uplineAddress, updatedUpline);
 };

@@ -5,15 +5,17 @@ import Upline from "./components/Upline";
 import Downline from "./components/Downline";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import WalletTokens from "./components/WalletTokens";
 
 const App = () => (
   <Router>
     <Header />
     <Routes>
       <Route path="/drip-mw-dashboard" element={<Dashboard />}></Route>
-      <Route path="/upline/:buddy" element={<Upline />} />
+      <Route path="/upline/:buddyId" element={<Upline />} />
       <Route path="/downline/:account" element={<Downline />} />
       <Route index element={<Dashboard />}></Route>
+      <Route path="/tokens" element={<WalletTokens />} />
     </Routes>
     <Footer />
   </Router>

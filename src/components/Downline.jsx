@@ -1,13 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
-import {
-  getDownline,
-  getUserInfo,
-  getContract,
-  getConnection,
-  getJoinDate,
-} from "../api/Contract";
+import { getDownline, getUserInfo, getJoinDate } from "../api/Contract";
 
 import format from "date-fns/format";
 const flatten = require("flat").flatten;
@@ -32,45 +26,32 @@ const Downline = () => {
   const [downline, setDownline] = useState();
   const { account } = useParams();
   const [depth, setDepth] = useState(0);
-  const [web3, setWeb3] = useState();
-  const [contract, setContract] = useState();
-
-  useEffect(() => {
-    const getWeb3 = async () => {
-      const web3 = await getConnection();
-      setWeb3(() => web3);
-      const contract = await getContract(web3);
-      setContract(() => contract);
-    };
-    getWeb3();
-  }, []);
 
   useEffect(() => {
     const fetchDownline = async () => {
-      const downline = await getDownline(account);
-      setDepth(() => getObjectDepth(downline));
-      setDownline(() => downline);
+      const downline = (await getDownline(account)).data;
+
+      setDepth(getObjectDepth(downline));
+      setDownline(downline);
     };
     fetchDownline();
   }, [account]);
 
   const getUserData = async (childId) => {
     navigator.clipboard.writeText(childId);
-    //console.log("getUserData for: " + childId);
 
-    const userInfo = await getUserInfo(contract, childId);
+    const userInfo = await getUserInfo(childId);
+    console.log(userInfo);
     const buddyDate = await getJoinDate(childId);
-
-    //console.log(connection.utils.fromWei(userInfo.deposits));
 
     setDownline(() => {
       let dStr = JSON.stringify(downline);
       dStr = dStr.replace(
         `"id":"${childId}",`,
         `"id":"${childId}","deposits":"${parseFloat(
-          web3.utils.fromWei(userInfo.deposits)
+          buddyDate.originalDeposit
         ).toFixed(2)}","buddyDate":"${format(
-          new Date(buddyDate * 1000),
+          new Date(buddyDate.buddyDate * 1000),
           "yyy-MM-dd"
         )}",`
       );
