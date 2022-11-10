@@ -109,7 +109,7 @@ const Header = () => {
         )}
 
         <div className={`prices ${hidePrices && "hidePrices"}`}>
-          <div className="price-group">
+          <div className="price-group group-of-3">
             <DripPrices
               dripPcsPrice={dripPcsPrice}
               BUY_SPREAD={BUY_SPREAD}
@@ -141,7 +141,7 @@ const Header = () => {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  Tax Vault Balance:
+                  Tax Vault:
                 </a>
               </label>{" "}
               {convertDrip(taxVaultBalance)}
