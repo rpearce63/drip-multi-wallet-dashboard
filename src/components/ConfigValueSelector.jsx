@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+let repeatInterval;
 
 const ConfigValueSelector = ({
   label,
@@ -6,6 +7,13 @@ const ConfigValueSelector = ({
   valueThreshold,
   incrementAction,
 }) => {
+  const repeatFunc = (func) => {
+    repeatInterval = setInterval(() => {
+      func();
+    }, 500);
+  };
+  const stopRepeatFunc = () => clearInterval(repeatInterval);
+
   return (
     <label className="form-check-label input-spinner-label">
       {label}
@@ -14,6 +22,8 @@ const ConfigValueSelector = ({
           type="button"
           className="btn btn-outline-secondary"
           onClick={decrementAction}
+          onMouseDown={() => repeatFunc(decrementAction)}
+          onMouseUp={stopRepeatFunc}
         >
           -
         </button>
@@ -22,13 +32,15 @@ const ConfigValueSelector = ({
           type="number"
           value={valueThreshold}
           onChange={() => {}}
-          size={4}
+          size={5}
           disabled={false}
         />
         <button
           type="button"
           className="btn btn-outline-secondary"
           onClick={incrementAction}
+          onMouseDown={() => repeatFunc(incrementAction)}
+          onMouseUp={stopRepeatFunc}
         >
           +
         </button>

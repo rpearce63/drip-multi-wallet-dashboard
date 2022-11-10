@@ -601,24 +601,21 @@ const Dashboard = () => {
                         checked={flagAmount}
                         onChange={() => setFlagAmount(!flagAmount)}
                       />
-                      {/* <label
+                      <label
                         className="form-check-label"
                         htmlFor="flagAmountChk"
                       >
                         Amount -{" "}
                         <span className="prepare">light green = .5+</span>,{" "}
                         <span className="hydrate">green = 1+</span>
-                      </label> */}
-                      <ConfigValueSelector
-                        label="Amount: "
-                        decrementAction={() =>
-                          setAmtReadyLevel(amtReadyLevel - 0.1)
-                        }
-                        valueThreshold={amtReadyLevel}
-                        incrementAction={() =>
-                          setAmtReadyLevel(amtReadyLevel + 0.1)
-                        }
-                      />
+                      </label>
+                      {/* <ConfigValueSelector 
+                      label="Amount: " decrementAction=
+                      {() => setAmtReadyLevel(amtReadyLevel - 0.1)}
+                      valueThreshold={amtReadyLevel}
+                      incrementAction=
+                      {() => setAmtReadyLevel(amtReadyLevel + 0.1)}
+                      /> */}
                     </div>
                     <div className="form-check">
                       <input

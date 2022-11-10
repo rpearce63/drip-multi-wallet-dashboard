@@ -16,6 +16,7 @@ const Header = () => {
   const [dogsPrice, setDogsPrice] = useState(0);
   const [version, setVersion] = useState();
   const [hidePrices, setHidePrices] = useState(true);
+  const [taxVaultBalance, setTaxVaultBalance] = useState(0);
   const BUY_SPREAD = 1.1;
 
   const getVersion = async () => {
@@ -37,6 +38,7 @@ const Header = () => {
       br34pPrice,
       afpPrice,
       dogsPrice,
+      taxVaultBalance,
     } = await getDripPriceData();
 
     const currentDripPrice = dripBnbRatio * bnbPrice;
@@ -49,7 +51,7 @@ const Header = () => {
     dripPcsPrice > 0 && setDripPcsPrice(() => dripPcsPrice);
     afpPrice > 0 && setPigPrice(() => afpPrice);
     dogsPrice > 0 && setDogsPrice(() => dogsPrice);
-
+    taxVaultBalance > 0 && setTaxVaultBalance(() => taxVaultBalance);
     currentDripPrice &&
       (document.title = `${formatCurrency(
         convertDrip(currentDripPrice)
@@ -130,6 +132,19 @@ const Header = () => {
           <div className="price-group">
             <div className="price stack">
               <label>DRIP Supply:</label> {convertDrip(tokenBalance)}
+            </div>
+
+            <div className="price stack">
+              <label>
+                <a
+                  href="https://bscscan.com/token/0x20f663cea80face82acdfa3aae6862d246ce0333?a=0xbff8a1f9b5165b787a00659216d7313354d25472"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Tax Vault Balance:
+                </a>
+              </label>{" "}
+              {convertDrip(taxVaultBalance)}
             </div>
             <div className="price stack">
               <a
