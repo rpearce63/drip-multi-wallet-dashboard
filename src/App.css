@@ -387,6 +387,20 @@ span.spinCtrl:after {
   flex-direction: column;
 }
 
+.tv-up,
+.tv-up::after {
+  content: "\1F680";
+  margin-left: 3px;
+  color: green;
+}
+
+.tv-down,
+.tv-down::after {
+  color: yellow;
+  content: "\1FA82";
+  margin-left: 3px;
+}
+
 .modal {
   position: fixed;
   top: 0;

@@ -17,6 +17,7 @@ const Header = () => {
   const [version, setVersion] = useState();
   const [hidePrices, setHidePrices] = useState(true);
   const [taxVaultBalance, setTaxVaultBalance] = useState(0);
+  const [tvDir, setTvDir] = useState(0);
   const BUY_SPREAD = 1.1;
 
   const getVersion = async () => {
@@ -38,7 +39,7 @@ const Header = () => {
       br34pPrice,
       afpPrice,
       dogsPrice,
-      taxVaultBalance,
+      taxVaultBalance: nTaxVaultBalance,
     } = await getDripPriceData();
 
     const currentDripPrice = dripBnbRatio * bnbPrice;
@@ -51,7 +52,16 @@ const Header = () => {
     dripPcsPrice > 0 && setDripPcsPrice(() => dripPcsPrice);
     afpPrice > 0 && setPigPrice(() => afpPrice);
     dogsPrice > 0 && setDogsPrice(() => dogsPrice);
-    taxVaultBalance > 0 && setTaxVaultBalance(() => taxVaultBalance);
+
+    setTaxVaultBalance((prevState) => {
+      //   console.log(`
+      // time: ${new Date().toLocaleTimeString()}
+      // taxVaultBalance: ${prevState / 10e17}
+      // new value: ${nTaxVaultBalance / 10e17}
+      // diff: ${(nTaxVaultBalance - prevState) / 10e17}`);
+      setTvDir(nTaxVaultBalance - prevState);
+      return nTaxVaultBalance;
+    });
     currentDripPrice &&
       (document.title = `${formatCurrency(
         convertDrip(currentDripPrice)
@@ -143,8 +153,12 @@ const Header = () => {
                 >
                   Tax Vault:
                 </a>
-              </label>{" "}
-              {convertDrip(taxVaultBalance)}
+              </label>
+              <span
+                className={`${tvDir !== 0 && tvDir > 0 ? "tv-up" : "tv-down"}`}
+              >
+                {convertDrip(taxVaultBalance)}
+              </span>
             </div>
             <div className="price stack">
               <a

@@ -27,7 +27,7 @@ const BigDripBuys = () => {
           bigBuys.length !== data.length || // number of buys is different
           JSON.stringify(bigBuys[0]) !== JSON.stringify(data[0]) // latest transaction is different
         ) {
-          console.log("updating bigBuys");
+          //console.log("updating bigBuys");
           setBigBuys(data);
         }
         setUpdateTime(new Date().toLocaleString());
