@@ -16,7 +16,6 @@ import {
 } from "../api/utils";
 
 import TableRow from "./TableRow";
-import ConfigValueSelector from "./ConfigValueSelector";
 
 const Dashboard = () => {
   const [wallets, setWallets] = useState([]);
@@ -39,11 +38,11 @@ const Dashboard = () => {
 
   //form configs
   const [flagAmount, setFlagAmount] = useState(true);
-  const [amtWarningLevel, setAmtWarningLevel] = useState(0.5);
-  const [amtReadyLevel, setAmtReadyLevel] = useState(1.0);
+  const [amtWarningLevel] = useState(0.5);
+  const [amtReadyLevel] = useState(1.0);
   const [flagPct, setFlagPct] = useState(true);
-  const [pctWarningLevel, setPctWarningLevel] = useState(0.009);
-  const [pctReadyLevel, setPctReadyLevel] = useState(0.01);
+  const [pctWarningLevel] = useState(0.009);
+  const [pctReadyLevel] = useState(0.01);
   const [flagLowBnb, setFlagLowBnb] = useState(true);
   const [bnbThreshold, setBnbThreshold] = useState(0.05);
   const [flagLowNdv, setFlagLowNdv] = useState(true);
