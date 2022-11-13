@@ -87,11 +87,16 @@ const Downline = () => {
   };
 
   const OrgList = ({ org }) => (
-    <ol>
-      {(org.children || []).map((item, index) => (
-        <OrgItem key={index} child={item} depth={1} />
-      ))}
-    </ol>
+    <>
+      <ul>
+        <OrgItem child={{ ...downline, children: [] }} depth="self" />
+      </ul>
+      <ol>
+        {(org.children || []).map((item, index) => (
+          <OrgItem key={index} child={item} depth={1} />
+        ))}
+      </ol>
+    </>
   );
 
   return (
