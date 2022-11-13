@@ -224,7 +224,7 @@ export const roll = async (account) => {
 export const getDownline = async (account) => {
   try {
     return await await axios.get(`https://api.drip.community/org/${account}`, {
-      timeout: 1000,
+      timeout: 5000,
       retry: 2,
       retryDelay: 1000,
     });
@@ -307,7 +307,7 @@ export const getJoinDate = async (account) => {
   const buddyDate = txHistory.find((tx) => tx.input?.startsWith(DEPOSIT_HEX));
   const amount = buddyDate.input.slice(-64);
 
-  console.log(parseInt(amount, 16));
+  //console.log(parseInt(amount, 16));
   return {
     buddyDate: buddyDate.timeStamp,
     originalDeposit: web3.utils.fromWei(parseInt(amount, 16).toString()),
@@ -545,6 +545,7 @@ export const getUplineTree = async (address, upline = []) => {
       balanceLevel,
       referrals: userInfo.referrals,
       total_structure: userInfo.total_structure,
+      ref_claim_pos: userInfo.ref_claim_pos,
     },
   ];
   if (uplineAddress.startsWith("0x000")) {

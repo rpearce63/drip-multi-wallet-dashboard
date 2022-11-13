@@ -30,7 +30,7 @@ const Downline = () => {
   useEffect(() => {
     const fetchDownline = async () => {
       const downline = (await getDownline(account)).data;
-
+      //console.log(downline);
       setDepth(getObjectDepth(downline));
       setDownline(downline);
     };
@@ -41,55 +41,66 @@ const Downline = () => {
     navigator.clipboard.writeText(childId);
 
     const userInfo = await getUserInfo(childId);
-    console.log(userInfo);
     const buddyDate = await getJoinDate(childId);
 
-    setDownline(() => {
-      let dStr = JSON.stringify(downline);
-      dStr = dStr.replace(
-        `"id":"${childId}",`,
-        `"id":"${childId}","deposits":"${parseFloat(
-          buddyDate.originalDeposit
-        ).toFixed(2)}","buddyDate":"${format(
-          new Date(buddyDate.buddyDate * 1000),
-          "yyy-MM-dd"
-        )}",`
-      );
-      const updated = JSON.parse(dStr);
-      return updated;
-    });
+    let dStr = JSON.stringify(downline);
+    dStr = dStr.replace(
+      `"id":"${childId}",`,
+      JSON.stringify({
+        id: childId,
+        originalDeposit: parseFloat(buddyDate.originalDeposit).toFixed(2),
+        buddyDate: format(new Date(buddyDate.buddyDate * 1000), "yyy-MM-dd"),
+        deposits: parseFloat(userInfo.deposits / 10e17).toFixed(2),
+      })
+        .replace("{", "")
+        .replace("}", ",")
+    );
+    const updated = JSON.parse(dStr);
+    setDownline(updated);
   };
 
-  const OrgItem = ({ child }) => {
-    const subChild = (child.children || []).map((child) => {
+  const OrgItem = ({ child, depth }) => {
+    const subChild = (child.children || []).map((child, index) => {
       return (
-        <ul key={child.id}>
-          <OrgItem child={child} type="child" />
-        </ul>
+        <OrgItem key={index} child={child} depth={depth + 1} type="child" />
       );
     });
 
     return (
       <li key={child.id}>
-        <span className="downline-wallet" onClick={() => getUserData(child.id)}>
+        <div className="downline-wallet" onClick={() => getUserData(child.id)}>
           {child.text}{" "}
-          {child.deposits && `(${child.deposits} - ${child.buddyDate})`}
-        </span>
-        {subChild}
+          {child.originalDeposit && (
+            <div className="card">
+              <div className="card-body">
+                <div>Join date: {child.buddyDate}</div>
+                <div>Original deposit: {child.originalDeposit}</div>
+                <div>Current deposits: {child.deposits}</div>
+                <div>Depth: {depth} </div>
+              </div>
+            </div>
+          )}
+        </div>
+        <ol>{subChild}</ol>
       </li>
     );
   };
 
   const OrgList = ({ org }) => (
-    <ol>
-      {(org.children || []).map((item, index) => (
-        <OrgItem key={index} child={item} />
-      ))}
-    </ol>
+    <>
+      <ul>
+        <OrgItem child={{ ...downline, children: [] }} depth="self" />
+      </ul>
+      <ol>
+        {(org.children || []).map((item, index) => (
+          <OrgItem key={index} child={item} depth={1} />
+        ))}
+      </ol>
+    </>
   );
 
   return (
-    <div className="container main">
+    <div className="container main" style={{ fontSize: "1.5em" }}>
       <div className="page-title">
         <h1>Wallet Downline</h1>
         <h3>for {downline && downline.id}</h3>

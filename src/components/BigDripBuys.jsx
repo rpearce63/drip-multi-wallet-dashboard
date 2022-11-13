@@ -50,7 +50,7 @@ const BigDripBuys = () => {
   }
 
   return (
-    <div style={{ display: "flex" }}>
+    <div className="marquee-wrapper">
       <IconButton
         onClick={(e) => setAnchorEl(e.currentTarget)}
         title="Change Speed"

@@ -23,9 +23,10 @@ const Upline = () => {
     <div className="container main">
       <div className="page-title">
         <h1>Wallet Upline</h1>
+        <h3>* - Next for rewards</h3>
       </div>
 
-      <div className="main">
+      <div className="main" style={{ fontSize: "1.5em" }}>
         {loading ? (
           <div className="loading" />
         ) : (
@@ -41,8 +42,18 @@ const Upline = () => {
             </thead>
             <tbody>
               {uplineData.map((upline, index) => (
-                <tr key={upline.address}>
-                  <td>{index === 0 ? "Self" : index - 1}</td>
+                <tr
+                  key={upline.address}
+                  className={
+                    parseInt(uplineData[0].ref_claim_pos) === index - 1
+                      ? "next-reward"
+                      : ""
+                  }
+                >
+                  <td>
+                    {parseInt(uplineData[0].ref_claim_pos) === index - 1 && "*"}
+                    {index === 0 ? "Self" : index - 1}
+                  </td>
                   <td>
                     <a
                       href={`https://bscscan.com/address/${upline.address}`}
