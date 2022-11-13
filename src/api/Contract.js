@@ -545,6 +545,7 @@ export const getUplineTree = async (address, upline = []) => {
       balanceLevel,
       referrals: userInfo.referrals,
       total_structure: userInfo.total_structure,
+      ref_claim_pos: userInfo.ref_claim_pos,
     },
   ];
   if (uplineAddress.startsWith("0x000")) {
