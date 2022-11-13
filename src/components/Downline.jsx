@@ -59,28 +59,29 @@ const Downline = () => {
     setDownline(updated);
   };
 
-  const OrgItem = ({ child }) => {
-    const subChild = (child.children || []).map((child) => {
+  const OrgItem = ({ child, depth }) => {
+    const subChild = (child.children || []).map((child, index) => {
       return (
-        <ul key={child.id}>
-          <OrgItem child={child} type="child" />
-        </ul>
+        <OrgItem key={index} child={child} depth={depth + 1} type="child" />
       );
     });
 
     return (
       <li key={child.id}>
-        <span className="downline-wallet" onClick={() => getUserData(child.id)}>
+        <div className="downline-wallet" onClick={() => getUserData(child.id)}>
           {child.text}{" "}
           {child.originalDeposit && (
             <div className="card">
-              <div>Join date: {child.buddyDate}</div>
-              <div>Original deposit: {child.originalDeposit}</div>
-              <div>Current deposits: {child.deposits}</div>
+              <div className="card-body">
+                <div>Join date: {child.buddyDate}</div>
+                <div>Original deposit: {child.originalDeposit}</div>
+                <div>Current deposits: {child.deposits}</div>
+                <div>Depth: {depth} </div>
+              </div>
             </div>
           )}
-        </span>
-        {subChild}
+        </div>
+        <ol>{subChild}</ol>
       </li>
     );
   };
@@ -88,7 +89,7 @@ const Downline = () => {
   const OrgList = ({ org }) => (
     <ol>
       {(org.children || []).map((item, index) => (
-        <OrgItem key={index} child={item} />
+        <OrgItem key={index} child={item} depth={1} />
       ))}
     </ol>
   );
