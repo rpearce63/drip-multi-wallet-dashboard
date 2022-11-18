@@ -13,7 +13,7 @@ import {
   DRIP_BUSD_LP_ADDRESS,
 } from "../configs/dripconfig";
 import ERC20_ABI from "../configs/erc20_abi.json";
-
+import faucetReaderAbi from "../configs/faucet-reader-abi";
 import { findFibIndex } from "./utils";
 
 import LRU from "lru-cache";
@@ -552,4 +552,72 @@ export const getUplineTree = async (address, upline = []) => {
     return updatedUpline;
   }
   return getUplineTree(uplineAddress, updatedUpline);
+};
+const fromWei = (n, unit) => Web3.utils.fromWei(n.toString(), unit);
+const parse = (v) => parseFloat(fromWei(v)).toFixed(2);
+
+export const getPlayerStats = async (address) => {
+  const ADDRESS = "0xF93994c76411C3c47bb0AB99835e8593F511b020";
+  const playerContract = new web3.eth.Contract(faucetReaderAbi, ADDRESS);
+  try {
+    const raw = await playerContract.methods
+      .getFullPlayerDetail(address)
+      .call();
+
+    const detail = {};
+    detail.address = address;
+    detail.uplines = raw.uplines.filter(
+      (p) => p !== "0x0000000000000000000000000000000000000000"
+    );
+    detail.br34pBalance = (parseFloat(raw.br34pBalance) / 1e8).toFixed(2);
+    detail.uplinesRewardsAllowed = raw.uplinesRewardsAllowed;
+    detail.claimsAvailable = parse(raw.claimsAvailable);
+    detail.deposits = parse(raw.userStats[0]);
+    detail.payouts = parse(raw.userStats[1]);
+    detail.direct_bonus = parse(raw.userStats[2]);
+    detail.match_bonus = parse(raw.userStats[3]);
+    detail.rewards = (
+      parseFloat(fromWei(raw.userStats[2])) +
+      parseFloat(fromWei(raw.userStats[3]))
+    ).toFixed(2);
+    detail.last_airdrop = parseFloat(raw.userStats[4]);
+    detail.deposit_time = parseFloat(raw.userStats[5]);
+    detail.referrals = parseInt(raw.userStats[6], 10);
+    detail.total_structure = parseInt(raw.userStats[7], 10);
+    detail.airdrops_total = parse(raw.userStats[8]);
+    detail.airdrops_received = parse(raw.userStats[9]);
+    detail.rolls = parse(raw.userStats[10]);
+    detail.max_payouts = parse(raw.userStats[11]);
+    detail.net_deposits = (
+      parseFloat(fromWei(raw.userStats[0])) +
+      parseFloat(fromWei(raw.userStats[10])) +
+      parseFloat(fromWei(raw.userStats[8])) -
+      parseFloat(fromWei(raw.userStats[1]))
+    ).toFixed(2);
+
+    detail.nextUplineRewarded = raw.nextUplineRewarded;
+    detail.bnbBalance = parse(raw.bnbBalance);
+    return detail;
+  } catch (e) {
+    console.error(e.message);
+  }
+};
+
+export const getIndividualStats = async (address) => {
+  const stats = await axios.get(
+    `https://faucetapi.dripnetwork.ca/getFaucetPlayerIndividualStats?address=${address}`
+  );
+  const statsRaw = Object.fromEntries(
+    Object.entries(stats.data).map(([key, value]) => [key, value[0]?.value])
+  );
+  const individualStats = {
+    ...statsRaw,
+    actualClaim: parseFloat(statsRaw.actualClaim).toFixed(2),
+    actualDeposit: parseFloat(statsRaw.actualDeposit).toFixed(2),
+    firstDepositDate: new Date(
+      statsRaw.firstDepositDate * 1000
+    ).toLocaleDateString(),
+  };
+
+  return individualStats;
 };
