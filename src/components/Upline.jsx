@@ -112,13 +112,38 @@ const getMainStats = (detail) => [
   },
 ];
 
+const calculateNextRewarded = (uplineData) => {
+  let refPos = Number(uplineData[0].ref_claim_pos);
+  //console.log("refPos: ", refPos);
+  const justUpline = uplineData.slice(1);
+  //console.log(justUpline.length, justUpline[refPos]);
+  const nextEligibleUpline = loopUpline(refPos, justUpline);
+  return nextEligibleUpline;
+};
+const loopUpline = (refPos, justUpline) => {
+  for (let u = 0; u < 15; u++) {
+    if (u === refPos) {
+      //console.log("looking at ", u);
+      if (justUpline[u].isEligible && justUpline[u].balanceLevel >= u) {
+        //console.log("eligible: ", justUpline[u]);
+        return justUpline[u].address;
+      }
+      refPos += 1;
+      if (refPos === justUpline.length) {
+        refPos = 0;
+        return loopUpline(refPos, justUpline);
+      }
+    }
+  }
+};
+
 const Upline = () => {
   let { buddyId } = useParams();
 
   const [uplineData, setUplineData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [userStats, setUserStats] = useState([]);
-
+  const [nextRewarded, setNextRewarded] = useState(null);
   useEffect(() => {
     const fetchUpline = async () => {
       setLoading(true);
@@ -128,8 +153,10 @@ const Upline = () => {
       const baseStats = await getPlayerStats(buddyId);
       const extendedStats = await getIndividualStats(buddyId);
       const stats = { ...baseStats, ...extendedStats };
-      console.log(stats);
+      //console.log(stats);
       setUserStats(getMainStats(stats));
+
+      setNextRewarded(calculateNextRewarded(upline));
     };
 
     fetchUpline();
@@ -140,6 +167,10 @@ const Upline = () => {
       <div className="page-title">
         <h1>Wallet Upline</h1>
         <h3>* - Next for rewards</h3>
+        <h4>
+          If scheduled upline is not eligible because of negative NDV or br34p
+          level coverage, reward will skip to the next eligible wallet.
+        </h4>
       </div>
       <div className="wallet-stats">
         {userStats.map(({ label, value }, index) => {
@@ -161,8 +192,16 @@ const Upline = () => {
               <tr>
                 <th>Referral Index</th>
                 <th>Address</th>
-                <th>Referral Coverage Depth</th>
-                <th>Net Positive</th>
+                <th>
+                  Referral
+                  <br />
+                  Coverage Depth
+                </th>
+                <th>
+                  NDV/Depth
+                  <br />
+                  Eligible
+                </th>
                 <th>Team</th>
               </tr>
             </thead>
@@ -171,9 +210,7 @@ const Upline = () => {
                 <tr
                   key={upline.address}
                   className={
-                    parseInt(uplineData[0].ref_claim_pos) === index - 1
-                      ? "next-reward"
-                      : ""
+                    upline.address === nextRewarded ? "next-reward" : ""
                   }
                 >
                   <td>
@@ -189,7 +226,11 @@ const Upline = () => {
                     </a>
                   </td>
                   <td>{upline.balanceLevel}</td>
-                  <td>{upline.isEligible ? "Y" : "N"}</td>
+                  <td>
+                    {upline.isEligible && upline.balanceLevel > index
+                      ? "Y"
+                      : "N"}
+                  </td>
                   <td>
                     {upline.referrals}/{upline.total_structure}
                   </td>
