@@ -5,6 +5,7 @@ import {
   getPlayerStats,
   getIndividualStats,
 } from "../api/Contract";
+
 const getMainStats = (detail) => [
   {
     label: "Join date",
@@ -190,7 +191,11 @@ const Upline = () => {
           <table className="table">
             <thead>
               <tr>
-                <th>Referral Index</th>
+                <th>
+                  Referral
+                  <br />
+                  Index
+                </th>
                 <th>Address</th>
                 <th>
                   Referral
@@ -222,8 +227,10 @@ const Upline = () => {
                       href={`https://bscscan.com/address/${upline.address}`}
                       target="_blank noreferrer"
                     >
-                      {upline.address}
+                      <i class="bi bi-box-arrow-up-right"></i>
                     </a>
+                    &nbsp;
+                    <a href={`/upline/${upline.address}`}>{upline.address}</a>
                   </td>
                   <td>{upline.balanceLevel}</td>
                   <td>
