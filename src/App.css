@@ -258,6 +258,12 @@ button {
   .beggar {
     font-size: 10px;
   }
+
+  .wallet-stats {
+    margin: auto;
+    height: 615px !important;
+    
+  }
 }
 
 .table-info {
