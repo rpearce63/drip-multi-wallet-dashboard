@@ -166,11 +166,15 @@ const Upline = () => {
   return (
     <div className="container main">
       <div className="page-title">
-        <h1>Wallet Upline</h1>
+        <h1>Wallet Stats & Upline</h1>
         <h3>* - Next for rewards</h3>
         <h4>
-          If scheduled upline is not eligible because of negative NDV or br34p
-          level coverage, reward will skip to the next eligible wallet.
+          <p>
+            If scheduled upline is not eligible because of negative NDV or br34p
+            level coverage, reward will skip to the next eligible wallet.
+          </p>
+          <p>Click on an upline wallet address to see stats on that wallet.</p>
+          <p>Click external link to view the address on bscscan.</p>
         </h4>
       </div>
       <div className="wallet-stats">
