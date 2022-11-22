@@ -628,6 +628,6 @@ export const getIndividualStats = async (address) => {
 export const calculateWhaleTax = (available, claimed) => {
   const total = claimed / 10e17 + available / 10e17;
   if (total < 10000) return 0;
-  const level = parseFloat(total / 100000 / 2).toFixed(2);
+  const level = parseInt((total / 100000 / 2) * 100);
   return level;
 };
