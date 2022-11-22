@@ -172,9 +172,7 @@ const TableRow = ({
       >
         {convertTokenToUSD(wallet.payouts, dripPrice, showDollarValues)}
       </td>
-      {expandedTable && (
-        <td>{wallet.whaleTax > 0 && wallet.whaleTax * 100 + "%"}</td>
-      )}
+      {expandedTable && <td>{wallet.whaleTax > 0 && wallet.whaleTax + "%"}</td>}
 
       {expandedTable && (
         <>
