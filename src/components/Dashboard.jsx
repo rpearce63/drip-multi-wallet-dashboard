@@ -82,6 +82,7 @@ const Dashboard = () => {
     { label: "Last Action", id: "lastAction" },
     { label: "NDV", id: "ndv" },
     { label: "Claimed", id: "payouts" },
+    { label: "Whale Tax", id: "whaleTax" },
     { label: "Hydrated", id: "r" },
     { label: "Rewarded", id: "direct_bonus" },
     { label: "Max Payout", id: "maxPayout" },
@@ -894,6 +895,7 @@ const Dashboard = () => {
               <th>
                 {convertTokenToUSD(totalClaimed, dripPrice, showDollarValues)}
               </th>
+              {expandedTable && <th></th>}
               {expandedTable && (
                 <th>
                   {convertTokenToUSD(

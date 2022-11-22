@@ -440,6 +440,8 @@ export const fetchWalletData = async (wallet, index) => {
   //console.log("startBlock: " + startBlock);
   //const lastAction = await getLastAction(startBlock - 200000, wallet.addr);
   const dropsBalance = await getReservoirBalance(wallet.addr);
+  const whaleTax = calculateWhaleTax(available, userInfo.payouts);
+
   return {
     index,
     ...userInfo,
@@ -466,6 +468,7 @@ export const fetchWalletData = async (wallet, index) => {
     r,
     dropsBalance,
     referrals: parseInt(userInfo.referrals),
+    whaleTax,
   };
 };
 
@@ -620,4 +623,11 @@ export const getIndividualStats = async (address) => {
   };
 
   return individualStats;
+};
+
+export const calculateWhaleTax = (available, claimed) => {
+  const total = claimed / 10e17 + available / 10e17;
+  if (total < 10000) return 0;
+  const level = parseFloat(total / 100000 / 2).toFixed(2);
+  return level;
 };
