@@ -262,7 +262,6 @@ button {
   .wallet-stats {
     margin: auto;
     height: 615px !important;
-    
   }
 }
 
@@ -654,4 +653,8 @@ span.spinCtrl:after {
 .upline-table {
   font-size: 1.5rem;
   margin-bottom: 5rem;
+}
+
+.whale::after {
+  content: "\1F433";
 }

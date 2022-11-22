@@ -165,12 +165,23 @@ const TableRow = ({
       >
         {formatNumber(wallet.ndv)}
       </td>
-      <td>{convertTokenToUSD(wallet.payouts, dripPrice, showDollarValues)}</td>
+      <td
+        className={
+          wallet.payouts + wallet.available > 10000 ? "whale" : undefined
+        }
+      >
+        {convertTokenToUSD(wallet.payouts, dripPrice, showDollarValues)}
+      </td>
+      {expandedTable && (
+        <td>{wallet.whaleTax > 0 && wallet.whaleTax * 100 + "%"}</td>
+      )}
+
       {expandedTable && (
         <>
           <td>{convertTokenToUSD(wallet.r, dripPrice, showDollarValues)}</td>
         </>
       )}
+
       <td>
         {convertTokenToUSD(wallet.direct_bonus, dripPrice, showDollarValues)}
         {/* /
