@@ -233,9 +233,9 @@ export const getDownline = async (account) => {
     const downline = await axios.get(
       `https://api.drip.community/org/${account}`,
       {
-        timeout: 5000,
-        retry: 2,
-        retryDelay: 1000,
+        timeout: 2000,
+        retry: 1,
+        retryDelay: 500,
       }
     );
     downlineCache.set(account, downline);
