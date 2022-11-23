@@ -242,6 +242,7 @@ export const getDownline = async (account) => {
     return downline;
   } catch (err) {
     console.log(`Error getting downline: ${err.message}`);
+    downlineCache.set(account, {});
     return {};
   }
 };
