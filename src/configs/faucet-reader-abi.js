@@ -1,4 +1,4 @@
-export default [
+const faucetReaderAbi = [
   {
     inputs: [
       {
@@ -54,3 +54,5 @@ export default [
     type: "function",
   },
 ];
+
+export default faucetReaderAbi;

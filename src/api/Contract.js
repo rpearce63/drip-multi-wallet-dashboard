@@ -58,6 +58,10 @@ const options = {
   ttl: 1000 * 60 * 5,
 };
 const cache = new LRU(options);
+const downlineCache = new LRU({
+  max: 500,
+  ttl: 1000 * 60 * 10,
+});
 //console.log("creating new cache");
 const ROLL_HEX = "0xcd5e3c5d";
 const CLAIM_HEX = "0x4e71d92d";
@@ -222,14 +226,23 @@ export const roll = async (account) => {
 };
 
 export const getDownline = async (account) => {
+  if (downlineCache.has(account)) {
+    return downlineCache.get(account);
+  }
   try {
-    return await await axios.get(`https://api.drip.community/org/${account}`, {
-      timeout: 5000,
-      retry: 2,
-      retryDelay: 1000,
-    });
+    const downline = await axios.get(
+      `https://api.drip.community/org/${account}`,
+      {
+        timeout: 2000,
+        retry: 1,
+        retryDelay: 500,
+      }
+    );
+    downlineCache.set(account, downline);
+    return downline;
   } catch (err) {
     console.log(`Error getting downline: ${err.message}`);
+    downlineCache.set(account, {});
     return {};
   }
 };
@@ -474,7 +487,7 @@ export const fetchWalletData = async (wallet, index) => {
 
 export const getAllWalletData = async (myWallets) => {
   const start = new Date();
-  console.log("getting wallet data");
+  //console.log("getting wallet data");
   //const startBlock = await getStartBlock();
   const walletCache = await Promise.all(
     myWallets.map(async (wallet, index) => {

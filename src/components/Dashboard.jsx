@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { getDripPriceData, getAllWalletData } from "../api/Contract";
-
+import { NumberPicker } from "react-widgets/cjs";
 import { CONFIGS_KEY } from "../configs/dripconfig";
 import * as MESSAGES from "../configs/messages";
 
@@ -38,8 +38,8 @@ const Dashboard = () => {
 
   //form configs
   const [flagAmount, setFlagAmount] = useState(true);
-  const [amtWarningLevel] = useState(0.5);
-  const [amtReadyLevel] = useState(1.0);
+  //const [amtWarningLevel, setAmtWarningLevel] = useState(0.5);
+  const [amtReadyLevel, setAmtReadyLevel] = useState(1.0);
   const [flagPct, setFlagPct] = useState(true);
   const [pctWarningLevel] = useState(0.009);
   const [pctReadyLevel] = useState(0.01);
@@ -108,6 +108,7 @@ const Dashboard = () => {
   useEffect(() => {
     const {
       flagAmount = true,
+      amtReadyLevel = 1.0,
       flagLowBnb = true,
       flagPct = true,
       bnbThreshold = 0.05,
@@ -120,6 +121,7 @@ const Dashboard = () => {
     } = JSON.parse(localStorage.getItem(CONFIGS_KEY)) ?? {};
 
     setFlagAmount(() => flagAmount);
+    setAmtReadyLevel(amtReadyLevel);
     setFlagLowBnb(() => flagLowBnb);
     setFlagPct(() => flagPct);
     setBnbThreshold(() => bnbThreshold);
@@ -156,15 +158,6 @@ const Dashboard = () => {
     );
     setWallets(filteredByGroup);
   }, [depositFilter, selectedGroup, fullList]);
-
-  // useEffect(() => {
-  //   if (selectedGroup === "*") {
-  //     setWallets(fullList);
-  //     return;
-  //   }
-  //   const filteredByGroup = fullList.filter((w) => w.group === selectedGroup);
-  //   setWallets(filteredByGroup);
-  // }, [selectedGroup, fullList]);
 
   const fetchPrices = useCallback(async () => {
     const { bnbPrice, dripBnbRatio, br34pPrice } = await getDripPriceData();
@@ -353,7 +346,7 @@ const Dashboard = () => {
           style =
             amount >= amtReadyLevel
               ? "hydrate inverted"
-              : amount >= amtWarningLevel
+              : amount >= amtReadyLevel * 0.9
               ? "prepare inverted"
               : "";
         }
@@ -463,44 +456,45 @@ const Dashboard = () => {
     setDataCopied(true);
   };
 
-  const incrementBnbFlag = () => {
-    setFlagLowBnb(true);
-    let val = parseFloat(bnbThreshold);
-    if (val < 0.1) {
-      setBnbThreshold(
-        parseFloat(parseFloat(val) + parseFloat(0.01)).toFixed(2)
-      );
-    }
-  };
+  // const incrementBnbFlag = () => {
+  //   setFlagLowBnb(true);
+  //   let val = parseFloat(bnbThreshold);
+  //   if (val < 0.1) {
+  //     setBnbThreshold(
+  //       parseFloat(parseFloat(val) + parseFloat(0.01)).toFixed(2)
+  //     );
+  //   }
+  // };
 
-  const decrementBnbFlag = () => {
-    setFlagLowBnb(true);
-    let val = parseFloat(bnbThreshold);
-    if (val > 0.01) {
-      setBnbThreshold(
-        parseFloat(parseFloat(val) - parseFloat(0.01)).toFixed(2)
-      );
-    }
-  };
+  // const decrementBnbFlag = () => {
+  //   setFlagLowBnb(true);
+  //   let val = parseFloat(bnbThreshold);
+  //   if (val > 0.01) {
+  //     setBnbThreshold(
+  //       parseFloat(parseFloat(val) - parseFloat(0.01)).toFixed(2)
+  //     );
+  //   }
+  // };
 
-  const incrementNdvWarning = () => {
-    setFlagLowNdv(true);
-    let val = ndvWarningLevel;
-    if (val < 50) {
-      setNdvWarningLevel(val + 5);
-    }
-  };
+  // const incrementNdvWarning = () => {
+  //   setFlagLowNdv(true);
+  //   let val = ndvWarningLevel;
+  //   if (val < 50) {
+  //     setNdvWarningLevel(val + 5);
+  //   }
+  // };
 
-  const decrementNdvWarning = () => {
-    setFlagLowNdv(true);
-    let val = ndvWarningLevel;
-    if (val > 5) {
-      setNdvWarningLevel(val - 5);
-    }
-  };
+  // const decrementNdvWarning = () => {
+  //   setFlagLowNdv(true);
+  //   let val = ndvWarningLevel;
+  //   if (val > 5) {
+  //     setNdvWarningLevel(val - 5);
+  //   }
+  // };
   useEffect(() => {
     const config = {
       flagAmount,
+      amtReadyLevel,
       flagLowBnb,
       flagPct,
       bnbThreshold,
@@ -515,6 +509,7 @@ const Dashboard = () => {
     localStorage.setItem(CONFIGS_KEY, JSON.stringify(config));
   }, [
     flagAmount,
+    amtReadyLevel,
     flagLowBnb,
     flagPct,
     bnbThreshold,
@@ -601,21 +596,30 @@ const Dashboard = () => {
                         checked={flagAmount}
                         onChange={() => setFlagAmount(!flagAmount)}
                       />
+                      Amount:
+                      <NumberPicker
+                        containerClassName="config-control"
+                        precision={1}
+                        defaultValue={0.5}
+                        step={0.1}
+                        min={0.1}
+                        max={100}
+                        value={amtReadyLevel}
+                        onChange={(value) => setAmtReadyLevel(value)}
+                      />
                       <label
                         className="form-check-label"
                         htmlFor="flagAmountChk"
                       >
-                        Amount -{" "}
-                        <span className="prepare">light green = .5+</span>,{" "}
-                        <span className="hydrate">green = 1+</span>
+                        <span className="prepare">
+                          light green ={" "}
+                          {parseFloat(amtReadyLevel * 0.9).toFixed(1)}+
+                        </span>
+                        ,{" "}
+                        <span className="hydrate">
+                          green = {amtReadyLevel}+
+                        </span>
                       </label>
-                      {/* <ConfigValueSelector 
-                      label="Amount: " decrementAction=
-                      {() => setAmtReadyLevel(amtReadyLevel - 0.1)}
-                      valueThreshold={amtReadyLevel}
-                      incrementAction=
-                      {() => setAmtReadyLevel(amtReadyLevel + 0.1)}
-                      /> */}
                     </div>
                     <div className="form-check">
                       <input
@@ -626,9 +630,10 @@ const Dashboard = () => {
                         onChange={() => setFlagPct(!flagPct)}
                       />
                       <label className="form-check-label" htmlFor="flagPctChk">
-                        Percent -{" "}
-                        <span className="prepare">light green = .9%</span> ,{" "}
-                        <span className="hydrate">green = 1%</span>
+                        <span>Percent: </span>
+                        <span className="prepare">
+                          light green = .9%
+                        </span> , <span className="hydrate">green = 1%</span>
                       </label>
                     </div>
 
@@ -640,32 +645,17 @@ const Dashboard = () => {
                         checked={flagLowBnb}
                         onChange={() => setFlagLowBnb(!flagLowBnb)}
                       />
+                      Low BNB:
+                      <NumberPicker
+                        containerClassName="config-control"
+                        defaultValue={bnbThreshold}
+                        step={0.01}
+                        min={0.01}
+                        max={0.1}
+                        value={parseFloat(bnbThreshold)}
+                        onChange={(value) => setBnbThreshold(value)}
+                      />
                       <label className="form-check-label input-spinner-label">
-                        Low BNB:
-                        <div className="inputSpinner">
-                          <button
-                            type="button"
-                            className="btn btn-outline-secondary"
-                            onClick={decrementBnbFlag}
-                          >
-                            -
-                          </button>
-                          <input
-                            className="inputSpinner-control"
-                            type="number"
-                            value={bnbThreshold}
-                            onChange={() => {}}
-                            size={3}
-                            disabled={true}
-                          />
-                          <button
-                            type="button"
-                            className="btn btn-outline-secondary"
-                            onClick={incrementBnbFlag}
-                          >
-                            +
-                          </button>
-                        </div>
                         <span className="warning"> - yellow</span>
                       </label>
                     </div>
@@ -678,32 +668,17 @@ const Dashboard = () => {
                         checked={flagLowNdv}
                         onChange={() => setFlagLowNdv(!flagLowNdv)}
                       />
+                      <span>Low NDV %:</span>
+                      <NumberPicker
+                        containerClassName="config-control"
+                        defaultValue={ndvWarningLevel}
+                        step={1}
+                        min={1}
+                        max={100}
+                        value={parseInt(ndvWarningLevel)}
+                        onChange={(value) => setNdvWarningLevel(value)}
+                      />
                       <label className="form-check-label input-spinner-label">
-                        Low NDV %:
-                        <div className="inputSpinner">
-                          <button
-                            type="button"
-                            className="btn btn-outline-secondary"
-                            onClick={decrementNdvWarning}
-                          >
-                            -
-                          </button>
-                          <input
-                            className="inputSpinner-control"
-                            type="number"
-                            value={ndvWarningLevel}
-                            onChange={() => {}}
-                            size={2}
-                            disabled={true}
-                          />
-                          <button
-                            type="button"
-                            className="btn btn-outline-secondary"
-                            onClick={incrementNdvWarning}
-                          >
-                            +
-                          </button>
-                        </div>
                         <span className="warning"> - yellow</span>
                       </label>
                     </div>
