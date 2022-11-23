@@ -486,7 +486,7 @@ export const fetchWalletData = async (wallet, index) => {
 
 export const getAllWalletData = async (myWallets) => {
   const start = new Date();
-  console.log("getting wallet data");
+  //console.log("getting wallet data");
   //const startBlock = await getStartBlock();
   const walletCache = await Promise.all(
     myWallets.map(async (wallet, index) => {
