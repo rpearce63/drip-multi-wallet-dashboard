@@ -658,3 +658,26 @@ span.spinCtrl:after {
 .whale::after {
   content: "\1F433";
 }
+
+.config-control {
+  width: min-content;
+  min-height: 0;
+}
+
+.config-control > .rw-widget-input {
+  width: 4rem;
+}
+.config-control svg {
+  font-size: 12px;
+}
+
+.form-check {
+  display: flex;
+  /* justify-content: space-between;
+  width: 28em; */
+}
+
+.form-check > div,
+input {
+  margin: 0 5px;
+}
