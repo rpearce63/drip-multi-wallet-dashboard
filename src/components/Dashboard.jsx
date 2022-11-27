@@ -810,7 +810,10 @@ const Dashboard = () => {
               <th>Totals - {wallets.length}</th>
               <th>
                 {!!wallets.length && (
-                  <div className="form-check form-switch">
+                  <div
+                    className="form-check form-switch"
+                    style={{ display: "table-cell" }}
+                  >
                     <label className="form-check-label">Edit</label>
                     <input
                       className="form-check-input"
