@@ -21,7 +21,7 @@ import LRU from "lru-cache";
 //const DMWDAPI = "https://drip-mw-dashboard-api.glitch.me";
 const BSCSCAN_URL = "https://api.bscscan.com";
 const RESERVOIR_CONTRACT = require("../configs/reservoir_contract.json");
-export const RPC_URL = "https://rpc.ankr.com/bsc"; //"https://bsc-dataseed.binance.org/";
+export const RPC_URL = "https://bsc-dataseed1.binance.org/";
 
 //export const RPC_URL = "https://node.theanimal.farm/";
 const axios = require("axios");
