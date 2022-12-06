@@ -926,49 +926,60 @@ const Dashboard = () => {
           </tbody>
         </table>
 
-        <div className="bottom-controls">
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={saveAddresses}
-            disabled={!addressList.length && !wallets.length}
-          >
-            {addressList.length ? "Save" : "Clear"} List
-          </button>
-          {!!wallets.length && (
+        <div className="bottom-section">
+          <div className="bottom-controls">
             <button
               type="button"
-              style={{ marginLeft: 10 }}
               className="btn btn-primary"
-              onClick={updatedAddresses}
-              disabled={!addressList.length}
+              onClick={saveAddresses}
+              disabled={!addressList.length && !wallets.length}
             >
-              Update List
+              {addressList.length ? "Save" : "Clear"} List
             </button>
-          )}
-          <div>Paste one or more addresses:</div>
-          <div>
-            <textarea
-              className="form-control inverted"
-              id="addressList"
-              rows={10}
-              cols={50}
-              value={addressList}
-              onChange={(e) => setAddressList(e.target.value)}
-            />
-            <div>Or load a saved list of wallets and labels:</div>
-            <div className="file-input-wrapper">
-              <button type="button" className="btn btn-primary btn-file-input">
-                Load backup file
+            {!!wallets.length && (
+              <button
+                type="button"
+                style={{ marginLeft: 10 }}
+                className="btn btn-primary"
+                onClick={updatedAddresses}
+                disabled={!addressList.length}
+              >
+                Update List
               </button>
-              <input
-                className="form-control"
-                type="file"
-                name="file"
-                onChange={changeHandler}
+            )}
+            <div>Paste one or more addresses:</div>
+            <div>
+              <textarea
+                className="form-control inverted"
+                id="addressList"
+                rows={10}
+                cols={50}
+                value={addressList}
+                onChange={(e) => setAddressList(e.target.value)}
               />
+              <div>Or load a saved list of wallets and labels:</div>
+              <div className="file-input-wrapper">
+                <button
+                  type="button"
+                  className="btn btn-primary btn-file-input"
+                >
+                  Load backup file
+                </button>
+                <input
+                  className="form-control"
+                  type="file"
+                  name="file"
+                  onChange={changeHandler}
+                />
+              </div>
             </div>
           </div>
+          {/* <div className="drip-ads card">
+            <div className="card-body">
+              Support the Drip ecosystem by putting some BNB into the Reservoir.
+              Earn BNB as well we supporting the floor price of Drip.
+            </div>
+          </div> */}
         </div>
       </div>
     </div>

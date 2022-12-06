@@ -223,7 +223,16 @@ export const roll = async (account) => {
   console.log(account);
   //const web3 = await getConnection();
   //const faucetContract = await getContract(web3);
-  await faucetContract.methods.roll().send({ from: account });
+  const web3 = new Web3(window.ethereum);
+  const accounts = await web3.eth.getAccounts();
+  console.log("accounts: ", accounts);
+  if (accounts[0].toLowerCase() === account.toLowerCase()) {
+    const contract = new web3.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
+
+    await contract.methods.roll().send({ from: accounts[0] });
+  } else {
+    alert("Switch accounts in MetaMask");
+  }
 };
 
 export const getDownline = async (account) => {

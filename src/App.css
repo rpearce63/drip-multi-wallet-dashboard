@@ -263,6 +263,10 @@ button {
     margin: auto;
     height: 615px !important;
   }
+
+  .bottom-section {
+    flex-direction: column;
+  }
 }
 
 .table-info {
@@ -436,9 +440,17 @@ span.spinCtrl:after {
 .btn {
   max-width: 10rem;
 }
-
+.bottom-section {
+  display: flex;
+}
 .bottom-controls {
   width: 35rem;
+}
+
+.drip-ads {
+  width: 50%;
+  margin: 2em;
+  background-color: white;
 }
 
 .file-input-wrapper {
@@ -680,4 +692,16 @@ span.spinCtrl:after {
 .form-check > div,
 input {
   margin: 0 5px;
+}
+
+.marquee-ad {
+  margin: 0 2em;
+  padding: 0 1em;
+  color: white;
+  background-color: red;
+}
+
+.marquee-ad a {
+  text-decoration-color: white !important;
+  color: white;
 }
