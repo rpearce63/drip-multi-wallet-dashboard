@@ -4,6 +4,7 @@ import { Popover, Slider } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import SettingsApplicationsOutlinedIcon from "@mui/icons-material/SettingsApplicationsOutlined";
 import { getBigBuysFromGlitch } from "../api/Contract";
+import { Link } from "react-router-dom";
 //import _ from "lodash";
 const BigDripBuys = () => {
   const [bigBuys, setBigBuys] = useState([]);
@@ -129,6 +130,13 @@ const BigDripBuys = () => {
             </div>
           ))}
         <span style={{ marginRight: "50px" }}>Updated: {updateTime}</span>
+        <span className="marquee-ad">
+          Deposit 0.5 BNB in the Reservoir today for your chance to Win 1,000
+          DRIP !{" "}
+          <a href="https://t.me/dripreservoir" target="_blank" rel="noreferrer">
+            #StuffTheRez
+          </a>
+        </span>
       </Marquee>
     </div>
   );
