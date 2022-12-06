@@ -448,7 +448,7 @@ span.spinCtrl:after {
 }
 
 .drip-ads {
-  width: 50%;
+  width: min-content;
   margin: 2em;
   background-color: white;
 }
