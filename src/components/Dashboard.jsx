@@ -974,12 +974,17 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
-          {/* <div className="drip-ads card">
+          <div className="drip-ads card">
             <div className="card-body">
-              Support the Drip ecosystem by putting some BNB into the Reservoir.
-              Earn BNB as well we supporting the floor price of Drip.
+              <a
+                href="https://t.me/dripreservoir"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img src="./RezCampaign.jpg" width="500px" />
+              </a>
             </div>
-          </div> */}
+          </div>
         </div>
       </div>
     </div>
