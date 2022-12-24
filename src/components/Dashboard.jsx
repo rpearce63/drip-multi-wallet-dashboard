@@ -974,7 +974,7 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
-          <div className="drip-ads card">
+          {/* <div className="drip-ads card">
             <div className="card-body">
               <a
                 href="https://t.me/dripreservoir"
@@ -984,7 +984,7 @@ const Dashboard = () => {
                 <img src="./RezCampaign.jpg" width="500px" />
               </a>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
