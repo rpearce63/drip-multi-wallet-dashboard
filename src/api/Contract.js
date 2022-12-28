@@ -471,7 +471,7 @@ export const fetchWalletData = async (wallet, index) => {
     deposits: userInfo.deposits / 10e17,
     available: available / 10e17,
     payouts: userInfo.payouts / 10e17,
-    maxPayout: (userInfo.deposits * 3.65) / 10e17,
+    maxPayout: Math.min((userInfo.deposits * 3.65) / 10e17, 100000),
     direct_bonus: referral_bonus / 10e17,
 
     address: wallet.addr,

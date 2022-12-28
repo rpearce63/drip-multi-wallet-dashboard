@@ -32,6 +32,7 @@ const Dashboard = () => {
   const [totalBusd, setTotalBusd] = useState(0);
   const [totalHydrated, setTotalHydrated] = useState(0);
   const [totalNDV, setTotalNDV] = useState(0);
+  const [totalMax, setTotalMax] = useState(0);
   const [totalDrops, setTotalDrops] = useState(0);
   const [sortCol, setSortCol] = useState("index");
   const [sortOrder, setSortOrder] = useState("asc");
@@ -263,6 +264,12 @@ const Dashboard = () => {
     );
     setTotalNDV(() =>
       validWallets.reduce((total, wallet) => total + parseFloat(wallet.ndv), 0)
+    );
+    setTotalMax(() =>
+      validWallets.reduce(
+        (total, wallet) => total + parseFloat(wallet.maxPayout),
+        0
+      )
     );
     setTotalDrops(() =>
       validWallets.reduce(
@@ -892,11 +899,7 @@ const Dashboard = () => {
                 {/* /{convertTokenToUSD(totalMatch, dripPrice, showDollarValues)} */}
               </th>
               <th>
-                {convertTokenToUSD(
-                  totalDeposits * 3.65,
-                  dripPrice,
-                  showDollarValues
-                )}
+                {convertTokenToUSD(totalMax, dripPrice, showDollarValues)}
               </th>
               <th>Directs: {totalTeam}</th>
               <th></th>
