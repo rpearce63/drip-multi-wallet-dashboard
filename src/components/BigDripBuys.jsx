@@ -130,15 +130,13 @@ const BigDripBuys = () => {
             </div>
           ))}
         <span style={{ marginRight: "50px" }}>Updated: {updateTime}</span>
-        {/* <span className="marquee-ad">
-          Deposit 0.5 BNB in the Reservoir between{" "}
-          {new Date(2022, 11, 16).toLocaleDateString()} and{" "}
-          {new Date(2022, 11, 23).toLocaleDateString()} for your chance to Win
-          1,000 DRIP !{" "}
+        <span className="marquee-ad">
+          Deposit BNB in the Reservoir to deepen liquidity, support price, send
+          Drip to the Tax Vault, and earn BNB.{" "}
           <a href="https://t.me/dripreservoir" target="_blank" rel="noreferrer">
-            #StuffTheRez
+            #SupportTheRez
           </a>
-        </span> */}
+        </span>
       </Marquee>
     </div>
   );
