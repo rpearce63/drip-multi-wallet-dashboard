@@ -131,8 +131,8 @@ const BigDripBuys = () => {
           ))}
         <span style={{ marginRight: "50px" }}>Updated: {updateTime}</span>
         <span className="marquee-ad">
-          Deposit BNB in the Reservoir to deepen liquidity, support price, send
-          Drip to the Tax Vault, and earn BNB.{" "}
+          Deposit BNB in the Reservoir to deepen liquidity, support price, and
+          earn BNB.{" "}
           <a href="https://t.me/dripreservoir" target="_blank" rel="noreferrer">
             #SupportTheRez
           </a>
