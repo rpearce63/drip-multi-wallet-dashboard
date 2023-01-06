@@ -327,13 +327,18 @@ export const getJoinDate = async (account) => {
       .then((response) => response.data.result);
 
   const txHistory = await fetchBuddyDate();
-  const buddyDate = txHistory.find((tx) => tx.input?.startsWith(DEPOSIT_HEX));
-  const amount = buddyDate.input.slice(-64);
+  const joinTransaction = txHistory.find((tx) =>
+    tx.input?.startsWith(DEPOSIT_HEX)
+  );
 
-  //console.log(parseInt(amount, 16));
+  const buddyDate = joinTransaction.timeStamp;
+  const amount = web3.utils.hexToNumberString(
+    "0x" + joinTransaction.input.slice(-64)
+  );
+
   return {
-    buddyDate: buddyDate.timeStamp,
-    originalDeposit: web3.utils.fromWei(parseInt(amount, 16).toString()),
+    buddyDate: buddyDate,
+    originalDeposit: web3.utils.fromWei(amount),
   };
 };
 

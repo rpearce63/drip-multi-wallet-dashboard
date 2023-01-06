@@ -231,7 +231,7 @@ const Upline = () => {
                       href={`https://bscscan.com/address/${upline.address}`}
                       target="_blank noreferrer"
                     >
-                      <i class="bi bi-box-arrow-up-right"></i>
+                      <i className="bi bi-box-arrow-up-right"></i>
                     </a>
                     &nbsp;
                     <a href={`/upline/${upline.address}`}>{upline.address}</a>
