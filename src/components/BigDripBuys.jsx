@@ -134,7 +134,7 @@ const BigDripBuys = () => {
           Deposit BNB in the Reservoir to deepen liquidity, support price, and
           earn BNB.{" "}
           <a href="https://t.me/dripreservoir" target="_blank" rel="noreferrer">
-            #SupportTheRez
+            #StuffTheRez
           </a>
         </span>
       </Marquee>
