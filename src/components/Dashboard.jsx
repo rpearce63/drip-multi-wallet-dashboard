@@ -16,6 +16,7 @@ import {
 } from "../api/utils";
 
 import TableRow from "./TableRow";
+import AdBox from "./AdBox";
 
 const Dashboard = () => {
   const [wallets, setWallets] = useState([]);
@@ -977,17 +978,7 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
-          {/* <div className="drip-ads card">
-            <div className="card-body">
-              <a
-                href="https://t.me/dripreservoir"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <img src="./RezCampaign.jpg" width="500px" />
-              </a>
-            </div>
-          </div> */}
+          <AdBox />
         </div>
       </div>
     </div>
