@@ -18,6 +18,7 @@ const Header = () => {
   const [hidePrices, setHidePrices] = useState(true);
   const [taxVaultBalance, setTaxVaultBalance] = useState(0);
   const [tvDir, setTvDir] = useState(0);
+  const [totalSupply, setTotalSupply] = useState(0);
   const BUY_SPREAD = 1.1;
 
   const getVersion = async () => {
@@ -40,6 +41,7 @@ const Header = () => {
       afpPrice,
       dogsPrice,
       taxVaultBalance: nTaxVaultBalance,
+      totalSupply,
     } = await getDripPriceData();
 
     const currentDripPrice = dripBnbRatio * bnbPrice;
@@ -52,6 +54,7 @@ const Header = () => {
     dripPcsPrice > 0 && setDripPcsPrice(() => dripPcsPrice);
     afpPrice > 0 && setPigPrice(() => afpPrice);
     dogsPrice > 0 && setDogsPrice(() => dogsPrice);
+    totalSupply > 0 && setTotalSupply(totalSupply);
 
     setTaxVaultBalance((prevState) => {
       //   console.log(`
@@ -141,7 +144,9 @@ const Header = () => {
           </div>
           <div className="price-group">
             <div className="price stack">
-              <label>DRIP Supply:</label> {convertDrip(tokenBalance)}
+              <label>DRIP Supply:</label> {convertDrip(tokenBalance)} /
+              <br />
+              {convertDrip(totalSupply)}
             </div>
 
             <div className="price stack">
