@@ -4,6 +4,7 @@ import { getDripPriceData } from "../api/Contract";
 import { formatCurrency, convertDrip, getLatestVersion } from "../api/utils";
 import BigDripBuys from "./BigDripBuys";
 import semver from "semver";
+import { Popup } from "semantic-ui-react";
 
 const Header = () => {
   const [dripPrice, setDripPrice] = useState(0);
@@ -144,9 +145,26 @@ const Header = () => {
           </div>
           <div className="price-group">
             <div className="price stack">
-              <label>DRIP Supply:</label> {convertDrip(tokenBalance)} /
-              <br />
-              {convertDrip(totalSupply)}
+              <label>DRIP Supply:</label>{" "}
+              <div className="stack">
+                <span className="tooltip-help">
+                  <Popup
+                    content="Circulating Supply: The amount available to buy from the Fountain."
+                    trigger={<label>CS: </label>}
+                    style={{ marginRight: "1em" }}
+                  />
+
+                  {convertDrip(tokenBalance)}
+                </span>
+                <span className="tooltip-help">
+                  <Popup
+                    content="Total Supply: The total Drip minted."
+                    trigger={<label>TS: </label>}
+                  />
+
+                  {convertDrip(totalSupply)}
+                </span>
+              </div>
             </div>
 
             <div className="price stack">
