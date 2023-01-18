@@ -705,3 +705,9 @@ input {
   text-decoration-color: white !important;
   color: white;
 }
+
+.tooltip-help > label {
+  margin-right: 5px;
+  color: #4183c4;
+  cursor: pointer;
+}

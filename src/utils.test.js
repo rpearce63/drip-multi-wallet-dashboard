@@ -1,4 +1,7 @@
 import { findFibIndex } from "./api/utils";
+import Web3 from "web3";
+
+const web3 = new Web3("");
 
 test("should find the fib index", () => {
   expect(findFibIndex(1)).toBe(0);
@@ -16,4 +19,10 @@ test("should find the fib index", () => {
   expect(findFibIndex(89)).toBe(9);
   expect(findFibIndex(376.999)).toBe(11);
   expect(findFibIndex(1598)).toBe(15);
+});
+
+test("should convert large numbers", () => {
+  const amount = 1000;
+  const wei = web3.utils.toWei(amount + "");
+  expect(web3.utils.fromWei(wei) === 1000);
 });
