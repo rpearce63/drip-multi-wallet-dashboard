@@ -77,7 +77,7 @@ const Dashboard = () => {
     { label: "BR34P / Levels", id: "br34pBalance" },
     { label: "Drip", id: "dripBalance" },
     { label: "BNB", id: "bnbBalance" },
-    { label: "DROPS", id: "dropsBalance" },
+    { label: "DROPS / Daily BNB", id: "dropsBalance" },
     { label: "Available", id: "available" },
     { label: "ROI", id: "roi" },
     { label: "Deposits", id: "deposits" },

@@ -135,7 +135,10 @@ const TableRow = ({
       )}
       {expandedTable && (
         <>
-          <td>{formatNumber(wallet.dropsBalance)}</td>
+          <td>
+            {formatNumber(wallet.dropsBalance)} <br />
+            {wallet.dailyBnb > 0 && wallet.dailyBnb}
+          </td>
         </>
       )}
       <td className={highlightStyleFor("amt", wallet)}>
