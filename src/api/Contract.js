@@ -149,7 +149,23 @@ export const getReservoirBalance = async (account) => {
   const dropsBalance = await reservoirContract.methods
     .balanceOf(account)
     .call();
+
   return dropsBalance / 10e17;
+};
+
+export const getReservoirDailyBnb = async (account) => {
+  const reservoirContract = new web3.eth.Contract(
+    RESERVOIR_CONTRACT,
+    RESERVOIR_ADDRESS
+  );
+
+  const dailyEstimateBnb = await reservoirContract.methods
+    .dailyEstimateBnb(account)
+    .call()
+    .catch((err) => 0);
+  console.log("daily bnb: ", dailyEstimateBnb);
+
+  return dailyEstimateBnb ? parseFloat(dailyEstimateBnb / 10e17).toFixed(4) : 0;
 };
 
 export const getDripPrice = async () => {
@@ -468,6 +484,7 @@ export const fetchWalletData = async (wallet, index) => {
   //console.log("startBlock: " + startBlock);
   //const lastAction = await getLastAction(startBlock - 200000, wallet.addr);
   const dropsBalance = await getReservoirBalance(wallet.addr);
+  const dailyBnb = await getReservoirDailyBnb(wallet.addr);
   const whaleTax = calculateWhaleTax(available, userInfo.payouts);
 
   return {
@@ -495,6 +512,7 @@ export const fetchWalletData = async (wallet, index) => {
     //lastAction,
     r,
     dropsBalance,
+    dailyBnb,
     referrals: parseInt(userInfo.referrals),
     whaleTax,
   };
@@ -584,7 +602,7 @@ export const getUplineTree = async (address, upline = []) => {
   }
   return getUplineTree(uplineAddress, updatedUpline);
 };
-const fromWei = (n, unit) => Web3.utils.fromWei(n.toString(), unit);
+const fromWei = (n) => Web3.utils.fromWei(n.toString());
 const parse = (v) => parseFloat(fromWei(v)).toFixed(2);
 
 export const getPlayerStats = async (address) => {
