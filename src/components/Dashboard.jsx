@@ -814,7 +814,7 @@ const Dashboard = () => {
                   ))}
             </tr>
             <tr className="table-success">
-              <th> </th>
+              <th style={{ color: "red" }}>X</th>
               <th>Totals - {wallets.length}</th>
               <th>
                 {!!wallets.length && (
