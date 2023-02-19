@@ -16,7 +16,7 @@ const Header = () => {
   const [pigPrice, setPigPrice] = useState(0);
   const [dogsPrice, setDogsPrice] = useState(0);
   const [version, setVersion] = useState();
-  const [hidePrices, setHidePrices] = useState(true);
+  const [hidePrices, setHidePrices] = useState(false);
   const [taxVaultBalance, setTaxVaultBalance] = useState(0);
   const [tvDir, setTvDir] = useState(0);
   const [totalSupply, setTotalSupply] = useState(0);
@@ -87,6 +87,16 @@ const Header = () => {
       <div className="container-fluid">
         <div className="navbar-brand">
           <Link to={"/"}>Drip Multi-Wallet Dashboard</Link>
+          {hidePrices && (
+            <div className="drip-price-large-screen">
+              <DripPrices
+                dripPcsPrice={dripPcsPrice}
+                BUY_SPREAD={BUY_SPREAD}
+                dripPrice={dripPrice}
+                hidePrices
+              />
+            </div>
+          )}
           {compareVersions() && (
             <div style={{ marginLeft: 25 }}>
               New version{" "}
@@ -100,6 +110,7 @@ const Header = () => {
               available. Please refresh page to get updates.
             </div>
           )}
+
           <div>
             {/* <span class="reload-icon">&#10227;</span> */}
             <span
@@ -122,7 +133,7 @@ const Header = () => {
           </div>
         )}
 
-        <div className={`prices ${hidePrices && "hidePrices"}`}>
+        <div className={`prices ${hidePrices && "hidePrices collapse"}`}>
           <div className="price-group group-of-3">
             <DripPrices
               dripPcsPrice={dripPcsPrice}
@@ -218,7 +229,11 @@ const Header = () => {
           </div>
         </div>
 
-        <div className="navbar-text text-white beggar">
+        <div
+          className={`navbar-text text-white beggar ${
+            hidePrices && "collapse"
+          }`}
+        >
           If you find this tool useful, feel free to drop me a little Drip or
           BNB: 0x645Dc8a64046FD877b82caB077BF929c299D5A7a{" "}
           <i
@@ -231,7 +246,7 @@ const Header = () => {
           ></i>
         </div>
       </div>
-      <BigDripBuys />
+      {hidePrices || <BigDripBuys />}
     </nav>
   );
 };

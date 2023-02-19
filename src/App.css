@@ -66,6 +66,9 @@ textarea.invert {
   justify-content: space-between;
   width: 100%;
 }
+.navbar-expand-lg {
+  max-width: none !important;
+}
 .page-title {
   padding-top: 3rem;
   margin-bottom: 3rem;
@@ -80,7 +83,6 @@ textarea.invert {
   flex-direction: column;
 }
 .toggle-prices {
-  visibility: hidden;
   cursor: pointer;
   font-size: 32px;
   line-height: 16px;
@@ -94,6 +96,17 @@ textarea.invert {
   color: white;
 }
 
+@media only screen and (min-width: 768px) {
+  .stack-collapsed {
+    flex-direction: row !important;
+  }
+  .drip-dex-collapsed {
+    margin-right: 10px;
+  }
+  .drip-price-small-screen {
+    display: none;
+  }
+}
 /* Small devices (portrait tablets and large phones, 600px and up) */
 @media only screen and (max-width: 700px) {
   .main {
@@ -118,6 +131,9 @@ textarea.invert {
 
   .drip-price-small-screen {
     display: flex;
+  }
+  .drip-price-large-screen {
+    display: none;
   }
 }
 
