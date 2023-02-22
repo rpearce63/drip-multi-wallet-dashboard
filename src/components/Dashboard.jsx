@@ -199,7 +199,7 @@ const Dashboard = () => {
     ];
     setGroups(groups);
     const validWallets = myWallets.filter((w) => web3.utils.isAddress(w.addr));
-    console.log(validWallets);
+
     const walletCache = await getAllWalletData(validWallets);
     setFullList(walletCache);
     setWallets(() => walletCache);
