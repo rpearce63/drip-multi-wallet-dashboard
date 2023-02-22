@@ -18,7 +18,7 @@ import {
 import TableRow from "./TableRow";
 import AdBox from "./AdBox";
 import Web3 from "web3";
-import { invalid } from "moment";
+
 const web3 = new Web3(Web3.givenProvider);
 
 const Dashboard = () => {
