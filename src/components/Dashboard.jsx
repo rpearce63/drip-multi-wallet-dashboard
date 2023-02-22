@@ -957,7 +957,9 @@ const Dashboard = () => {
             {badAddresses.length ? (
               <div className="alert alert-warning">
                 The following addresses are invalid. Please check them for
-                errors.
+                errors. Common issues are spaces in the middle of the address,
+                which will show as two short lines below, and the letter 'O' at
+                the beginning instead of the number 0 (zero)
                 <ul>
                   {badAddresses.map((ba) => (
                     <li key={ba}>{ba}</li>
