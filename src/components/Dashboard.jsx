@@ -198,7 +198,6 @@ const Dashboard = () => {
       ),
     ];
     setGroups(groups);
-    console.log(myWallets);
     const validWallets = myWallets.filter((w) => web3.utils.isAddress(w.addr));
     console.log(validWallets);
     const walletCache = await getAllWalletData(validWallets);
