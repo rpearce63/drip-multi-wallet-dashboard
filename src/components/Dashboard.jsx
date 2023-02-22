@@ -311,7 +311,7 @@ const Dashboard = () => {
     const arrayOfAddresses = [
       ...new Set(
         addressList
-          .split(/[\n,]+/)
+          .split(/[\n, ]+/)
           .filter((addr) => web3.utils.isAddress(addr.trim()))
       ),
     ];
@@ -336,7 +336,7 @@ const Dashboard = () => {
     const arrayOfAddresses = [
       ...new Set(
         addressList
-          .split(/[\n,]+/)
+          .split(/[\n, ]+/)
           .filter((addr) => web3.utils.isAddress(addr.trim()))
       ),
     ];
@@ -359,7 +359,7 @@ const Dashboard = () => {
 
   const checkValidAddresses = (listOfAddresses) => {
     const invalidAddresses = listOfAddresses
-      .split(/[\n,]+/)
+      .split(/[\n, ]+/)
       .filter((addr) => !web3.utils.isAddress(addr.trim()))
       .filter((a) => a.length);
     if (invalidAddresses.length) setBadAddresses([...invalidAddresses]);
