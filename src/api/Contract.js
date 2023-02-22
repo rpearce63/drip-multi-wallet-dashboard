@@ -163,7 +163,6 @@ export const getReservoirDailyBnb = async (account) => {
     .dailyEstimateBnb(account)
     .call()
     .catch((err) => 0);
-  console.log("daily bnb: ", dailyEstimateBnb);
 
   return dailyEstimateBnb ? parseFloat(dailyEstimateBnb / 10e17).toFixed(4) : 0;
 };

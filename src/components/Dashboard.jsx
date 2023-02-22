@@ -17,6 +17,9 @@ import {
 
 import TableRow from "./TableRow";
 import AdBox from "./AdBox";
+import Web3 from "web3";
+
+const web3 = new Web3(Web3.givenProvider);
 
 const Dashboard = () => {
   const [wallets, setWallets] = useState([]);
@@ -37,6 +40,7 @@ const Dashboard = () => {
   const [totalDrops, setTotalDrops] = useState(0);
   const [sortCol, setSortCol] = useState("index");
   const [sortOrder, setSortOrder] = useState("asc");
+  const [badAddresses, setBadAddresses] = useState([]);
 
   //form configs
   const [flagAmount, setFlagAmount] = useState(true);
@@ -194,8 +198,9 @@ const Dashboard = () => {
       ),
     ];
     setGroups(groups);
+    const validWallets = myWallets.filter((w) => web3.utils.isAddress(w.addr));
 
-    const walletCache = await getAllWalletData(myWallets);
+    const walletCache = await getAllWalletData(validWallets);
     setFullList(walletCache);
     setWallets(() => walletCache);
 
@@ -300,9 +305,13 @@ const Dashboard = () => {
       if (!window.confirm("This will clear your current list. Are you sure?"))
         return false;
     }
+    checkValidAddresses(addressList);
+
     const arrayOfAddresses = [
       ...new Set(
-        addressList.split(/[\n,]+/).filter((addr) => addr.trim().length === 42)
+        addressList
+          .split(/[\n, ]+/)
+          .filter((addr) => web3.utils.isAddress(addr.trim()))
       ),
     ];
 
@@ -320,9 +329,14 @@ const Dashboard = () => {
 
   const updatedAddresses = async (e) => {
     e.preventDefault();
+
+    checkValidAddresses(addressList);
+
     const arrayOfAddresses = [
       ...new Set(
-        addressList.split(/[\n,]+/).filter((addr) => addr.trim().length === 42)
+        addressList
+          .split(/[\n, ]+/)
+          .filter((addr) => web3.utils.isAddress(addr.trim()))
       ),
     ];
 
@@ -340,6 +354,14 @@ const Dashboard = () => {
     );
     setAddressList("");
     fetchData();
+  };
+
+  const checkValidAddresses = (listOfAddresses) => {
+    const invalidAddresses = listOfAddresses
+      .split(/[\n, ]+/)
+      .filter((addr) => !web3.utils.isAddress(addr.trim()))
+      .filter((a) => a.length);
+    if (invalidAddresses.length) setBadAddresses([...invalidAddresses]);
   };
 
   const highlightStyleFor = (col, wallet) => {
@@ -932,6 +954,21 @@ const Dashboard = () => {
 
         <div className="bottom-section">
           <div className="bottom-controls">
+            {badAddresses.length ? (
+              <div className="alert alert-warning">
+                The following addresses are invalid. Please check them for
+                errors. Common issues are spaces in the middle of the address,
+                which will show as two short lines below, and the letter 'O' at
+                the beginning instead of the number 0 (zero)
+                <ul>
+                  {badAddresses.map((ba) => (
+                    <li key={ba}>{ba}</li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              <></>
+            )}
             <button
               type="button"
               className="btn btn-primary"
