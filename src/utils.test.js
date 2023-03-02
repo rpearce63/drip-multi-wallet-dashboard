@@ -26,3 +26,12 @@ test("should convert large numbers", () => {
   const wei = web3.utils.toWei(amount + "");
   expect(web3.utils.fromWei(wei) === 1000);
 });
+
+test("should format date", () => {
+  formatDatestamp();
+});
+const formatDatestamp = () => {
+  const date = new Date();
+  const formattedDate = `${date.getFullYear()}_${date.getMonth()}_${date.getDate()}_${date.getTime()}`;
+  console.log(formattedDate);
+};

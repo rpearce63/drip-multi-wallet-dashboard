@@ -57,9 +57,14 @@ export const backupData = () => {
   const element = document.createElement("a");
   const file = new Blob([data], { type: "text/plain" });
   element.href = URL.createObjectURL(file);
-  element.download = "dashboardAddresses.json";
+  element.download = `drip-mw-dashboard-backup-${formatDatestamp()}.json`;
   document.body.appendChild(element); // Required for this to work in FireFox
   element.click();
+};
+const formatDatestamp = () => {
+  const date = new Date();
+  const formattedDate = `${date.getFullYear()}_${date.getMonth()}_${date.getDate()}_${date.getTime()}`;
+  return formattedDate;
 };
 
 export const findFibIndex = (n) => {
