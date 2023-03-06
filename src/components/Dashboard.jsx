@@ -61,8 +61,8 @@ const Dashboard = () => {
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [dataCopied, setDataCopied] = useState(false);
 
-  const [expandedTable, setExpandedTable] = useState(false);
-  const [hideTableControls, setHideTableControls] = useState(true);
+  const [expandedTable, setExpandedTable] = useState(true);
+  const [hideTableControls, setHideTableControls] = useState(false);
   const [showDollarValues, setShowDollarValues] = useState(false);
   const [bnbPrice, setBnbPrice] = useState(0);
   const [dripPrice, setDripPrice] = useState(0);
@@ -991,6 +991,13 @@ const Dashboard = () => {
             <div>Paste one or more addresses:</div>
             <div>
               <textarea
+                placeholder={`Paste addresses one per line or separated by commas. 
+No quotes or other characters. 
+Ex:
+0x1232DeFD265F86452AE72c9411a607BB73CCEe00
+0x123620F3B7f80cEF56e17a307168B17bE7ece914
+0x123461dE02069caa63b367255d39D393a8F2Ee1b
+                `}
                 className="form-control inverted"
                 id="addressList"
                 rows={10}
