@@ -135,6 +135,9 @@ textarea.invert {
   .drip-price-large-screen {
     display: none;
   }
+  .table-options {
+    margin-top: 4em;
+  }
 }
 
 .controls {
