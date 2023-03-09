@@ -371,7 +371,7 @@ const Dashboard = () => {
     switch (col) {
       case "amt":
         if (flagAmount) {
-          amount = parseFloat(convertTokenToUSD(wallet.available));
+          amount = Number(wallet.available);
           //console.log(`amount: ${amount}, amtReadyLevel: ${amtReadyLevel}, ${amount >= amtReadyLevel}`);
           style =
             amount >= amtReadyLevel
