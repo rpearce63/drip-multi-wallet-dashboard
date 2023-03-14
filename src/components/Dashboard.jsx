@@ -794,6 +794,9 @@ const Dashboard = () => {
               </select>
               <PopupHelp message={MESSAGES.GROUP_FILTER_MESSAGE} />
             </div>
+            <button className="btn btn-secondary" onClick={backupData}>
+              Back Up
+            </button>
           </div>
         )}
         <table className="table">
