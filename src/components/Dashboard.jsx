@@ -633,7 +633,7 @@ const Dashboard = () => {
                         defaultValue={0.5}
                         step={0.1}
                         min={0.1}
-                        max={100}
+                        max={1000}
                         value={amtReadyLevel}
                         onChange={(value) => setAmtReadyLevel(value)}
                       />
