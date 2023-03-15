@@ -15,43 +15,47 @@ import {
 import ERC20_ABI from "../configs/erc20_abi.json";
 import faucetReaderAbi from "../configs/faucet-reader-abi";
 import { findFibIndex } from "./utils";
+import RESERVOIR_CONTRACT from "../configs/reservoir_contract.json";
 
 import LRU from "lru-cache";
+import axios from "axios";
+
 //const DMWDAPI = "https://api.drip-mw-dashboard.com";
 //const DMWDAPI = "https://drip-mw-dashboard-api.glitch.me";
+
 const BSCSCAN_URL = "https://api.bscscan.com";
-const RESERVOIR_CONTRACT = require("../configs/reservoir_contract.json");
+
 export const RPC_URL = "https://bsc-dataseed1.binance.org/";
 
 //export const RPC_URL = "https://node.theanimal.farm/";
-const axios = require("axios");
+
 //const rax = require("retry-axios");
 // eslint-disable-next-line no-unused-vars
 //const interceptorId = rax.attach();
-axios.interceptors.response.use(undefined, (err) => {
-  const { config, message } = err;
-  if (!config || !config.retry) {
-    return Promise.reject(err);
-  }
-  // retry while Network timeout or Network Error
-  if (
-    !(
-      message.includes("timeout") ||
-      message.includes("Network Error") ||
-      message.includes("retry")
-    )
-  ) {
-    return Promise.reject(err);
-  }
-  config.retry -= 1;
-  const delayRetryRequest = new Promise((resolve) => {
-    setTimeout(() => {
-      console.log("retry the request", config.url);
-      resolve();
-    }, config.retryDelay || 1000);
-  });
-  return delayRetryRequest.then(() => axios(config));
-});
+// axios.interceptors.response.use(undefined, (err) => {
+//   const { config, message } = err;
+//   if (!config || !config.retry) {
+//     return Promise.reject(err);
+//   }
+//   // retry while Network timeout or Network Error
+//   if (
+//     !(
+//       message.includes("timeout") ||
+//       message.includes("Network Error") ||
+//       message.includes("retry")
+//     )
+//   ) {
+//     return Promise.reject(err);
+//   }
+//   config.retry -= 1;
+//   const delayRetryRequest = new Promise((resolve) => {
+//     setTimeout(() => {
+//       console.log("retry the request", config.url);
+//       resolve();
+//     }, config.retryDelay || 1000);
+//   });
+//   return delayRetryRequest.then(() => axios(config));
+// });
 const flatten = require("flat").flatten;
 
 const options = {

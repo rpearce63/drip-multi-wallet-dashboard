@@ -57,7 +57,7 @@ export const backupData = async () => {
     types: [
       {
         description: "Text file",
-        accept: { "text/plain": [".json", ".txt"] },
+        accept: { "application/json": [".json"] },
       },
     ],
     suggestedName: `drip-mw-dashboard-backup-${formatDatestamp()}.json`,
@@ -70,7 +70,7 @@ export const backupData = async () => {
     writable.close();
   } else {
     const element = document.createElement("a");
-    const file = new Blob([data], { type: "text/plain" });
+    const file = new Blob([data], { type: "application/json" });
     element.href = URL.createObjectURL(file);
     element.download = `drip-mw-dashboard-backup-${formatDatestamp()}.json`;
     document.body.appendChild(element); // Required for this to work in FireFox
