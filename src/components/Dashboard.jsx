@@ -82,7 +82,10 @@ const Dashboard = () => {
     { label: "Drip", id: "dripBalance" },
     { label: "BNB", id: "bnbBalance" },
     { label: "DROPS / Daily BNB", id: "dropsBalance" },
-    { label: "Available", id: "available" },
+    {
+      label: `Available ${showDollarValues ? "(after taxes)" : ""}`,
+      id: "available",
+    },
     { label: "ROI", id: "roi" },
     { label: "Deposits", id: "deposits" },
     { label: "Last Action", id: "lastAction" },
@@ -832,7 +835,11 @@ const Dashboard = () => {
               )}
               {expandedTable && <th>{formatNumber(totalDrops)}</th>}
               <th>
-                {convertTokenToUSD(totalAvailable, dripPrice, showDollarValues)}
+                {convertTokenToUSD(
+                  totalAvailable * (showDollarValues ? 0.81 : 1),
+                  dripPrice,
+                  showDollarValues
+                )}
               </th>
 
               <th>{formatPercent(totalAvailable / totalDeposits)}%</th>

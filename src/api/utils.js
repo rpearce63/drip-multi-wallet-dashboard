@@ -56,7 +56,7 @@ export const backupData = async () => {
   const opts = {
     types: [
       {
-        description: "Text file",
+        description: "Json file",
         accept: { "application/json": [".json"] },
       },
     ],

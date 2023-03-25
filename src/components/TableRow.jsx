@@ -142,7 +142,11 @@ const TableRow = ({
         </>
       )}
       <td className={highlightStyleFor("amt", wallet)}>
-        {convertTokenToUSD(wallet.available, dripPrice, showDollarValues)}
+        {convertTokenToUSD(
+          wallet.available * (showDollarValues ? 0.81 : 1),
+          dripPrice,
+          showDollarValues
+        )}
       </td>
 
       <td className={highlightStyleFor("pct", wallet)}>
