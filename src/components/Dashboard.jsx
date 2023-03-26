@@ -83,7 +83,7 @@ const Dashboard = () => {
     { label: "BNB", id: "bnbBalance" },
     { label: "DROPS / Daily BNB", id: "dropsBalance" },
     {
-      label: `Available ${showDollarValues ? "(after taxes)" : ""}`,
+      label: `Available`,
       id: "available",
     },
     { label: "ROI", id: "roi" },
@@ -835,6 +835,9 @@ const Dashboard = () => {
               )}
               {expandedTable && <th>{formatNumber(totalDrops)}</th>}
               <th>
+                {showDollarValues && (
+                  <span style={{ display: "table" }}>(after tax)</span>
+                )}
                 {convertTokenToUSD(
                   totalAvailable * (showDollarValues ? 0.81 : 1),
                   dripPrice,
