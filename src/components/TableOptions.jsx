@@ -19,12 +19,12 @@ const TableOptions = ({
   return (
     <div className="table-options">
       <div className="table-options-ctrl">
-        <button onClick={copyTableData} className="ui  grey button">
+        <button onClick={copyTableData} className="ui   button">
           <i className={`bi bi-clipboard${dataCopied ? "-check" : ""}`}></i>
           Copy table
         </button>
       </div>
-      <div className="table-options-ctrl ui grey checkbox">
+      <div className="table-options-ctrl ui  checkbox">
         <input
           id="expandedTable"
           type="checkbox"
@@ -33,7 +33,7 @@ const TableOptions = ({
         />
         <label htmlFor="expandedTable">Expanded Table</label>
       </div>
-      <div className="table-options-ctrl ui grey toggle checkbox">
+      <div className="table-options-ctrl ui  toggle checkbox">
         <input
           id="showDollarValues"
           type="checkbox"
@@ -87,7 +87,7 @@ const TableOptions = ({
         </div> */}
         <PopupHelp message={MESSAGES.GROUP_FILTER_MESSAGE} />
       </div>
-      <button className="ui grey button" onClick={backupData}>
+      <button className="ui  button" onClick={backupData}>
         Back Up
       </button>
     </div>
