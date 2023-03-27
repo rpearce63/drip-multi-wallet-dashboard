@@ -13,17 +13,11 @@ const Footer = () => {
       document.querySelectorAll(".inverted").forEach((result) => {
         result.classList.add("invert");
       });
-      document.querySelectorAll(".ui").forEach((result) => {
-        result.classList.add("inverted");
-      });
     } else {
       document.documentElement.classList.remove("dark-mode");
       document.documentElement.classList.add("light-mode");
       document.querySelectorAll(".inverted").forEach((result) => {
         result.classList.remove("invert");
-      });
-      document.querySelectorAll(".ui").forEach((result) => {
-        result.classList.remove("inverted");
       });
     }
   }, [darkMode]);

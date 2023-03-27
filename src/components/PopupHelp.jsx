@@ -1,10 +1,14 @@
 import React from "react";
-import { Button, Popup } from "semantic-ui-react";
+import { Button, Popup, Icon } from "semantic-ui-react";
 
 const PopupHelp = ({ message }) => (
   <Popup
     content={message}
-    trigger={<Button size="mini" icon="help small" />}
+    trigger={
+      <Button>
+        <Icon name="question circle outline" />{" "}
+      </Button>
+    }
     basic
   />
 );

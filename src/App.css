@@ -731,3 +731,15 @@ input {
   color: #4183c4;
   cursor: pointer;
 }
+
+.ui.toggle.checkbox input[type="checkbox"] ~ label::before {
+  background-color: grey !important;
+}
+
+.ui.toggle.checkbox input[type="checkbox"] ~ label::after {
+  background-color: lightgrey !important;
+}
+/* .ui.toggle.checkbox input[type="checkbox"]:checked ~ label::before,
+.ui.toggle.checkbox input[type="checkbox"]:checked:focus ~ label::before {
+  background: grey !important;
+} */
