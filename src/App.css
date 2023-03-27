@@ -349,6 +349,9 @@ span.spinCtrl:after {
 .table-options {
   display: flex;
   justify-content: flex-start;
+  background-color: lightgrey;
+  padding: 10px;
+  width: max-content;
 }
 .table-options-ctrl {
   margin: auto 0;
@@ -732,7 +735,7 @@ input {
   cursor: pointer;
 }
 
-.ui.toggle.checkbox input[type="checkbox"]:not(:checked) ~ label::before {
+/* .ui.toggle.checkbox input[type="checkbox"]:not(:checked) ~ label::before {
   background-color: grey !important;
 }
 
@@ -742,4 +745,4 @@ input {
 .ui.toggle.checkbox input[type="checkbox"]:checked ~ label::before,
 .ui.toggle.checkbox input[type="checkbox"]:checked:focus ~ label::before {
   background: green !important;
-}
+} */
