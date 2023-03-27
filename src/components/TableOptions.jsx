@@ -1,4 +1,5 @@
 import PopupHelp from "./PopupHelp";
+import { Checkbox } from "semantic-ui-react";
 const TableOptions = ({
   copyTableData,
   dataCopied,
@@ -18,40 +19,34 @@ const TableOptions = ({
   return (
     <div className="table-options">
       <div className="table-options-ctrl">
-        <button
-          className="btn-copy btn btn-outline-secondary"
-          onClick={copyTableData}
-        >
+        <button onClick={copyTableData} className="ui  grey button">
           <i className={`bi bi-clipboard${dataCopied ? "-check" : ""}`}></i>
           Copy table
         </button>
       </div>
-      <div className="form-check table-options-ctrl">
+      <div className="table-options-ctrl ui grey checkbox">
         <input
           id="expandedTable"
-          className="form-check-input"
           type="checkbox"
           checked={expandedTable}
           onChange={() => setExpandedTable(!expandedTable)}
         />
-        <label htmlFor="expandedTable" className="form-check-label">
-          Expanded Table
-        </label>
+        <label htmlFor="expandedTable">Expanded Table</label>
       </div>
-      <div className="form-check form-switch table-options-ctrl">
+      <div className="table-options-ctrl ui grey toggle checkbox">
         <input
           id="showDollarValues"
-          className="form-check-input"
           type="checkbox"
           checked={showDollarValues}
           onChange={() => setShowDollarValues(!showDollarValues)}
         />
-        <label htmlFor="showDollarValues" className="form-check-label">
+        <label style={{ fontSize: "larger" }} htmlFor="showDollarValues">
           $
         </label>
       </div>
-      <div className="table-options-ctrl">
-        Filter deposits &gt;{" "}
+
+      <div className="table-options-ctrl ui labeled input">
+        <label className="ui label">Filter deposits &gt; </label>
         <input
           type="text"
           size={10}
@@ -68,9 +63,10 @@ const TableOptions = ({
           }}
         />
       </div>
-      <div className="table-options-ctrl">
-        Group:{" "}
+      <div className="table-options-ctrl ui labeled input">
+        <label className="ui  label">Group</label>
         <select
+          className="ui  dropdown"
           value={selectedGroup}
           onChange={(e) => setSelectedGroup(e.target.value)}
         >
@@ -82,9 +78,16 @@ const TableOptions = ({
             </option>
           ))}
         </select>
+        {/* <div
+          className="ui  icon button"
+          data-tooltip={MESSAGES.GROUP_FILTER_MESSAGE}
+          data-variation="basic"
+        >
+          <i className="question circle outline icon"></i>
+        </div> */}
         <PopupHelp message={MESSAGES.GROUP_FILTER_MESSAGE} />
       </div>
-      <button className="btn btn-secondary" onClick={backupData}>
+      <button className="ui grey button" onClick={backupData}>
         Back Up
       </button>
     </div>
