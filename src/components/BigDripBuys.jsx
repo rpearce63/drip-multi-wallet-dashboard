@@ -124,7 +124,10 @@ const BigDripBuys = () => {
                 target="_blank"
                 rel="noreferrer"
               >
-                {bb.amount} BNB {bb.dripAmt && <span>({bb.dripAmt} Drip)</span>}
+                {bb.amount} BNB{" "}
+                {bb.dripAmt && (
+                  <span>({Number(bb.dripAmt).toLocaleString()} Drip)</span>
+                )}
               </a>{" "}
               on {new Date(bb.timestamp).toLocaleString()} -
             </div>

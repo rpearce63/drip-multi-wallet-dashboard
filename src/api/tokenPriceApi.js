@@ -356,8 +356,8 @@ let pancakeSwapAbi = [
 ];
 
 const Web3 = require("web3");
-const { RPC_URL } = require("./Contract.js");
-
+//const { RPC_URL } = require("./Contract.js");
+const RPC_URL = "https://bsc-dataseed1.binance.org/";
 /*
 Required Node.js
 -- Usage --
