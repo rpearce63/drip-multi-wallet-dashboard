@@ -1,5 +1,4 @@
 import PopupHelp from "./PopupHelp";
-import { Checkbox } from "semantic-ui-react";
 const TableOptions = ({
   copyTableData,
   dataCopied,
