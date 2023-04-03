@@ -26,14 +26,20 @@ const Downline = () => {
   const [downline, setDownline] = useState();
   const { account } = useParams();
   const [depth, setDepth] = useState(0);
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     const fetchDownline = async () => {
-      const downline = (await getDownline(account)).data;
-      //console.log(downline);
-      setDepth(getObjectDepth(downline));
-      setDownline(downline);
+      const { downline, error } = await getDownline(account);
+      if (error) {
+        setIsError(true);
+      } else {
+        setDepth(getObjectDepth(downline));
+        setDownline(downline);
+        setIsError(false);
+      }
     };
+
     fetchDownline();
   }, [account]);
 
@@ -103,13 +109,18 @@ const Downline = () => {
     <div className="container main" style={{ fontSize: "1.5em" }}>
       <div className="page-title">
         <h1>Wallet Downline</h1>
-        <h3>for {downline && downline.id}</h3>
+        <h3>for {account}</h3>
         <div>Depth: {depth}</div>
         <hr />
         <div className="alert alert-info">
           Click wallet address to see Deposits and join date
           <div>Click also copies wallet address to clipboard</div>
         </div>
+        {isError && (
+          <div className="alert alert-warning">
+            Error getting downline data. Please try again later.
+          </div>
+        )}
       </div>
       {downline && (
         <div className="container main">
