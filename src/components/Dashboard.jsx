@@ -203,7 +203,23 @@ const Dashboard = () => {
     setGroups(groups);
     const validWallets = myWallets.filter((w) => web3.utils.isAddress(w.addr));
 
-    const walletCache = await getAllWalletData(validWallets);
+    let walletCache;
+    const storedWalletCache = JSON.parse(
+      localStorage.getItem("dripWalletCache")
+    );
+    if (
+      storedWalletCache &&
+      storedWalletCache.lastSaved > new Date().getTime() - 60000
+    ) {
+      walletCache = storedWalletCache.data;
+    } else {
+      walletCache = await getAllWalletData(validWallets);
+      localStorage.setItem(
+        "dripWalletCache",
+        JSON.stringify({ data: walletCache, lastSaved: new Date().getTime() })
+      );
+    }
+
     setFullList(walletCache);
     setWallets(() => walletCache);
 
@@ -291,6 +307,7 @@ const Dashboard = () => {
   useEffect(() => {
     fetchData();
     const interval = setInterval(() => {
+      localStorage.removeItem("dripWalletCache");
       autoRefresh && fetchData();
     }, 60000);
     const timerInterval = setInterval(() => {
