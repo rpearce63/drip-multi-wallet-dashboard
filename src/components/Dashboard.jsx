@@ -208,7 +208,7 @@ const Dashboard = () => {
       localStorage.getItem("dripWalletCache")
     );
     if (
-      storedWalletCache &&
+      storedWalletCache?.data?.length &&
       storedWalletCache.lastSaved > new Date().getTime() - 60000
     ) {
       walletCache = storedWalletCache.data;
@@ -325,6 +325,7 @@ const Dashboard = () => {
       if (!window.confirm("This will clear your current list. Are you sure?"))
         return false;
     }
+    localStorage.removeItem("dripWalletCache");
     checkValidAddresses(addressList);
 
     const arrayOfAddresses = [
@@ -372,6 +373,7 @@ const Dashboard = () => {
       "dripAddresses",
       JSON.stringify(storedAddresses)
     );
+    localStorage.removeItem("dripWalletCache");
     setAddressList("");
     fetchData();
   };
@@ -443,6 +445,7 @@ const Dashboard = () => {
       }
     });
     window.localStorage.setItem("dripAddresses", JSON.stringify(storedWallets));
+    localStorage.removeItem("dripWalletCache");
     setWallets(newWallets);
   };
 
@@ -468,12 +471,14 @@ const Dashboard = () => {
       }
     });
     window.localStorage.setItem("dripAddresses", JSON.stringify(storedWallets));
+    localStorage.removeItem("dripWalletCache");
     setWallets(newWallets);
   };
 
   const changeHandler = (event) => {
     event.target.files[0].text().then((t) => {
       localStorage.setItem("dripAddresses", t);
+      localStorage.removeItem("dripWalletCache");
     });
     window.location.reload(true);
   };
@@ -577,8 +582,16 @@ const Dashboard = () => {
     }
     const temp = wallets.filter((wallet) => wallet.address !== addr);
     setWallets(temp);
-    const stored = temp.map((t) => ({ addr: t.address, label: t.label }));
+    const stored = temp.map((t) => ({
+      addr: t.address,
+      label: t.label,
+      group: t.group,
+    }));
     localStorage.setItem("dripAddresses", JSON.stringify(stored));
+    localStorage.setItem(
+      "dripWalletCache",
+      JSON.stringify({ data: temp, lastSaved: new Date().getTime() })
+    );
   };
 
   const setSortBy = (col, order) => {
