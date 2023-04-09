@@ -77,13 +77,7 @@ const TableOptions = ({
             </option>
           ))}
         </select>
-        {/* <div
-          className="ui  icon button"
-          data-tooltip={MESSAGES.GROUP_FILTER_MESSAGE}
-          data-variation="basic"
-        >
-          <i className="question circle outline icon"></i>
-        </div> */}
+
         <PopupHelp message={MESSAGES.GROUP_FILTER_MESSAGE} />
       </div>
       <button className="ui  button" onClick={backupData}>
