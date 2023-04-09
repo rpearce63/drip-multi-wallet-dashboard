@@ -15,6 +15,62 @@
 /* #root {
   width: fit-content;
 } */
+
+/* 1 */
+:root {
+  --font-color: #333;
+  --contrast-color: #eee;
+  --background-color: #fff;
+  --link-color: cornflowerblue;
+  --warning-color: yellow;
+  --footer-bg-color: blue;
+  --hydrate-bg-color: green;
+  --background-red: red;
+  --totals-bg: #d1e7dd;
+  --table-options-bg-color: lightgrey;
+  --input-bg-color: #eee;
+  --input-color: #333;
+  --btn-primary-bg: #0d6efd;
+  --totals-color: #333;
+  --table-header-color: #212529;
+  --table-header-bg: #fff;
+}
+
+/* 2 */
+[data-theme="dark"] {
+  --font-color: #eee;
+  --contrast-color: #eee;
+  --background-color: #000;
+  --link-color: lightblue;
+  --warning-color: goldenrod;
+  --footer-bg-color: midnightblue;
+  --hydrate-bg-color: olivedrab;
+  --background-red: darkred;
+  --table-header-bg-color: #333;
+  --table-options-bg-color: rgb(59, 58, 58); 
+  --input-bg-color: #333;
+  --input-color: #eee;
+  --btn-primary-bg: midnightblue;
+  --totals-bg: darkslategray;
+  --totals-color: #eee;
+  --table-header-color:  #fff;
+  --table-header-bg: #212529;
+  /* invert(1) hue-rotate(180deg); */
+}
+
+/* 3 */
+body {
+  transition: background-color 1s, color 1s ease-in-out;
+  background-color: var(--background-color);
+  color: var(--font-color);
+  
+}
+
+/* a {
+  color: var(--link-color);
+} */
+
+
 body {
   font-family: var(--bs-body-font-family) !important;
   line-height: var(--bs-body-line-height) !important;
@@ -22,6 +78,19 @@ body {
 }
 a {
   text-decoration: underline !important;
+}
+.table-light>*>*{
+  color: var(--table-header-color) !important;
+  background-color: var(--table-header-bg) !important;
+}
+
+.table-success th{
+  background-color: var(--totals-bg) !important;
+  color: var(--totals-color) ;
+}
+
+.red {
+  color: red !important;
 }
 .center {
   position: absolute;
@@ -32,35 +101,14 @@ a {
   padding: 10px;
 }
 
-.dark-mode {
-  filter: invert(1) hue-rotate(180deg);
-  transition: filter 0.5s ease-in-out;
-}
-.light-mode {
-  transition: 0.5s ease-in-out;
-}
 
-.invert {
-  filter: invert(1) hue-rotate(180deg);
-  transition: filter 0.5s ease-in-out;
-}
-input.invert,
-textarea.invert {
-  background-color: lightgray;
-}
 .navbar,
 .container {
   display: flex;
   max-width: fit-content;
 }
 
-/* .navbar-brand {
-  padding-left: 20px;
-  display: flex;
-  justify-content: space-between;
-  padding-right: 20px;
-  width: 100%;
-} */
+
 .navbar-brand {
   display: flex;
   justify-content: space-between;
@@ -157,14 +205,15 @@ textarea.invert {
   left: 0;
   bottom: 0;
   right: 0;
-  background-color: blue;
-  color: white;
+  background-color: var(--footer-bg-color);
+  color: var(--font-color);
 }
 .footer-content {
   display: flex;
   justify-content: space-between;
   margin-left: 2rem;
   margin-right: 2rem;
+  color: var(--contrast-color)
 }
 
 .copyright {
@@ -189,8 +238,8 @@ button {
 }
 
 .hydrate {
-  color: white;
-  background-color: green !important;
+  color: #eee;
+  background-color: var(--hydrate-bg-color) !important;
 }
 
 .prepare {
@@ -305,25 +354,11 @@ button {
 }
 
 .warning {
-  background-color: yellow !important;
+  background-color: var(--warning-color) !important;
   margin-left: 5px;
 }
 
-/* span.spinCtrl {
-  position: relative;
-  outline: 1px solid #00f;
-}
 
-span.spinCtrl:after {
-  content: "";
-
-  height: 100%;
-  left: 0;
-  top: 0;
-  position: absolute;
-  outline: 1px solid red; 
-  width: 60%;
-} */
 
 .inputSpinner {
   margin-left: 5px;
@@ -345,17 +380,45 @@ span.spinCtrl:after {
 .downline-wallet {
   cursor: pointer;
 }
+table {
+  color: var(--font-color) !important
+}
+
 
 .table-options {
   display: flex;
   justify-content: flex-start;
-  background-color: lightgrey;
+  background-color: var(--table-options-bg-color);
   padding: 10px;
   width: max-content;
 }
 .table-options-ctrl {
   margin: auto 0;
   margin-right: 1em;
+  /* color: var(--font-color) !important; */
+}
+.table-options-ctrl > label {
+  color: var(--font-color) !important;
+  background-color: var(--table-options-bg-color) !important;
+}
+.table-options-ctrl.ui.toggle.checkbox input:checked~label {
+  color: var(--font-color) !important;
+  font-weight: bold;
+}
+
+.table-options-ctrl > input {
+  color: var(--input-color) !important;
+  background-color: var(--input-bg-color) !important;
+}
+
+.table-options-ctrl > select {
+  color: var(--input-color) !important;
+  background-color: var(--input-bg-color) !important;
+}
+
+.button {
+  background-color: var(--background-color) !important;
+  color: var(--font-color) !important;
 }
 
 .nav-wrap {
@@ -388,7 +451,7 @@ span.spinCtrl:after {
 }
 
 .buy-more-br34p {
-  background-color: red !important;
+  background-color: var(--background-red) !important;
   color: white;
   margin-left: 5px;
 }
@@ -423,7 +486,7 @@ span.spinCtrl:after {
 .tv-up::after {
   content: "\1F680";
   margin-left: 3px;
-  color: green;
+  color: lightgreen;
 }
 
 .tv-down,
@@ -489,14 +552,7 @@ span.spinCtrl:after {
   right: 0;
   opacity: 0;
 }
-/* .file-input-wrapper > .btn-file-input {
-  display: inline-block;
-  width: 200px;
-  height: 40px;
-} */
-/* .file-input-wrapper:hover > .btn-file-input {
-  background-color: #aaa;
-} */
+
 
 /* Absolute Center Spinner */
 .loading {
@@ -662,6 +718,8 @@ span.spinCtrl:after {
 .card {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   transition: 0.3s;
+  color: var(--font-color);
+  background-color: var(--background-color);
   /* width: 100%;
   padding: 2px 16px; */
 }
@@ -721,7 +779,7 @@ input {
   margin: 0 2em;
   padding: 0 1em;
   color: white;
-  background-color: red;
+  background-color: var(--background-red);
 }
 
 .marquee-ad a {
@@ -735,14 +793,10 @@ input {
   cursor: pointer;
 }
 
-/* .ui.toggle.checkbox input[type="checkbox"]:not(:checked) ~ label::before {
-  background-color: grey !important;
+.btn-primary {
+  background-color: var(--btn-primary-bg);
+  border-color: var(--btn-primary-bg);
+  color: #eee;
 }
 
-.ui.toggle.checkbox input[type="checkbox"] ~ label::after {
-  background-color: lightgrey !important;
-}
-.ui.toggle.checkbox input[type="checkbox"]:checked ~ label::before,
-.ui.toggle.checkbox input[type="checkbox"]:checked:focus ~ label::before {
-  background: green !important;
-} */
+

@@ -1,50 +1,45 @@
 import React, { useState } from "react";
-import { useCallback } from "react";
 import { useEffect } from "react";
 import DarkModeToggle from "react-dark-mode-toggle";
 
 const Footer = () => {
-  const [darkMode, setDarkMode] = useState(false);
+  const [theme, setTheme] = useState("light");
 
-  const changeMode = useCallback(() => {
-    if (darkMode) {
-      document.documentElement.classList.add("dark-mode");
-      document.documentElement.classList.remove("light-mode");
-      document.querySelectorAll(".inverted").forEach((result) => {
-        result.classList.add("invert");
-      });
+  const setDark = () => {
+    setTheme("dark");
+    localStorage.setItem("theme", "dark");
+
+    document.documentElement.setAttribute("data-theme", "dark");
+  };
+
+  const setLight = () => {
+    setTheme("light");
+    localStorage.setItem("theme", "light");
+    document.documentElement.setAttribute("data-theme", "light");
+  };
+
+  const toggleTheme = () => {
+    if (theme === "light") {
+      setDark();
     } else {
-      document.documentElement.classList.remove("dark-mode");
-      document.documentElement.classList.add("light-mode");
-      document.querySelectorAll(".inverted").forEach((result) => {
-        result.classList.remove("invert");
-      });
+      setLight();
     }
-  }, [darkMode]);
+  };
 
   useEffect(() => {
-    const configs = JSON.parse(localStorage.getItem("darkMode")) ?? {};
-    setDarkMode(configs.darkMode);
+    let storedTheme = localStorage.getItem("theme");
+    const darkMode = JSON.parse(localStorage.getItem("darkMode"));
+    if (!storedTheme && darkMode)
+      storedTheme = darkMode.darkMode ? "dark" : "light";
+    localStorage.removeItem("darkMode");
+    const prefersDark =
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+    const defaultDark =
+      storedTheme === "dark" || (storedTheme === null && prefersDark);
+    defaultDark && setDark();
   }, []);
-
-  useEffect(() => {
-    const configs = JSON.parse(localStorage.getItem("darkMode")) ?? {};
-    configs.darkMode = darkMode;
-
-    localStorage.setItem("darkMode", JSON.stringify(configs));
-    changeMode();
-
-    //let counter = 10;
-
-    const interval = setInterval(() => {
-      changeMode();
-
-      //if (counter-- < 1) {
-      // clearInterval(interval);
-      //}
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [darkMode, changeMode]);
 
   return (
     <footer id="footer" className="page-footer font-small blue inverted">
@@ -64,7 +59,11 @@ const Footer = () => {
             {process.env.REACT_APP_VERSION}
           </a>
         </div>
-        <DarkModeToggle onChange={setDarkMode} checked={darkMode} size={40} />{" "}
+        <DarkModeToggle
+          onChange={toggleTheme}
+          checked={theme === "dark"}
+          size={40}
+        />{" "}
       </div>
     </footer>
   );
