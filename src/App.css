@@ -79,6 +79,9 @@ body {
 a {
   text-decoration: underline !important;
 }
+th, td {
+  border-bottom-width: 0px !important;
+}
 .table-light>*>*{
   color: var(--table-header-color) !important;
   background-color: var(--table-header-bg) !important;
