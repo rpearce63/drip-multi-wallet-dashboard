@@ -21,19 +21,20 @@
   --monica-blue: rgb(0, 0, 33.15);
   --mickey-yellow: #f9d70b;
   --mickey-red: #da0f10;
+  --donald-duck-blue: #2d7eb6;
   --font-color: #333;
   --contrast-color: #eee;
   --background-color: #fff;
-  --link-color: cornflowerblue;
+  --link-color: var(--donald-duck-blue);
   --warning-color: var(--mickey-yellow);
-  --footer-bg-color: blue;
+  --footer-bg-color: var(--donald-duck-blue);
   --hydrate-bg-color: green;
   --background-red: var(--mickey-red);
   --totals-bg: #d1e7dd;
   --table-options-bg-color: lightgrey;
   --input-bg-color: #eee;
   --input-color: #333;
-  --btn-primary-bg: #0d6efd;
+  --btn-primary-bg: var(--donald-duck-blue);
   --totals-color: #333;
   --table-header-color: #212529;
   --table-header-bg: #fff;
@@ -44,7 +45,7 @@
   --font-color: #eee;
   --contrast-color: #121212;
   --background-color: var(--monica-blue);
-  --link-color: lightblue;
+  --link-color: var(--donald-duck-blue);
   --warning-color: var(--mickey-yellow);
   --footer-bg-color: midnightblue;
   --hydrate-bg-color: green;
@@ -53,7 +54,7 @@
   --table-options-bg-color: rgb(59, 58, 58);
   --input-bg-color: #333;
   --input-color: #eee;
-  --btn-primary-bg: midnightblue;
+  --btn-primary-bg: var(--donald-duck-blue);
   --totals-bg: darkslategray;
   --totals-color: #eee;
   --table-header-color: #fff;
@@ -68,9 +69,9 @@ body {
   color: var(--font-color);
 }
 
-/* a {
+a {
   color: var(--link-color);
-} */
+}
 
 body {
   font-family: var(--bs-body-font-family) !important;
@@ -216,6 +217,10 @@ td {
   justify-content: space-between;
   margin-left: 2rem;
   margin-right: 2rem;
+  color: #eee;
+}
+
+.footer-content a {
   color: #eee;
 }
 
