@@ -18,19 +18,23 @@
 
 /* 1 */
 :root {
+  --monica-blue: rgb(0, 0, 33.15);
+  --mickey-yellow: #f9d70b;
+  --mickey-red: #da0f10;
+  --donald-duck-blue: #2d7eb6;
   --font-color: #333;
   --contrast-color: #eee;
   --background-color: #fff;
-  --link-color: cornflowerblue;
-  --warning-color: yellow;
-  --footer-bg-color: blue;
+  --link-color: var(--donald-duck-blue);
+  --warning-color: var(--mickey-yellow);
+  --footer-bg-color: var(--donald-duck-blue);
   --hydrate-bg-color: green;
-  --background-red: red;
+  --background-red: var(--mickey-red);
   --totals-bg: #d1e7dd;
   --table-options-bg-color: lightgrey;
   --input-bg-color: #eee;
   --input-color: #333;
-  --btn-primary-bg: #0d6efd;
+  --btn-primary-bg: var(--donald-duck-blue);
   --totals-color: #333;
   --table-header-color: #212529;
   --table-header-bg: #fff;
@@ -39,21 +43,21 @@
 /* 2 */
 [data-theme="dark"] {
   --font-color: #eee;
-  --contrast-color: #eee;
-  --background-color: #000;
-  --link-color: lightblue;
-  --warning-color: goldenrod;
+  --contrast-color: #121212;
+  --background-color: var(--monica-blue);
+  --link-color: var(--donald-duck-blue);
+  --warning-color: var(--mickey-yellow);
   --footer-bg-color: midnightblue;
-  --hydrate-bg-color: olivedrab;
-  --background-red: darkred;
+  --hydrate-bg-color: green;
+  --background-red: var(--mickey-red);
   --table-header-bg-color: #333;
-  --table-options-bg-color: rgb(59, 58, 58); 
+  --table-options-bg-color: rgb(59, 58, 58);
   --input-bg-color: #333;
   --input-color: #eee;
-  --btn-primary-bg: midnightblue;
+  --btn-primary-bg: var(--donald-duck-blue);
   --totals-bg: darkslategray;
   --totals-color: #eee;
-  --table-header-color:  #fff;
+  --table-header-color: #fff;
   --table-header-bg: #212529;
   /* invert(1) hue-rotate(180deg); */
 }
@@ -63,13 +67,11 @@ body {
   transition: background-color 1s, color 1s ease-in-out;
   background-color: var(--background-color);
   color: var(--font-color);
-  
 }
 
-/* a {
+a {
   color: var(--link-color);
-} */
-
+}
 
 body {
   font-family: var(--bs-body-font-family) !important;
@@ -79,17 +81,18 @@ body {
 a {
   text-decoration: underline !important;
 }
-th, td {
+th,
+td {
   border-bottom-width: 0px !important;
 }
-.table-light>*>*{
+.table-light > * > * {
   color: var(--table-header-color) !important;
   background-color: var(--table-header-bg) !important;
 }
 
-.table-success th{
+.table-success th {
   background-color: var(--totals-bg) !important;
-  color: var(--totals-color) ;
+  color: var(--totals-color);
 }
 
 .red {
@@ -104,13 +107,11 @@ th, td {
   padding: 10px;
 }
 
-
 .navbar,
 .container {
   display: flex;
   max-width: fit-content;
 }
-
 
 .navbar-brand {
   display: flex;
@@ -209,14 +210,18 @@ th, td {
   bottom: 0;
   right: 0;
   background-color: var(--footer-bg-color);
-  color: var(--font-color);
+  color: #eee;
 }
 .footer-content {
   display: flex;
   justify-content: space-between;
   margin-left: 2rem;
   margin-right: 2rem;
-  color: var(--contrast-color)
+  color: #eee;
+}
+
+.footer-content a {
+  color: #eee;
 }
 
 .copyright {
@@ -247,7 +252,7 @@ button {
 
 .prepare {
   background-color: yellowgreen !important;
-  color: black;
+  color: #121212;
 }
 
 .blinking {
@@ -358,10 +363,9 @@ button {
 
 .warning {
   background-color: var(--warning-color) !important;
+  color: #121212 !important;
   margin-left: 5px;
 }
-
-
 
 .inputSpinner {
   margin-left: 5px;
@@ -384,9 +388,8 @@ button {
   cursor: pointer;
 }
 table {
-  color: var(--font-color) !important
+  color: var(--font-color) !important;
 }
-
 
 .table-options {
   display: flex;
@@ -404,7 +407,7 @@ table {
   color: var(--font-color) !important;
   background-color: var(--table-options-bg-color) !important;
 }
-.table-options-ctrl.ui.toggle.checkbox input:checked~label {
+.table-options-ctrl.ui.toggle.checkbox input:checked ~ label {
   color: var(--font-color) !important;
   font-weight: bold;
 }
@@ -555,7 +558,6 @@ table {
   right: 0;
   opacity: 0;
 }
-
 
 /* Absolute Center Spinner */
 .loading {
@@ -801,5 +803,3 @@ input {
   border-color: var(--btn-primary-bg);
   color: #eee;
 }
-
-
