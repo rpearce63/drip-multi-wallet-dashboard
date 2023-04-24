@@ -267,8 +267,8 @@ export const getDownline = async (account) => {
         retryDelay: 500,
       }
     );
-    downlineCache.set(account, downline);
-    return { downline };
+    downlineCache.set(account, downline.data);
+    return { downline: downline.data };
   } catch (err) {
     console.log(`Error getting downline for ${account}: ${err.message}`);
     downlineCache.delete(account);
