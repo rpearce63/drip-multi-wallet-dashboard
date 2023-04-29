@@ -255,9 +255,9 @@ export const roll = async (account) => {
 };
 
 export const getDownline = async (account) => {
-  if (downlineCache.has(account)) {
-    return downlineCache.get(account);
-  }
+  // if (downlineCache.has(account)) {
+  //   return downlineCache.get(account);
+  // }
   try {
     const downline = await axios.get(
       `https://api.drip.community/org/${account}`,
