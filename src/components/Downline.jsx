@@ -23,7 +23,7 @@ function getObjectDepth(obj) {
 }
 
 const Downline = () => {
-  const [downline, setDownline] = useState();
+  const [downline, setDownline] = useState({});
   const { account } = useParams();
   const [depth, setDepth] = useState(0);
   const [isError, setIsError] = useState(false);
