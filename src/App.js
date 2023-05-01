@@ -15,7 +15,7 @@ const App = () => (
       <Route path="/upline/:buddyId" element={<Upline />} />
       <Route path="/downline/:account" element={<Downline />} />
       <Route index element={<Dashboard />}></Route>
-      <Route path="/tokens" element={<WalletTokens />} />
+      <Route path="/tokens/:account" element={<WalletTokens />} />
     </Routes>
     <Footer />
   </Router>

@@ -139,10 +139,14 @@ export const getBnbBalance = async (account) => {
   return balance / 10e17;
 };
 
-export const getTokenBalance = async (account, tokenAddress) => {
+export const getTokenBalance = async (
+  account,
+  tokenAddress,
+  tokenDecimal = 18
+) => {
   const tokenContract = new web3.eth.Contract(BASIC_TOKEN_ABI, tokenAddress);
   const tokenBalance = await tokenContract.methods.balanceOf(account).call();
-  return tokenBalance / 10e17;
+  return Number(tokenBalance / Math.pow(10, tokenDecimal)).toFixed(6);
 };
 
 export const getReservoirBalance = async (account) => {
@@ -553,14 +557,17 @@ export async function getTokenInfo(addressOfToken) {
 }
 
 export const getWalletTokens = async (address) => {
-  const response = await axios.get(
-    "https://api.bscscan.com/api?module=account&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY&action=tokentx&address=0x1ff661243cb97384102a69a466c887b4cC12d72a&startblock=0&endblock=999999999&sort=asc"
-  );
+  const response = await axios
+    .get(
+      `https://api.bscscan.com/api?module=account&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY&action=tokentx&address=${address}&startblock=0&endblock=999999999&sort=asc`
+    )
+    .catch((err) => console.log(err.message));
   const allTokens = response.data;
   const tokens = allTokens.result
     .map((tx) => ({
       tokenSymbol: tx.tokenSymbol,
       contractAddress: tx.contractAddress,
+      tokenDecimal: tx.tokenDecimal,
     }))
     .filter((token) => !token.tokenSymbol.includes("."));
   let symbols = [];
@@ -568,20 +575,23 @@ export const getWalletTokens = async (address) => {
   tokens.forEach((token) => {
     if (!symbols.includes(token.tokenSymbol)) {
       symbols.push(token.tokenSymbol);
-      uniq.push(token);
+      uniq.push({ ...token, count: 1 });
+    } else {
+      uniq = uniq.map((u) =>
+        u.tokenSymbol === token.tokenSymbol ? { ...u, count: u.count + 1 } : u
+      );
     }
   });
   let tokensWithBalance = [];
   for (const token of uniq) {
     const tokenBalance = await getTokenBalance(
-      web3,
       address,
-      token.contractAddress
+      token.contractAddress,
+      token.tokenDecimal
     );
     tokensWithBalance.push({ ...token, tokenBalance });
   }
-
-  return tokensWithBalance;
+  return tokensWithBalance.sort((a, b) => b.count - a.count);
 };
 
 export const getUplineTree = async (address, upline = []) => {
