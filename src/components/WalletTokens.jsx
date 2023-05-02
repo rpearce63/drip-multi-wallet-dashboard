@@ -31,7 +31,11 @@ const WalletTokens = () => {
         method: "eth_requestAccounts",
       });
       if (connectedAccounts[0].toLowerCase() !== account.toLowerCase()) {
-        alert("please switch accounts");
+        alert(
+          "Metamask is not connected to the selected account. Please switch accounts in Metamask and try again."
+        );
+        document.getElementById(e.target.id).checked = false;
+
         return false;
       }
       await window.ethereum.request({
@@ -59,8 +63,14 @@ const WalletTokens = () => {
         <div className="alert alert-info">
           Select the token you want to add to your wallet. The list shows the
           balance of each token and the number of transactions for each token,
-          so the most used are likely ones you want. Once you select the disired
+          so the most used are likely ones you want. Once you select the desired
           token, you will be prompted to approve that token in MetaMask.
+        </div>
+        <div className="alert alert-warning">
+          Be careful of unknown tokens. Scammers will often send tokens to your
+          wallet tempting you to try to sell them. That can result in giving
+          that contract permission to spend unlimited amounts of your other main
+          tokens, like BUSD or BNB. Just ignore tokens you don't recognize.{" "}
         </div>
 
         <FormGroup>
@@ -74,6 +84,7 @@ const WalletTokens = () => {
                 <FormControlLabel
                   control={
                     <Checkbox
+                      id={token.contractAddress}
                       value={token.contractAddress}
                       onChange={(e) => updateTokenList(e)}
                       sx={{
