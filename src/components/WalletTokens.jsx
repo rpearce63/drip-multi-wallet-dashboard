@@ -9,22 +9,23 @@ const WalletTokens = () => {
   const { account } = useParams();
   const [tokens, setTokens] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  const fetchTokens = async () => {
-    setLoading(true);
-    const tokens = await getWalletTokens(account);
-    setLoading(false);
-    setTokens(tokens);
-  };
+  const [selectedTokens, setSelectedTokens] = useState([]);
 
   useEffect(() => {
+    const fetchTokens = async () => {
+      setLoading(true);
+      const tokens = await getWalletTokens(account);
+      setLoading(false);
+      setTokens(tokens);
+    };
     fetchTokens();
-  }, []);
+  }, [account]);
 
   const updateTokenList = async (e) => {
     const { checked } = e.target;
     if (!checked) return;
     const tokenAddress = e.target.value;
+    setSelectedTokens((prev) => [...prev, tokenAddress]);
     const tokenToAdd = tokens.find((t) => t.contractAddress === tokenAddress);
     try {
       const connectedAccounts = await window.ethereum.request({
@@ -34,8 +35,7 @@ const WalletTokens = () => {
         alert(
           "Metamask is not connected to the selected account. Please switch accounts in Metamask and try again."
         );
-        document.getElementById(e.target.id).checked = false;
-
+        setSelectedTokens((prev) => prev.map((t) => !t === tokenAddress));
         return false;
       }
       await window.ethereum.request({
@@ -52,6 +52,7 @@ const WalletTokens = () => {
       });
     } catch (err) {
       console.log(err.message);
+      setSelectedTokens((prev) => prev.map((t) => !t === tokenAddress));
     }
   };
 
@@ -86,6 +87,7 @@ const WalletTokens = () => {
                     <Checkbox
                       id={token.contractAddress}
                       value={token.contractAddress}
+                      checked={selectedTokens.includes(token.contractAddress)}
                       onChange={(e) => updateTokenList(e)}
                       sx={{
                         color: "white",
