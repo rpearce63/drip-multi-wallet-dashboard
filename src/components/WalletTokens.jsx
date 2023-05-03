@@ -25,7 +25,7 @@ const WalletTokens = () => {
     const { checked } = e.target;
     if (!checked) return;
     const tokenAddress = e.target.value;
-    setSelectedTokens((prev) => [...prev, tokenAddress]);
+    setSelectedTokens([...selectedTokens, tokenAddress]);
     const tokenToAdd = tokens.find((t) => t.contractAddress === tokenAddress);
     try {
       const connectedAccounts = await window.ethereum.request({
@@ -35,7 +35,7 @@ const WalletTokens = () => {
         alert(
           "Metamask is not connected to the selected account. Please switch accounts in Metamask and try again."
         );
-        setSelectedTokens((prev) => prev.map((t) => !t === tokenAddress));
+        setSelectedTokens(selectedTokens.filter((t) => t !== tokenAddress));
         return false;
       }
       await window.ethereum.request({
@@ -52,7 +52,7 @@ const WalletTokens = () => {
       });
     } catch (err) {
       console.log(err.message);
-      setSelectedTokens((prev) => prev.map((t) => !t === tokenAddress));
+      setSelectedTokens(selectedTokens.filter((t) => t !== tokenAddress));
     }
   };
 
