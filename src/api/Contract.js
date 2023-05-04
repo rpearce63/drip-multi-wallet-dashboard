@@ -559,9 +559,13 @@ export async function getTokenInfo(addressOfToken) {
 export const getWalletTokens = async (address) => {
   const response = await axios
     .get(
-      `https://api.bscscan.com/api?module=account&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY&action=tokentx&address=${address}&startblock=0&endblock=999999999&sort=asc`
+      `https://api.bscscan.com/api?module=account&apikey=9Y2EB28QQ14REAGZCK56PY2P5REW2NQGIY&action=tokentx&address=${address}&startblock=0&endblock=999999999&sort=asc`,
+      { timeout: 5000 }
     )
-    .catch((err) => console.log(err.message));
+    .catch((err) => {
+      console.log(err.message);
+      throw err;
+    });
   const allTokens = response.data;
   const tokens = allTokens.result
     .map((tx) => ({
