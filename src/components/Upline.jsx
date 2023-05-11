@@ -154,7 +154,6 @@ const Upline = () => {
       const baseStats = await getPlayerStats(buddyId);
       const extendedStats = await getIndividualStats(buddyId);
       const stats = { ...baseStats, ...extendedStats };
-      //console.log(stats);
       setUserStats(getMainStats(stats));
 
       setNextRewarded(calculateNextRewarded(upline));
@@ -241,7 +240,9 @@ const Upline = () => {
                   </td>
                   <td>{upline.balanceLevel}</td>
                   <td>
-                    {upline.isEligible && upline.balanceLevel > index
+                    {upline.isEligible &&
+                    upline.balanceLevel > 0 &&
+                    upline.balanceLevel >= index
                       ? "Y"
                       : "N"}
                   </td>
