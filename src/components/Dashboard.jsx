@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { getDripPriceData, getAllWalletData } from "../api/Contract";
 import { NumberPicker } from "react-widgets/cjs";
 import { CONFIGS_KEY } from "../configs/dripconfig";
@@ -70,6 +70,10 @@ const Dashboard = () => {
   const [showLastAction, setShowLastAction] = useState(true);
   const [timer, setTimer] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [loadingError, setLoadingError] = useState(false);
+
+  const loadingRef = useRef(loading);
+  const timeoutRef = useRef();
 
   const TABLE_HEADERS = [
     { label: "#", id: "index" },
@@ -113,6 +117,8 @@ const Dashboard = () => {
     { label: "Team", id: "referrals" },
     { label: "Ref Pos", id: "ref_claim_pos" },
   ];
+
+  const REFRESH_INTERVAL = 120000;
 
   useEffect(() => {
     const {
@@ -176,8 +182,31 @@ const Dashboard = () => {
     setBr34pPrice(() => br34pPrice);
   }, []);
 
+  useEffect(() => {
+    loadingRef.current = loading;
+  }, [loading]);
+
+  useEffect(() => {
+    if (!loading) {
+      setLoadingError(false);
+    } else {
+      timeoutRef.current = setTimeout(() => {
+        if (loadingRef.current) {
+          setLoadingError(true);
+        }
+        // setLoading(false);
+      }, 10000);
+    }
+
+    return () => {
+      clearTimeout(timeoutRef.current);
+    };
+  }, [loading]);
+
   const fetchData = useCallback(async () => {
-    setTimer(60);
+    console.log("fetching data");
+    setLoading(true);
+    setTimer(REFRESH_INTERVAL / 1000);
 
     let storedWallets = JSON.parse(
       window.localStorage.getItem("dripAddresses")
@@ -208,12 +237,16 @@ const Dashboard = () => {
       localStorage.getItem("dripWalletCache")
     );
     if (
-      storedWalletCache?.data?.length &&
-      storedWalletCache.lastSaved > new Date().getTime() - 60000
+      storedWalletCache?.data?.length
+      // &&
+      // storedWalletCache.lastSaved > new Date().getTime() - 60000
     ) {
       walletCache = storedWalletCache.data;
     } else {
+      const start = new Date();
       walletCache = await getAllWalletData(validWallets);
+      const end = new Date();
+      console.log(`got wallet data in ${(end - start) / 1000} seconds`);
       localStorage.setItem(
         "dripWalletCache",
         JSON.stringify({ data: walletCache, lastSaved: new Date().getTime() })
@@ -309,7 +342,7 @@ const Dashboard = () => {
     const interval = setInterval(() => {
       localStorage.removeItem("dripWalletCache");
       autoRefresh && fetchData();
-    }, 60000);
+    }, REFRESH_INTERVAL);
     const timerInterval = setInterval(() => {
       autoRefresh && setTimer((timer) => timer - 1);
     }, 1000);
@@ -511,41 +544,6 @@ const Dashboard = () => {
     setDataCopied(true);
   };
 
-  // const incrementBnbFlag = () => {
-  //   setFlagLowBnb(true);
-  //   let val = parseFloat(bnbThreshold);
-  //   if (val < 0.1) {
-  //     setBnbThreshold(
-  //       parseFloat(parseFloat(val) + parseFloat(0.01)).toFixed(2)
-  //     );
-  //   }
-  // };
-
-  // const decrementBnbFlag = () => {
-  //   setFlagLowBnb(true);
-  //   let val = parseFloat(bnbThreshold);
-  //   if (val > 0.01) {
-  //     setBnbThreshold(
-  //       parseFloat(parseFloat(val) - parseFloat(0.01)).toFixed(2)
-  //     );
-  //   }
-  // };
-
-  // const incrementNdvWarning = () => {
-  //   setFlagLowNdv(true);
-  //   let val = ndvWarningLevel;
-  //   if (val < 50) {
-  //     setNdvWarningLevel(val + 5);
-  //   }
-  // };
-
-  // const decrementNdvWarning = () => {
-  //   setFlagLowNdv(true);
-  //   let val = ndvWarningLevel;
-  //   if (val > 5) {
-  //     setNdvWarningLevel(val - 5);
-  //   }
-  // };
   useEffect(() => {
     const config = {
       flagAmount,
@@ -607,7 +605,7 @@ const Dashboard = () => {
             <div
               style={{
                 backgroundColor: "green",
-                width: `${timer}rem`,
+                width: `${(timer - Math.log2(timer)) / 2}rem`,
                 height: 2,
                 marginBottom: 5,
                 transition: `width 1s linear`,
@@ -752,8 +750,13 @@ const Dashboard = () => {
             </div>
           </div>
         )}
-        {loading ? (
-          <div className="loading">Loading...</div>
+
+        {loading && !wallets && <div className="loading" />}
+        {loadingError ? (
+          <div className={`alert alert-${wallets ? "warning" : "danger"}`}>
+            It's taking longer to {`${wallets ? "refresh" : "load"}`} than
+            normal. Please be patient.
+          </div>
         ) : (
           <TableOptions
             copyTableData={copyTableData}
