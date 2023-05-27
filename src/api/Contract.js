@@ -72,7 +72,21 @@ const ROLL_HEX = "0xcd5e3c5d";
 const CLAIM_HEX = "0x4e71d92d";
 const DEPOSIT_HEX = "0x47e7ef24";
 
-const web3 = new Web3(RPC_URL);
+//const web3 = new Web3(RPC_URL);
+const rpcOptions = {
+  reconnect: {
+    auto: true,
+    delay: 5000, // ms
+    maxAttempts: 5,
+    onTimeout: false,
+  },
+};
+export const web3 = new Web3(
+  new Web3.providers.WebsocketProvider(
+    "wss://ws-nd-545-991-262.p2pify.com/26d4d56490e1d55a2a05b198dbca102d",
+    rpcOptions
+  )
+);
 const faucetContract = new web3.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
 const fountainContract = new web3.eth.Contract(FOUNTAIN_ABI, FOUNTAIN_ADDR);
 //let startBlock;
