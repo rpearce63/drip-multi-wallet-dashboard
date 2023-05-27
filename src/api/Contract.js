@@ -25,8 +25,8 @@ import axios from "axios";
 
 const BSCSCAN_URL = "https://api.bscscan.com";
 
-export const RPC_URL = "https://bsc-dataseed1.binance.org/";
-
+export const RPC_URL = "https://bsc-rpc.gateway.pokt.network";
+//export const RPC_URL = "https://bsc-dataseed1.binance.org/";
 //export const RPC_URL = "https://node.theanimal.farm/";
 
 //const rax = require("retry-axios");
@@ -530,18 +530,42 @@ export const fetchWalletData = async (wallet, index) => {
 };
 
 export const getAllWalletData = async (myWallets) => {
-  const start = new Date();
-  //console.log("getting wallet data");
-  //const startBlock = await getStartBlock();
-  const walletCache = await Promise.all(
-    myWallets.map(async (wallet, index) => {
-      const walletData = await fetchWalletData(wallet, index);
-      return walletData;
-    })
-  );
-  const end = new Date();
-  console.log(`got wallet data in ${(end - start) / 1000} seconds`);
-  return walletCache;
+  try {
+    const walletCache = await Promise.all(
+      myWallets.map(async (wallet, index) => {
+        const walletData = await fetchWalletData(wallet, index);
+        return walletData;
+      })
+    );
+
+    return walletCache;
+  } catch (err) {
+    console.log("error fetching wallets: ", err.message);
+    return fetchWalletDataSynchronously(myWallets);
+  }
+};
+const fetchWalletDataSynchronously = async (myWallets) => {
+  console.log("fetching wallets individually.");
+  const walletData = [];
+  try {
+    let index = 0;
+    for (const wallet of myWallets) {
+      try {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        const data = await fetchWalletData(wallet, index);
+        console.log("got data for ", wallet.addr);
+        walletData.push(data);
+        index++;
+      } catch (error) {
+        console.log("error getting data for: ", wallet.addr);
+        index++;
+      }
+    }
+    return walletData;
+  } catch (error) {
+    console.log("error fetching synchronously: ", error.message);
+    return walletData;
+  }
 };
 
 // run this multiple times by putting in its own function
