@@ -118,7 +118,7 @@ const Dashboard = () => {
     { label: "Ref Pos", id: "ref_claim_pos" },
   ];
 
-  const REFRESH_INTERVAL = 120000;
+  const REFRESH_INTERVAL = 300000;
 
   useEffect(() => {
     const {
@@ -605,7 +605,7 @@ const Dashboard = () => {
             <div
               style={{
                 backgroundColor: "green",
-                width: `${(timer - Math.log2(timer)) / 2}rem`,
+                width: `${(timer / (REFRESH_INTERVAL / 1000) / 2) * 100}vw`,
                 height: 2,
                 marginBottom: 5,
                 transition: `width 1s linear`,
