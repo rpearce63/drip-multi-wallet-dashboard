@@ -750,31 +750,32 @@ const Dashboard = () => {
             </div>
           </div>
         )}
-
-        {loading && !wallets && <div className="loading" />}
-        {loadingError ? (
-          <div className={`alert alert-${wallets ? "warning" : "danger"}`}>
-            It's taking longer to {`${wallets ? "refresh" : "load"}`} than
-            normal. Please be patient.
+        {loading && !wallets.length && <div className="loading" />}
+        {loadingError && (
+          <div
+            className={`alert alert-${wallets.length ? "warning" : "danger"}`}
+          >
+            It's taking longer to {`${wallets.length ? "refresh" : "load"}`}{" "}
+            than normal. Please be patient.
           </div>
-        ) : (
-          <TableOptions
-            copyTableData={copyTableData}
-            dataCopied={dataCopied}
-            expandedTable={expandedTable}
-            setExpandedTable={setExpandedTable}
-            showDollarValues={showDollarValues}
-            setShowDollarValues={setShowDollarValues}
-            depositFilter={depositFilter}
-            setDepositFilter={setDepositFilter}
-            wallets={wallets}
-            selectedGroup={selectedGroup}
-            setSelectedGroup={setSelectedGroup}
-            groups={groups}
-            MESSAGES={MESSAGES}
-            backupData={backupData}
-          />
         )}
+        <TableOptions
+          copyTableData={copyTableData}
+          dataCopied={dataCopied}
+          expandedTable={expandedTable}
+          setExpandedTable={setExpandedTable}
+          showDollarValues={showDollarValues}
+          setShowDollarValues={setShowDollarValues}
+          depositFilter={depositFilter}
+          setDepositFilter={setDepositFilter}
+          wallets={wallets}
+          selectedGroup={selectedGroup}
+          setSelectedGroup={setSelectedGroup}
+          groups={groups}
+          MESSAGES={MESSAGES}
+          backupData={backupData}
+        />
+
         <table className="table">
           <thead className="table-light">
             <tr>
@@ -937,7 +938,6 @@ const Dashboard = () => {
             ))}
           </tbody>
         </table>
-
         <div className="bottom-section">
           <div className="bottom-controls">
             {badAddresses.length ? (

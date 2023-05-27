@@ -81,6 +81,7 @@ const rpcOptions = {
     onTimeout: false,
   },
 };
+//export const web3 = new Web3(RPC_URL);
 export const web3 = new Web3(
   new Web3.providers.WebsocketProvider(
     "wss://ws-nd-545-991-262.p2pify.com/26d4d56490e1d55a2a05b198dbca102d",
