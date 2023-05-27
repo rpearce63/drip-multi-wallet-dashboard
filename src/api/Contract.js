@@ -26,6 +26,7 @@ import axios from "axios";
 const BSCSCAN_URL = "https://api.bscscan.com";
 
 export const RPC_URL = "https://bsc-rpc.gateway.pokt.network";
+//export const RPC_URL = "https://rpc.ankr.com/bsc";
 //export const RPC_URL = "https://bsc-dataseed1.binance.org/";
 //export const RPC_URL = "https://node.theanimal.farm/";
 
@@ -81,15 +82,27 @@ const rpcOptions = {
     onTimeout: false,
   },
 };
-//export const web3 = new Web3(RPC_URL);
-export const web3 = new Web3(
+export const web3 = new Web3(RPC_URL);
+export const web3wss = new Web3(
   new Web3.providers.WebsocketProvider(
     "wss://ws-nd-545-991-262.p2pify.com/26d4d56490e1d55a2a05b198dbca102d",
     rpcOptions
   )
 );
-const faucetContract = new web3.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
-const fountainContract = new web3.eth.Contract(FOUNTAIN_ABI, FOUNTAIN_ADDR);
+let faucetContract = new web3.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
+let fountainContract = new web3.eth.Contract(FOUNTAIN_ABI, FOUNTAIN_ADDR);
+
+const setWssContracts = () => {
+  console.log("switching to wss");
+  faucetContract = new web3wss.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
+  fountainContract = new web3wss.eth.Contract(FOUNTAIN_ABI, FOUNTAIN_ADDR);
+};
+const setBscContracts = () => {
+  console.log("switching to default bsc");
+  faucetContract = new web3.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
+  fountainContract = new web3.eth.Contract(FOUNTAIN_ABI, FOUNTAIN_ADDR);
+};
+
 //let startBlock;
 
 // export const getConnection = () => {
@@ -544,9 +557,10 @@ export const fetchWalletData = async (wallet, index) => {
   };
 };
 
-export const getAllWalletData = async (myWallets) => {
+export const getAllWalletData = async (myWallets, retryCount = 0) => {
+  let walletCache;
   try {
-    const walletCache = await Promise.all(
+    walletCache = await Promise.all(
       myWallets.map(async (wallet, index) => {
         const walletData = await fetchWalletData(wallet, index);
         return walletData;
@@ -556,9 +570,19 @@ export const getAllWalletData = async (myWallets) => {
     return walletCache;
   } catch (err) {
     console.log("error fetching wallets: ", err.message);
-    return fetchWalletDataSynchronously(myWallets);
+    if (retryCount < 3) {
+      setWssContracts();
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      walletCache = await getAllWalletData(myWallets, retryCount + 1);
+      setBscContracts();
+      return walletCache;
+    } else {
+      setBscContracts();
+      return fetchWalletDataSynchronously(myWallets);
+    }
   }
 };
+
 const fetchWalletDataSynchronously = async (myWallets) => {
   console.log("fetching wallets individually.");
   const walletData = [];
@@ -566,7 +590,7 @@ const fetchWalletDataSynchronously = async (myWallets) => {
     let index = 0;
     for (const wallet of myWallets) {
       try {
-        await new Promise((resolve) => setTimeout(resolve, 100));
+        //await new Promise((resolve) => setTimeout(resolve, 100));
         const data = await fetchWalletData(wallet, index);
         console.log("got data for ", wallet.addr);
         walletData.push(data);

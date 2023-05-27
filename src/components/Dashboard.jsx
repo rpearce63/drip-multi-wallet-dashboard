@@ -193,6 +193,7 @@ const Dashboard = () => {
       timeoutRef.current = setTimeout(() => {
         if (loadingRef.current) {
           setLoadingError(true);
+          window.scrollTo({ top: 0 });
         }
         // setLoading(false);
       }, 10000);
