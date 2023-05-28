@@ -1,5 +1,9 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { getDripPriceData, getAllWalletData } from "../api/Contract";
+import {
+  getDripPriceData,
+  getAllWalletData,
+  fetchWalletData,
+} from "../api/Contract";
 import { NumberPicker } from "react-widgets/cjs";
 import { CONFIGS_KEY } from "../configs/dripconfig";
 import * as MESSAGES from "../configs/messages";
@@ -18,6 +22,7 @@ import TableRow from "./TableRow";
 import AdBox from "./AdBox";
 import Web3 from "web3";
 import TableOptions from "./TableOptions";
+import { isUndefined } from "lodash";
 
 const web3 = new Web3(Web3.givenProvider);
 
@@ -70,7 +75,7 @@ const Dashboard = () => {
   const [showLastAction, setShowLastAction] = useState(true);
   const [timer, setTimer] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [loadingError, setLoadingError] = useState(false);
+  const [loadingError, setLoadingError] = useState(isUndefined);
 
   const loadingRef = useRef(loading);
   const timeoutRef = useRef();
@@ -188,11 +193,11 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (!loading) {
-      setLoadingError(false);
+      setLoadingError(undefined);
     } else {
       timeoutRef.current = setTimeout(() => {
         if (loadingRef.current) {
-          setLoadingError(true);
+          setLoadingError("timeout");
           window.scrollTo({ top: 0 });
         }
         // setLoading(false);
@@ -203,6 +208,23 @@ const Dashboard = () => {
       clearTimeout(timeoutRef.current);
     };
   }, [loading]);
+
+  const fetchWalletsIndv = useCallback(async (validWallets) => {
+    console.log("loading wallets one at a time");
+    setLoadingError("individual");
+    window.scrollTo({ top: 0 });
+    let index = 0;
+    for (const wallet of validWallets) {
+      try {
+        const data = await fetchWalletData(wallet, index++);
+        setWallets((w) => [...w, data]);
+        setFullList((w) => [...w, data]);
+      } catch (err) {
+        index++;
+      }
+    }
+    setLoadingError(undefined);
+  }, []);
 
   const fetchData = useCallback(async () => {
     console.log("fetching data");
@@ -238,29 +260,36 @@ const Dashboard = () => {
       localStorage.getItem("dripWalletCache")
     );
     if (
-      storedWalletCache?.data?.length
-      // &&
-      // storedWalletCache.lastSaved > new Date().getTime() - 60000
+      storedWalletCache?.data?.length &&
+      storedWalletCache.lastSaved > new Date().getTime() - REFRESH_INTERVAL
     ) {
+      console.log("got stored wallet cache.");
       walletCache = storedWalletCache.data;
+      setFullList(walletCache);
+      setWallets(walletCache);
     } else {
-      const start = new Date();
-      walletCache = await getAllWalletData(validWallets);
-      const end = new Date();
-      console.log(`got wallet data in ${(end - start) / 1000} seconds`);
-      localStorage.setItem(
-        "dripWalletCache",
-        JSON.stringify({ data: walletCache, lastSaved: new Date().getTime() })
-      );
+      try {
+        const start = new Date();
+        console.log("trying to get all wallet data.");
+        walletCache = await getAllWalletData(validWallets);
+        const end = new Date();
+        console.log(`got wallet data in ${(end - start) / 1000} seconds`);
+        setFullList(walletCache);
+        setWallets(walletCache);
+      } catch (err) {
+        console.log("Error getting all wallet data: ", err.message);
+        await fetchWalletsIndv(validWallets);
+      }
     }
 
-    setFullList(walletCache);
-    setWallets(() => walletCache);
-
     setDataCopied(false);
-    fetchPrices();
     setLoading(false);
-  }, [fetchPrices]);
+    fetchPrices();
+    localStorage.setItem(
+      "dripWalletCache",
+      JSON.stringify({ data: walletCache, lastSaved: new Date().getTime() })
+    );
+  }, [fetchPrices, fetchWalletsIndv]);
 
   useEffect(() => {
     if (!wallets || !wallets.length) {
@@ -752,12 +781,15 @@ const Dashboard = () => {
           </div>
         )}
         {loading && !wallets.length && <div className="loading" />}
-        {loadingError && (
-          <div
-            className={`alert alert-${wallets.length ? "warning" : "danger"}`}
-          >
-            It's taking longer to {`${wallets.length ? "refresh" : "load"}`}{" "}
-            than normal. Please be patient.
+        {loadingError === "timeout" && !wallets.length && (
+          <div className="alert alert-danger">
+            It's taking longer to load than normal. Please be patient.
+          </div>
+        )}
+        {loadingError === "individual" && (
+          <div className="alert alert-warning">
+            The network is not cooperating. Getting the wallet data one at a
+            time. Please be patient.
           </div>
         )}
         <TableOptions
