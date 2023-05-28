@@ -24,11 +24,14 @@ import axios from "axios";
 //const DMWDAPI = "https://drip-mw-dashboard-api.glitch.me";
 
 const BSCSCAN_URL = "https://api.bscscan.com";
-
 export const RPC_URL =
-  "https://knowing-west-stingray.glitch.me/https://bsc-rpc.gateway.pokt.network";
-//export const RPC_URL = "https://bsc-dataseed1.binance.org/";
-//export const RPC_URL = "https://node.theanimal.farm/";
+  // list of rpcs
+  //"https://nd-545-991-262.p2pify.com/26d4d56490e1d55a2a05b198dbca102d";
+  //"https://bsc-mainnet-rpc.allthatnode.com";
+  //  "https://bsc-dataseed1.defibit.io";
+  //"https://knowing-west-stingray.glitch.me/https://bsc-rpc.gateway.pokt.network";
+  "https://bsc-dataseed.binance.org/";
+//"https://fragrant-alien-pine.bsc.discover.quiknode.pro/5ab734bf3a5066d920f3996c8b28ecfdbe3c88bf/";
 
 const flatten = require("flat").flatten;
 
@@ -55,13 +58,15 @@ const rpcOptions = {
     onTimeout: false,
   },
 };
-export const web3 = new Web3(RPC_URL);
+
 export const web3wss = new Web3(
   new Web3.providers.WebsocketProvider(
-    "wss://ws-nd-545-991-262.p2pify.com/26d4d56490e1d55a2a05b198dbca102d",
+    "wss://fragrant-alien-pine.bsc.discover.quiknode.pro/5ab734bf3a5066d920f3996c8b28ecfdbe3c88bf/",
+    //"wss://ws-nd-545-991-262.p2pify.com/26d4d56490e1d55a2a05b198dbca102d",
     rpcOptions
   )
 );
+export const web3 = new Web3(RPC_URL);
 let faucetContract = new web3.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
 let fountainContract = new web3.eth.Contract(FOUNTAIN_ABI, FOUNTAIN_ADDR);
 
@@ -461,6 +466,7 @@ export const getDripPriceData = async () => {
 };
 
 export const fetchWalletData = async (wallet, index, retry = false) => {
+  //setWssContracts();
   // const web3 = await getConnection();
   try {
     //const contract = await getContract(web3);
@@ -540,6 +546,7 @@ export const getAllWalletData = async (myWallets, retryCount = 0) => {
     walletCache = await Promise.all(
       myWallets.map(async (wallet, index) => {
         const walletData = await fetchWalletData(wallet, index);
+        console.log("got data for ", wallet.addr);
         return walletData;
       })
     );

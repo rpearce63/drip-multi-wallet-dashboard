@@ -271,14 +271,15 @@ const Dashboard = () => {
       try {
         const start = new Date();
         console.log("trying to get all wallet data.");
-        walletCache = await getAllWalletData(validWallets);
+        //walletCache = await getAllWalletData(validWallets);
+        await fetchWalletsIndv(validWallets);
         const end = new Date();
         console.log(`got wallet data in ${(end - start) / 1000} seconds`);
-        setFullList(walletCache);
-        setWallets(walletCache);
+        //setFullList(walletCache);
+        //setWallets(walletCache);
       } catch (err) {
         console.log("Error getting all wallet data: ", err.message);
-        await fetchWalletsIndv(validWallets);
+        //await fetchWalletsIndv(validWallets);
       }
     }
 
@@ -781,12 +782,12 @@ const Dashboard = () => {
           </div>
         )}
         {loading && !wallets.length && <div className="loading" />}
-        {loadingError === "timeout" && !wallets.length && (
+        {/* {loadingError === "timeout" && !wallets.length && (
           <div className="alert alert-danger">
             It's taking longer to load than normal. Please be patient.
           </div>
-        )}
-        {loadingError === "individual" && (
+        )} */}
+        {loadingError && (
           <div className="alert alert-warning">
             The network is not cooperating. Getting the wallet data one at a
             time. Please be patient.
