@@ -25,7 +25,8 @@ import axios from "axios";
 
 const BSCSCAN_URL = "https://api.bscscan.com";
 
-export const RPC_URL = "https://bsc-rpc.gateway.pokt.network";
+export const RPC_URL =
+  "https://knowing-west-stingray.glitch.me/https://bsc-rpc.gateway.pokt.network";
 //export const RPC_URL = "https://bsc-dataseed1.binance.org/";
 //export const RPC_URL = "https://node.theanimal.farm/";
 

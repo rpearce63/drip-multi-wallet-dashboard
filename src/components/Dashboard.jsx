@@ -781,7 +781,7 @@ const Dashboard = () => {
           </div>
         )}
         {loading && !wallets.length && <div className="loading" />}
-        {loadingError === "timeout" && (
+        {loadingError === "timeout" && !wallets.length && (
           <div className="alert alert-danger">
             It's taking longer to load than normal. Please be patient.
           </div>
