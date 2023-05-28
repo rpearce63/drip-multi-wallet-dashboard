@@ -26,37 +26,9 @@ import axios from "axios";
 const BSCSCAN_URL = "https://api.bscscan.com";
 
 export const RPC_URL = "https://bsc-rpc.gateway.pokt.network";
-//export const RPC_URL = "https://rpc.ankr.com/bsc";
 //export const RPC_URL = "https://bsc-dataseed1.binance.org/";
 //export const RPC_URL = "https://node.theanimal.farm/";
 
-//const rax = require("retry-axios");
-// eslint-disable-next-line no-unused-vars
-//const interceptorId = rax.attach();
-// axios.interceptors.response.use(undefined, (err) => {
-//   const { config, message } = err;
-//   if (!config || !config.retry) {
-//     return Promise.reject(err);
-//   }
-//   // retry while Network timeout or Network Error
-//   if (
-//     !(
-//       message.includes("timeout") ||
-//       message.includes("Network Error") ||
-//       message.includes("retry")
-//     )
-//   ) {
-//     return Promise.reject(err);
-//   }
-//   config.retry -= 1;
-//   const delayRetryRequest = new Promise((resolve) => {
-//     setTimeout(() => {
-//       console.log("retry the request", config.url);
-//       resolve();
-//     }, config.retryDelay || 1000);
-//   });
-//   return delayRetryRequest.then(() => axios(config));
-// });
 const flatten = require("flat").flatten;
 
 const options = {
@@ -487,74 +459,78 @@ export const getDripPriceData = async () => {
   return { ...dripPriceData.data };
 };
 
-export const fetchWalletData = async (wallet, index) => {
-  //console.log("fetchWalletData");
+export const fetchWalletData = async (wallet, index, retry = false) => {
   // const web3 = await getConnection();
-  //const contract = await getContract(web3);
-  const userInfo = await getUserInfo(wallet.addr);
-  if (!userInfo) return;
-  const available = await claimsAvailable(wallet.addr);
-  const dripBalance = await getTokenBalance(wallet.addr, DRIP_TOKEN_ADDR);
-  const uplineCount = await getUplineCount(wallet.addr);
-  const br34pBalance = await getBr34pBalance(wallet.addr);
-  const bnbBalance = await getBnbBalance(wallet.addr);
+  try {
+    //const contract = await getContract(web3);
+    const userInfo = await getUserInfo(wallet.addr);
+    if (!userInfo) return;
+    const available = await claimsAvailable(wallet.addr);
+    const dripBalance = await getTokenBalance(wallet.addr, DRIP_TOKEN_ADDR);
+    const uplineCount = await getUplineCount(wallet.addr);
+    const br34pBalance = await getBr34pBalance(wallet.addr);
+    const bnbBalance = await getBnbBalance(wallet.addr);
 
-  const busdBalance = await getTokenBalance(wallet.addr, BUSD_TOKEN_ADDRESS);
-  const dripBusdLpBalance = await getTokenBalance(
-    wallet.addr,
-    DRIP_BUSD_LP_ADDRESS
-  );
+    const busdBalance = await getTokenBalance(wallet.addr, BUSD_TOKEN_ADDRESS);
+    const dripBusdLpBalance = await getTokenBalance(
+      wallet.addr,
+      DRIP_BUSD_LP_ADDRESS
+    );
 
-  const coveredDepth = findFibIndex(br34pBalance);
-  const teamDepth =
-    userInfo.referrals > 0 && (await getDownlineDepth(wallet.addr));
+    const coveredDepth = findFibIndex(br34pBalance);
+    const teamDepth =
+      userInfo.referrals > 0 && (await getDownlineDepth(wallet.addr));
 
-  const { airdrops } = await getAirdrops(wallet.addr);
-  const a = parseFloat(web3.utils.fromWei(airdrops));
-  const d = parseFloat(web3.utils.fromWei(userInfo.deposits));
-  const r = parseFloat(web3.utils.fromWei(userInfo.rolls));
-  const c = parseFloat(web3.utils.fromWei(userInfo.payouts));
+    const { airdrops } = await getAirdrops(wallet.addr);
+    const a = parseFloat(web3.utils.fromWei(airdrops));
+    const d = parseFloat(web3.utils.fromWei(userInfo.deposits));
+    const r = parseFloat(web3.utils.fromWei(userInfo.rolls));
+    const c = parseFloat(web3.utils.fromWei(userInfo.payouts));
 
-  const ndv = d + a + r - c;
-  const valid = !!userInfo;
-  const referral_bonus =
-    parseFloat(userInfo.direct_bonus) + parseFloat(userInfo.match_bonus);
-  //const startBlock = await getStartBlock();
-  //console.log("startBlock: " + startBlock);
-  //const lastAction = await getLastAction(startBlock - 200000, wallet.addr);
-  const dropsBalance = await getReservoirBalance(wallet.addr);
-  const dailyBnb = await getReservoirDailyBnb(wallet.addr);
-  const whaleTax = calculateWhaleTax(available, userInfo.payouts);
+    const ndv = d + a + r - c;
+    const valid = !!userInfo;
+    const referral_bonus =
+      parseFloat(userInfo.direct_bonus) + parseFloat(userInfo.match_bonus);
+    //const startBlock = await getStartBlock();
+    //console.log("startBlock: " + startBlock);
+    //const lastAction = await getLastAction(startBlock - 200000, wallet.addr);
+    const dropsBalance = await getReservoirBalance(wallet.addr);
+    const dailyBnb = await getReservoirDailyBnb(wallet.addr);
+    const whaleTax = calculateWhaleTax(available, userInfo.payouts);
 
-  return {
-    index,
-    ...userInfo,
-    deposits: userInfo.deposits / 10e17,
-    available: available / 10e17,
-    payouts: userInfo.payouts / 10e17,
-    maxPayout: Math.min((userInfo.deposits * 3.65) / 10e17, 100000),
-    direct_bonus: referral_bonus / 10e17,
+    return {
+      index,
+      ...userInfo,
+      deposits: userInfo.deposits / 10e17,
+      available: available / 10e17,
+      payouts: userInfo.payouts / 10e17,
+      maxPayout: Math.min((userInfo.deposits * 3.65) / 10e17, 100000),
+      direct_bonus: referral_bonus / 10e17,
 
-    address: wallet.addr,
-    label: wallet.label,
-    group: wallet.group,
-    valid,
-    dripBalance,
-    br34pBalance,
-    uplineCount,
-    bnbBalance,
-    coveredDepth,
-    teamDepth,
-    ndv,
-    busdBalance,
-    dripBusdLpBalance,
-    //lastAction,
-    r,
-    dropsBalance,
-    dailyBnb,
-    referrals: parseInt(userInfo.referrals),
-    whaleTax,
-  };
+      address: wallet.addr,
+      label: wallet.label,
+      group: wallet.group,
+      valid,
+      dripBalance,
+      br34pBalance,
+      uplineCount,
+      bnbBalance,
+      coveredDepth,
+      teamDepth,
+      ndv,
+      busdBalance,
+      dripBusdLpBalance,
+      //lastAction,
+      r,
+      dropsBalance,
+      dailyBnb,
+      referrals: parseInt(userInfo.referrals),
+      whaleTax,
+    };
+  } catch (err) {
+    if (!retry) return await fetchWalletData(wallet, index, true);
+    throw err;
+  }
 };
 
 export const getAllWalletData = async (myWallets, retryCount = 0) => {
@@ -569,21 +545,27 @@ export const getAllWalletData = async (myWallets, retryCount = 0) => {
 
     return walletCache;
   } catch (err) {
-    console.log("error fetching wallets: ", err.message);
-    if (retryCount < 3) {
-      setWssContracts();
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      walletCache = await getAllWalletData(myWallets, retryCount + 1);
-      setBscContracts();
-      return walletCache;
-    } else {
-      setBscContracts();
-      return fetchWalletDataSynchronously(myWallets);
+    if (retryCount < 2) {
+      console.log("retry getAllWalletData");
+      return await getAllWalletData(myWallets, retryCount + 1);
     }
+    console.log("error fetching wallets: ", err.message);
+    throw new Error("failed rpc");
+    // if (retryCount < 3) {
+    //   setWssContracts();
+    //   await new Promise((resolve) => setTimeout(resolve, 1000));
+    //   walletCache = await getAllWalletData(myWallets, retryCount + 1);
+    //   setBscContracts();
+    //   return walletCache;
+    // } else {
+    //   setBscContracts();
+    //   //return fetchWalletDataSynchronously(myWallets);
+    //   return new Error("rpc failure");
+    // }
   }
 };
 
-const fetchWalletDataSynchronously = async (myWallets) => {
+export const fetchWalletDataSynchronously = async (myWallets) => {
   console.log("fetching wallets individually.");
   const walletData = [];
   try {
