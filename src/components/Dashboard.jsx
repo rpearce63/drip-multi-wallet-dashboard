@@ -27,6 +27,7 @@ import { isUndefined } from "lodash";
 const web3 = new Web3(Web3.givenProvider);
 
 const Dashboard = () => {
+  const [init, setInit] = useState(false);
   const [wallets, setWallets] = useState([]);
   const [fullList, setFullList] = useState([]);
   const [totalDeposits, setTotalDeposits] = useState(0);
@@ -197,7 +198,7 @@ const Dashboard = () => {
     } else {
       timeoutRef.current = setTimeout(() => {
         if (loadingRef.current) {
-          setLoadingError("timeout");
+          //setLoadingError("timeout");
           window.scrollTo({ top: 0 });
         }
         // setLoading(false);
@@ -209,22 +210,35 @@ const Dashboard = () => {
     };
   }, [loading]);
 
-  const fetchWalletsIndv = useCallback(async (validWallets) => {
-    console.log("loading wallets one at a time");
-    setLoadingError("individual");
-    window.scrollTo({ top: 0 });
-    let index = 0;
-    for (const wallet of validWallets) {
-      try {
-        const data = await fetchWalletData(wallet, index++);
-        setWallets((w) => [...w, data]);
-        setFullList((w) => [...w, data]);
-      } catch (err) {
-        index++;
+  const fetchWalletsIndv = useCallback(
+    async (validWallets) => {
+      console.log("loading wallets one at a time");
+
+      window.scrollTo({ top: 0 });
+      let index = 0;
+
+      if (!init) {
+        setLoadingError("individual");
+        for (const wallet of validWallets) {
+          const data = await fetchWalletData(wallet, index++);
+          setWallets((current) => [...current, data]);
+          setFullList((current) => [...current, data]);
+        }
+        setInit(true);
+      } else {
+        const updatedWallets = [];
+        for (const wallet of validWallets) {
+          const data = await fetchWalletData(wallet, index++);
+          updatedWallets.push(data);
+        }
+        setWallets([...updatedWallets]);
+        setFullList([...updatedWallets]);
       }
-    }
-    setLoadingError(undefined);
-  }, []);
+
+      setLoadingError(undefined);
+    },
+    [init]
+  );
 
   const fetchData = useCallback(async () => {
     console.log("fetching data");
