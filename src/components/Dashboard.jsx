@@ -242,10 +242,11 @@ const Dashboard = () => {
   );
 
   useEffect(() => {
-    localStorage.setItem(
-      "dripWalletCache",
-      JSON.stringify({ data: wallets, lastSaved: new Date().getTime() })
-    );
+    wallets.length &&
+      localStorage.setItem(
+        "dripWalletCache",
+        JSON.stringify({ data: wallets, lastSaved: new Date().getTime() })
+      );
   }, [wallets]);
 
   const fetchData = useCallback(async () => {
