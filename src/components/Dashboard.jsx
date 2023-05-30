@@ -220,6 +220,7 @@ const Dashboard = () => {
       if (!init) {
         setLoadingError("individual");
         for (const wallet of validWallets) {
+          console.log("fetching data for ", wallet.addr);
           const data = await fetchWalletData(wallet, index++);
           setWallets((current) => [...current, data]);
           setFullList((current) => [...current, data]);
@@ -394,7 +395,7 @@ const Dashboard = () => {
   useEffect(() => {
     fetchData();
     const interval = setInterval(() => {
-      //localStorage.removeItem("dripWalletCache");
+      localStorage.removeItem("dripWalletCache");
       autoRefresh && fetchData();
     }, REFRESH_INTERVAL);
     const timerInterval = setInterval(() => {

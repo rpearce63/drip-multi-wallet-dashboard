@@ -555,10 +555,10 @@ export const getAllWalletData = async (myWallets, retryCount = 0) => {
 
     return walletCache;
   } catch (err) {
-    if (retryCount < 2) {
-      console.log("retry getAllWalletData");
-      return await getAllWalletData(myWallets, retryCount + 1);
-    }
+    // if (retryCount < 2) {
+    //   console.log("retry getAllWalletData");
+    //   return await getAllWalletData(myWallets, retryCount + 1);
+    // }
     console.log("error fetching wallets: ", err.message);
     throw new Error("failed rpc");
     // if (retryCount < 3) {
