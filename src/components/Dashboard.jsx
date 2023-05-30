@@ -236,9 +236,17 @@ const Dashboard = () => {
       }
 
       setLoadingError(undefined);
+      return true;
     },
     [init]
   );
+
+  useEffect(() => {
+    localStorage.setItem(
+      "dripWalletCache",
+      JSON.stringify({ data: wallets, lastSaved: new Date().getTime() })
+    );
+  }, [wallets]);
 
   const fetchData = useCallback(async () => {
     console.log("fetching data");
@@ -285,25 +293,25 @@ const Dashboard = () => {
       try {
         const start = new Date();
         console.log("trying to get all wallet data.");
-        //walletCache = await getAllWalletData(validWallets);
-        await fetchWalletsIndv(validWallets);
+        walletCache = await getAllWalletData(validWallets);
+        //await fetchWalletsIndv(validWallets);
         const end = new Date();
         console.log(`got wallet data in ${(end - start) / 1000} seconds`);
-        //setFullList(walletCache);
-        //setWallets(walletCache);
+        setFullList(walletCache);
+        setWallets(walletCache);
       } catch (err) {
         console.log("Error getting all wallet data: ", err.message);
-        //await fetchWalletsIndv(validWallets);
+        await fetchWalletsIndv(validWallets);
       }
     }
 
     setDataCopied(false);
     setLoading(false);
     fetchPrices();
-    localStorage.setItem(
-      "dripWalletCache",
-      JSON.stringify({ data: walletCache, lastSaved: new Date().getTime() })
-    );
+    // localStorage.setItem(
+    //   "dripWalletCache",
+    //   JSON.stringify({ data: walletCache, lastSaved: new Date().getTime() })
+    // );
   }, [fetchPrices, fetchWalletsIndv]);
 
   useEffect(() => {
@@ -385,7 +393,7 @@ const Dashboard = () => {
   useEffect(() => {
     fetchData();
     const interval = setInterval(() => {
-      localStorage.removeItem("dripWalletCache");
+      //localStorage.removeItem("dripWalletCache");
       autoRefresh && fetchData();
     }, REFRESH_INTERVAL);
     const timerInterval = setInterval(() => {

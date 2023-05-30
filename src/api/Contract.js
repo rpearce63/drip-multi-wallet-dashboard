@@ -26,11 +26,13 @@ import axios from "axios";
 const BSCSCAN_URL = "https://api.bscscan.com";
 export const RPC_URL =
   // list of rpcs
-  //"https://nd-545-991-262.p2pify.com/26d4d56490e1d55a2a05b198dbca102d";
-  //"https://bsc-mainnet-rpc.allthatnode.com";
-  //  "https://bsc-dataseed1.defibit.io";
-  //"https://knowing-west-stingray.glitch.me/https://bsc-rpc.gateway.pokt.network";
-  "https://bsc-dataseed.binance.org/";
+  "https://bscrpc.com";
+//"https://bsc-mainnet.public.blastapi.io";
+//"https://nd-545-991-262.p2pify.com/26d4d56490e1d55a2a05b198dbca102d";
+//"https://bsc-mainnet-rpc.allthatnode.com";
+//  "https://bsc-dataseed1.defibit.io";
+//"https://knowing-west-stingray.glitch.me/https://bsc-rpc.gateway.pokt.network";
+//"https://bsc-dataseed.binance.org/";
 //"https://fragrant-alien-pine.bsc.discover.quiknode.pro/5ab734bf3a5066d920f3996c8b28ecfdbe3c88bf/";
 
 const flatten = require("flat").flatten;
@@ -546,7 +548,7 @@ export const getAllWalletData = async (myWallets, retryCount = 0) => {
     walletCache = await Promise.all(
       myWallets.map(async (wallet, index) => {
         const walletData = await fetchWalletData(wallet, index);
-        console.log("got data for ", wallet.addr);
+        //console.log("got data for ", wallet.addr);
         return walletData;
       })
     );
