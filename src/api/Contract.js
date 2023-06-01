@@ -26,13 +26,14 @@ import axios from "axios";
 const BSCSCAN_URL = "https://api.bscscan.com";
 export const RPC_URL =
   // list of rpcs
-  "https://bscrpc.com";
-//"https://bsc-mainnet.public.blastapi.io";
-//"https://nd-545-991-262.p2pify.com/26d4d56490e1d55a2a05b198dbca102d";
-//"https://bsc-mainnet-rpc.allthatnode.com";
-//  "https://bsc-dataseed1.defibit.io";
-//"https://knowing-west-stingray.glitch.me/https://bsc-rpc.gateway.pokt.network";
-//"https://bsc-dataseed.binance.org/";
+  //"https://bscrpc.com";
+  //"https://rpc.ankr.com/bsc";
+  //"https://bsc-mainnet.public.blastapi.io";
+  //"https://nd-545-991-262.p2pify.com/26d4d56490e1d55a2a05b198dbca102d";
+  //"https://bsc-mainnet-rpc.allthatnode.com";
+  //  "https://bsc-dataseed1.defibit.io";
+  //"https://knowing-west-stingray.glitch.me/https://bsc-rpc.gateway.pokt.network";
+  "https://bsc-dataseed.binance.org/";
 //"https://fragrant-alien-pine.bsc.discover.quiknode.pro/5ab734bf3a5066d920f3996c8b28ecfdbe3c88bf/";
 
 const flatten = require("flat").flatten;
@@ -120,12 +121,12 @@ export const getAirdrops = async (account) => {
   }
 };
 
-export const getUserInfo = async (account, isRetry = false) => {
+export const getUserInfo = async (account, isRetry = true) => {
   try {
     return await faucetContract.methods.users(account).call();
   } catch (err) {
     console.log("Error getting UserInfo: ", err.message);
-    if (isRetry) return {};
+    if (isRetry) throw new Error("retry failure");
     await new Promise((resolve) =>
       setTimeout(() => {
         resolve(1);
@@ -537,30 +538,43 @@ export const fetchWalletData = async (wallet, index, retry = false) => {
       whaleTax,
     };
   } catch (err) {
-    if (!retry) return await fetchWalletData(wallet, index, true);
+    if (!retry) {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      return await fetchWalletData(wallet, index, true);
+    }
     throw err;
   }
 };
 
-export const getAllWalletData = async (myWallets, retryCount = 0) => {
-  let walletCache;
-  try {
-    walletCache = await Promise.all(
-      myWallets.map(async (wallet, index) => {
-        const walletData = await fetchWalletData(wallet, index);
-        //console.log("got data for ", wallet.addr);
-        return walletData;
-      })
-    );
+const chunk = (xs, n) =>
+  xs.length <= n ? [[...xs]] : [xs.slice(0, n)].concat(chunk(xs.slice(n), n));
 
-    return walletCache;
+export const getAllWalletData = async (myWallets, retryCount = 0) => {
+  let walletCache = [];
+  try {
+    const chunks = chunk(myWallets, 10);
+    console.log("chunk: ", chunks.length);
+    let index = 0;
+    for (const [idx, chunk] of chunks.entries()) {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const chunkData = await Promise.all(
+        chunk.map(async (wallet) => {
+          const walletData = await fetchWalletData(wallet, index++);
+          return walletData;
+        })
+      );
+      console.log("got chunk ", idx);
+      walletCache.push(...chunkData);
+    }
+    return [...new Set(walletCache)];
   } catch (err) {
     // if (retryCount < 2) {
     //   console.log("retry getAllWalletData");
     //   return await getAllWalletData(myWallets, retryCount + 1);
     // }
-    console.log("error fetching wallets: ", err.message);
-    throw new Error("failed rpc");
+    console.log("error fetching wallets. Partial return: ", err.message);
+    return [...new Set(walletCache)];
+    //throw new Error("failed rpc");
     // if (retryCount < 3) {
     //   setWssContracts();
     //   await new Promise((resolve) => setTimeout(resolve, 1000));
