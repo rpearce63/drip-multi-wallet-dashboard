@@ -3,6 +3,7 @@ import {
   getDripPriceData,
   getAllWalletData,
   fetchWalletData,
+  chunk,
 } from "../api/Contract";
 import { NumberPicker } from "react-widgets/cjs";
 import { CONFIGS_KEY } from "../configs/dripconfig";
@@ -124,7 +125,7 @@ const Dashboard = () => {
     { label: "Ref Pos", id: "ref_claim_pos" },
   ];
 
-  const REFRESH_INTERVAL = 60000;
+  const REFRESH_INTERVAL = 300000;
 
   useEffect(() => {
     const {
@@ -300,12 +301,30 @@ const Dashboard = () => {
       try {
         const start = new Date();
         console.log("trying to get all wallet data.");
-        walletCache = await getAllWalletData(validWallets);
-        //await fetchWalletsIndv(validWallets);
+        const chunks = chunk(validWallets, 10);
+        //setWallets([]);
+        //setFullList([]);
+        let index = 0;
+        for (const chunk of chunks) {
+          walletCache = await getAllWalletData(chunk, index);
+          //await fetchWalletsIndv(validWallets);
+
+          setFullList((current) => [
+            ...current.filter(
+              (c) => !walletCache.find((w) => w.address === c.address)
+            ),
+            ...walletCache,
+          ]);
+          setWallets((current) => [
+            ...current.filter(
+              (c) => !walletCache.find((w) => w.address === c.address)
+            ),
+            ...walletCache,
+          ]);
+          index += 10;
+        }
         const end = new Date();
         console.log(`got wallet data in ${(end - start) / 1000} seconds`);
-        setFullList(walletCache);
-        setWallets(walletCache);
         setLoadingError(undefined);
       } catch (err) {
         console.log("Error getting all wallet data: ", err.message);

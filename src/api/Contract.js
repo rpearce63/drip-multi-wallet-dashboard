@@ -546,26 +546,18 @@ export const fetchWalletData = async (wallet, index, retry = false) => {
   }
 };
 
-const chunk = (xs, n) =>
+export const chunk = (xs, n) =>
   xs.length <= n ? [[...xs]] : [xs.slice(0, n)].concat(chunk(xs.slice(n), n));
 
-export const getAllWalletData = async (myWallets, retryCount = 0) => {
+export const getAllWalletData = async (myWallets, index) => {
   let walletCache = [];
   try {
-    const chunks = chunk(myWallets, 10);
-    console.log("chunk: ", chunks.length);
-    let index = 0;
-    for (const [idx, chunk] of chunks.entries()) {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      const chunkData = await Promise.all(
-        chunk.map(async (wallet) => {
-          const walletData = await fetchWalletData(wallet, index++);
-          return walletData;
-        })
-      );
-      console.log("got chunk ", idx);
-      walletCache.push(...chunkData);
-    }
+    walletCache = await Promise.all(
+      myWallets.map(async (wallet) => {
+        const walletData = await fetchWalletData(wallet, index++);
+        return walletData;
+      })
+    );
     return [...new Set(walletCache)];
   } catch (err) {
     // if (retryCount < 2) {
@@ -573,8 +565,8 @@ export const getAllWalletData = async (myWallets, retryCount = 0) => {
     //   return await getAllWalletData(myWallets, retryCount + 1);
     // }
     console.log("error fetching wallets. Partial return: ", err.message);
-    return [...new Set(walletCache)];
-    //throw new Error("failed rpc");
+    //return [...new Set(walletCache)];
+    throw new Error("failed rpc");
     // if (retryCount < 3) {
     //   setWssContracts();
     //   await new Promise((resolve) => setTimeout(resolve, 1000));
