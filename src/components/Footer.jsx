@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
 import DarkModeToggle from "react-dark-mode-toggle";
+import TelegramIcon from "@mui/icons-material/Telegram";
 
 const Footer = () => {
   const [theme, setTheme] = useState("light");
@@ -46,8 +47,10 @@ const Footer = () => {
       <div className="footer-content text-center py-3">
         <span className="copyright">
           <span>© 2022 - </span>
-          <a href="https://t.me/rpearce63" target="_blank no_referrer">
-            Rick Pearce
+          <span>@rpearce63</span>
+          &nbsp;
+          <a href="https://t.me/drip_mw_dashboard" target="_blank no_referrer">
+            <TelegramIcon fontSize="large" />
           </a>
         </span>
         <div>
