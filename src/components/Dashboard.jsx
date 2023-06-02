@@ -3,6 +3,7 @@ import {
   getDripPriceData,
   getAllWalletData,
   fetchWalletData,
+  chunk,
 } from "../api/Contract";
 import { NumberPicker } from "react-widgets/cjs";
 import { CONFIGS_KEY } from "../configs/dripconfig";
@@ -194,7 +195,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (!loading) {
-      setLoadingError(undefined);
+      loadingError !== "retry" && setLoadingError(undefined);
     } else {
       timeoutRef.current = setTimeout(() => {
         if (loadingRef.current) {
@@ -208,7 +209,7 @@ const Dashboard = () => {
     return () => {
       clearTimeout(timeoutRef.current);
     };
-  }, [loading]);
+  }, [loading, loadingError]);
 
   const fetchWalletsIndv = useCallback(
     async (validWallets) => {
@@ -216,26 +217,31 @@ const Dashboard = () => {
 
       window.scrollTo({ top: 0 });
       let index = 0;
-
-      if (!init) {
-        setLoadingError("individual");
-        for (const wallet of validWallets) {
-          console.log("fetching data for ", wallet.addr);
-          const data = await fetchWalletData(wallet, index++);
-          setWallets((current) => [...current, data]);
-          setFullList((current) => [...current, data]);
+      try {
+        if (!init) {
+          setLoadingError("individual");
+          for (const wallet of validWallets) {
+            console.log("fetching data for ", wallet.addr);
+            const data = await fetchWalletData(wallet, index++);
+            setWallets((current) => [...current, data]);
+            setFullList((current) => [...current, data]);
+          }
+          setInit(true);
+        } else {
+          const updatedWallets = [];
+          for (const wallet of validWallets) {
+            const data = await fetchWalletData(wallet, index++);
+            updatedWallets.push(data);
+          }
+          setWallets([...updatedWallets]);
+          setFullList([...updatedWallets]);
         }
-        setInit(true);
-      } else {
-        const updatedWallets = [];
-        for (const wallet of validWallets) {
-          const data = await fetchWalletData(wallet, index++);
-          updatedWallets.push(data);
-        }
-        setWallets([...updatedWallets]);
-        setFullList([...updatedWallets]);
+      } catch (error) {
+        console.log("failed to get wallets individually. Retry on next cycle.");
+        setLoadingError("retry");
+        return true;
       }
-
+      console.log("resetting loading error value.");
       setLoadingError(undefined);
       return true;
     },
@@ -295,12 +301,31 @@ const Dashboard = () => {
       try {
         const start = new Date();
         console.log("trying to get all wallet data.");
-        walletCache = await getAllWalletData(validWallets);
-        //await fetchWalletsIndv(validWallets);
+        const chunks = chunk(validWallets, 10);
+        //setWallets([]);
+        //setFullList([]);
+        let index = 0;
+        for (const chunk of chunks) {
+          walletCache = await getAllWalletData(chunk, index);
+          //await fetchWalletsIndv(validWallets);
+
+          setFullList((current) => [
+            ...current.filter(
+              (c) => !walletCache.find((w) => w.address === c.address)
+            ),
+            ...walletCache,
+          ]);
+          setWallets((current) => [
+            ...current.filter(
+              (c) => !walletCache.find((w) => w.address === c.address)
+            ),
+            ...walletCache,
+          ]);
+          index += 10;
+        }
         const end = new Date();
         console.log(`got wallet data in ${(end - start) / 1000} seconds`);
-        setFullList(walletCache);
-        setWallets(walletCache);
+        setLoadingError(undefined);
       } catch (err) {
         console.log("Error getting all wallet data: ", err.message);
         await fetchWalletsIndv(validWallets);
@@ -396,10 +421,10 @@ const Dashboard = () => {
     fetchData();
     const interval = setInterval(() => {
       localStorage.removeItem("dripWalletCache");
-      autoRefresh && fetchData();
+      autoRefresh && !loadingRef.current && fetchData();
     }, REFRESH_INTERVAL);
     const timerInterval = setInterval(() => {
-      autoRefresh && setTimer((timer) => timer - 1);
+      autoRefresh && !loadingRef.current && setTimer((timer) => timer - 1);
     }, 1000);
     return () => {
       clearInterval(timerInterval);
@@ -811,10 +836,16 @@ const Dashboard = () => {
             It's taking longer to load than normal. Please be patient.
           </div>
         )} */}
-        {loadingError && (
+        {loadingError === "individual" && (
           <div className="alert alert-warning">
             The network is not cooperating. Getting the wallet data one at a
             time. Please be patient.
+          </div>
+        )}
+        {loadingError === "retry" && (
+          <div className="alert alert-warning">
+            I wasn't able to load the data this time. I'll try again in a few
+            minutes.
           </div>
         )}
         <TableOptions

@@ -50,7 +50,7 @@ const Footer = () => {
           <span>@rpearce63</span>
           &nbsp;
           <a href="https://t.me/drip_mw_dashboard" target="_blank no_referrer">
-            <TelegramIcon />
+            <TelegramIcon fontSize="large" />
           </a>
         </span>
         <div>
