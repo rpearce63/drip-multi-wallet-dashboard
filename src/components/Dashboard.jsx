@@ -125,7 +125,7 @@ const Dashboard = () => {
     { label: "Ref Pos", id: "ref_claim_pos" },
   ];
 
-  const REFRESH_INTERVAL = 300000;
+  const REFRESH_INTERVAL = 60000;
 
   useEffect(() => {
     const {
@@ -218,24 +218,28 @@ const Dashboard = () => {
       window.scrollTo({ top: 0 });
       let index = 0;
       try {
-        if (!init) {
-          setLoadingError("individual");
-          for (const wallet of validWallets) {
-            console.log("fetching data for ", wallet.addr);
-            const data = await fetchWalletData(wallet, index++);
-            setWallets((current) => [...current, data]);
-            setFullList((current) => [...current, data]);
-          }
-          setInit(true);
-        } else {
-          const updatedWallets = [];
-          for (const wallet of validWallets) {
-            const data = await fetchWalletData(wallet, index++);
-            updatedWallets.push(data);
-          }
-          setWallets([...updatedWallets]);
-          setFullList([...updatedWallets]);
+        //if (!init) {
+        setLoadingError("individual");
+        for (const wallet of validWallets) {
+          //console.log("fetching data for ", wallet.addr);
+          const data = await fetchWalletData(wallet, index++);
+          setWallets((current) =>
+            current.map((c) => (c.address === data.address ? data : c))
+          );
+          setFullList((current) =>
+            current.map((c) => (c.address === data.address ? data : c))
+          );
         }
+        setInit(true);
+        // } else {
+        //   const updatedWallets = [];
+        //   for (const wallet of validWallets) {
+        //     const data = await fetchWalletData(wallet, index++);
+        //     updatedWallets.push(data);
+        //   }
+        //   setWallets([...updatedWallets]);
+        //   setFullList([...updatedWallets]);
+        // }
       } catch (error) {
         console.log("failed to get wallets individually. Retry on next cycle.");
         setLoadingError("retry");

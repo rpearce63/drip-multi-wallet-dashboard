@@ -26,12 +26,14 @@ import axios from "axios";
 const BSCSCAN_URL = "https://api.bscscan.com";
 export const RPC_URL =
   // list of rpcs
+  //"https://blissful-frequent-asphalt.bsc.quiknode.pro/bbb0a627b2e3e833221d1b083ef0c84c48e1c84f/"
+  //"https://proportionate-late-market.bsc.quiknode.pro/ec5804f94e01a2e6d2f463ef5943cd1c5adfb1da/";
   //"https://bscrpc.com";
   //"https://rpc.ankr.com/bsc";
   //"https://bsc-mainnet.public.blastapi.io";
   //"https://nd-545-991-262.p2pify.com/26d4d56490e1d55a2a05b198dbca102d";
   //"https://bsc-mainnet-rpc.allthatnode.com";
-  //  "https://bsc-dataseed1.defibit.io";
+  //"https://bsc-dataseed1.defibit.io";
   //"https://knowing-west-stingray.glitch.me/https://bsc-rpc.gateway.pokt.network";
   "https://bsc-dataseed.binance.org/";
 //"https://fragrant-alien-pine.bsc.discover.quiknode.pro/5ab734bf3a5066d920f3996c8b28ecfdbe3c88bf/";
