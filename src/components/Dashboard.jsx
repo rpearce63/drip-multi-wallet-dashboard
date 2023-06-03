@@ -125,7 +125,7 @@ const Dashboard = () => {
     { label: "Ref Pos", id: "ref_claim_pos" },
   ];
 
-  const REFRESH_INTERVAL = 60000;
+  const REFRESH_INTERVAL = 120000;
 
   useEffect(() => {
     const {
