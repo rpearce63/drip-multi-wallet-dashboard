@@ -28,7 +28,6 @@ import { isUndefined } from "lodash";
 const web3 = new Web3(Web3.givenProvider);
 
 const Dashboard = () => {
-  const [init, setInit] = useState(false);
   const [wallets, setWallets] = useState([]);
   const [fullList, setFullList] = useState([]);
   const [totalDeposits, setTotalDeposits] = useState(0);
@@ -211,46 +210,32 @@ const Dashboard = () => {
     };
   }, [loading, loadingError]);
 
-  const fetchWalletsIndv = useCallback(
-    async (validWallets) => {
-      console.log("loading wallets one at a time");
+  const fetchWalletsIndv = useCallback(async (validWallets) => {
+    console.log("loading wallets one at a time");
 
-      window.scrollTo({ top: 0 });
-      let index = 0;
-      try {
-        //if (!init) {
-        setLoadingError("individual");
-        for (const wallet of validWallets) {
-          //console.log("fetching data for ", wallet.addr);
-          const data = await fetchWalletData(wallet, index++);
-          setWallets((current) =>
-            current.map((c) => (c.address === data.address ? data : c))
-          );
-          setFullList((current) =>
-            current.map((c) => (c.address === data.address ? data : c))
-          );
-        }
-        setInit(true);
-        // } else {
-        //   const updatedWallets = [];
-        //   for (const wallet of validWallets) {
-        //     const data = await fetchWalletData(wallet, index++);
-        //     updatedWallets.push(data);
-        //   }
-        //   setWallets([...updatedWallets]);
-        //   setFullList([...updatedWallets]);
-        // }
-      } catch (error) {
-        console.log("failed to get wallets individually. Retry on next cycle.");
-        setLoadingError("retry");
-        return true;
+    window.scrollTo({ top: 0 });
+    let index = 0;
+    try {
+      setLoadingError("individual");
+      for (const wallet of validWallets) {
+        //console.log("fetching data for ", wallet.addr);
+        const data = await fetchWalletData(wallet, index++);
+        setWallets((current) =>
+          current.map((c) => (c.address === data.address ? data : c))
+        );
+        setFullList((current) =>
+          current.map((c) => (c.address === data.address ? data : c))
+        );
       }
-      console.log("resetting loading error value.");
-      setLoadingError(undefined);
+    } catch (error) {
+      console.log("failed to get wallets individually. Retry on next cycle.");
+      setLoadingError("retry");
       return true;
-    },
-    [init]
-  );
+    }
+    console.log("resetting loading error value.");
+    setLoadingError(undefined);
+    return true;
+  }, []);
 
   useEffect(() => {
     wallets.length &&
@@ -260,90 +245,96 @@ const Dashboard = () => {
       );
   }, [wallets]);
 
-  const fetchData = useCallback(async () => {
-    console.log("fetching data");
-    setLoading(true);
-    setTimer(REFRESH_INTERVAL / 1000);
+  const fetchData = useCallback(
+    async (refresh = false) => {
+      console.log("fetching data");
+      setLoading(true);
+      setTimer(REFRESH_INTERVAL / 1000);
 
-    let storedWallets = JSON.parse(
-      window.localStorage.getItem("dripAddresses")
-    );
+      let storedWallets = JSON.parse(
+        window.localStorage.getItem("dripAddresses")
+      );
 
-    const myWallets =
-      storedWallets?.map((wallet) => ({
-        addr: wallet.addr.trim().replace("\n", ""),
-        label: wallet.label,
-        group: wallet.group || "none",
-      })) ?? [];
-    const groups = [
-      ...new Set(
-        myWallets
-          .filter((w) => w.group && w.group !== "none")
-          .map((w) => w.group)
-          .join(",")
-          .split(",")
-          .map((g) => g.trim())
-          .filter((g) => g.trim().length)
-      ),
-    ];
-    setGroups(groups);
-    const validWallets = myWallets.filter((w) => web3.utils.isAddress(w.addr));
+      const myWallets =
+        storedWallets?.map((wallet) => ({
+          addr: wallet.addr.trim().replace("\n", ""),
+          label: wallet.label,
+          group: wallet.group || "none",
+        })) ?? [];
+      const groups = [
+        ...new Set(
+          myWallets
+            .filter((w) => w.group && w.group !== "none")
+            .map((w) => w.group)
+            .join(",")
+            .split(",")
+            .map((g) => g.trim())
+            .filter((g) => g.trim().length)
+        ),
+      ];
+      setGroups(groups);
+      const validWallets = myWallets.filter((w) =>
+        web3.utils.isAddress(w.addr)
+      );
 
-    let walletCache;
-    const storedWalletCache = JSON.parse(
-      localStorage.getItem("dripWalletCache")
-    );
-    if (
-      storedWalletCache?.data?.length &&
-      storedWalletCache.lastSaved > new Date().getTime() - REFRESH_INTERVAL
-    ) {
-      console.log("got stored wallet cache.");
-      walletCache = storedWalletCache.data;
-      setFullList(walletCache);
-      setWallets(walletCache);
-    } else {
-      try {
-        const start = new Date();
-        console.log("trying to get all wallet data.");
-        const chunks = chunk(validWallets, 10);
-        //setWallets([]);
-        //setFullList([]);
-        let index = 0;
-        for (const chunk of chunks) {
-          walletCache = await getAllWalletData(chunk, index);
-          //await fetchWalletsIndv(validWallets);
+      let walletCache;
+      const storedWalletCache = JSON.parse(
+        localStorage.getItem("dripWalletCache")
+      );
+      if (
+        !refresh &&
+        storedWalletCache?.data?.length &&
+        storedWalletCache.lastSaved > new Date().getTime() - REFRESH_INTERVAL
+      ) {
+        console.log("got stored wallet cache.");
+        walletCache = storedWalletCache.data;
+        setFullList(walletCache);
+        setWallets(walletCache);
+      } else {
+        try {
+          const start = new Date();
+          console.log("trying to get all wallet data.");
+          const chunks = chunk(validWallets, 10);
+          //setWallets([]);
+          //setFullList([]);
+          let index = 0;
+          for (const chunk of chunks) {
+            const chunkData = await getAllWalletData(chunk, index);
+            //await fetchWalletsIndv(validWallets);
 
-          setFullList((current) => [
-            ...current.filter(
-              (c) => !walletCache.find((w) => w.address === c.address)
-            ),
-            ...walletCache,
-          ]);
-          setWallets((current) => [
-            ...current.filter(
-              (c) => !walletCache.find((w) => w.address === c.address)
-            ),
-            ...walletCache,
-          ]);
-          index += 10;
+            setFullList((current) => [
+              ...current.filter(
+                (c) => !chunkData.find((w) => w.address === c.address)
+              ),
+              ...chunkData,
+            ]);
+            setWallets((current) => [
+              ...current.filter(
+                (c) => !chunkData.find((w) => w.address === c.address)
+              ),
+              ...chunkData,
+            ]);
+            index += 10;
+          }
+          const end = new Date();
+          console.log(`got wallet data in ${(end - start) / 1000} seconds`);
+          setLoadingError(undefined);
+        } catch (err) {
+          console.log("Error getting all wallet data: ", err.message);
+          await fetchWalletsIndv(validWallets);
         }
-        const end = new Date();
-        console.log(`got wallet data in ${(end - start) / 1000} seconds`);
-        setLoadingError(undefined);
-      } catch (err) {
-        console.log("Error getting all wallet data: ", err.message);
-        await fetchWalletsIndv(validWallets);
       }
-    }
 
-    setDataCopied(false);
-    setLoading(false);
-    fetchPrices();
-    // localStorage.setItem(
-    //   "dripWalletCache",
-    //   JSON.stringify({ data: walletCache, lastSaved: new Date().getTime() })
-    // );
-  }, [fetchPrices, fetchWalletsIndv]);
+      setDataCopied(false);
+      setLoading(false);
+      fetchPrices();
+      // localStorage.setItem(
+      //   "dripWalletCache",
+      //   JSON.stringify({ data: walletCache, lastSaved: new Date().getTime() })
+      // );
+    },
+    [fetchPrices, fetchWalletsIndv]
+  );
 
   useEffect(() => {
     if (!wallets || !wallets.length) {
@@ -867,6 +858,7 @@ const Dashboard = () => {
           groups={groups}
           MESSAGES={MESSAGES}
           backupData={backupData}
+          fetchData={fetchData}
         />
 
         <table className="table">

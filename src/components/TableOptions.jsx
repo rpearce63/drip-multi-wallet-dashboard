@@ -14,6 +14,7 @@ const TableOptions = ({
   groups,
   MESSAGES,
   backupData,
+  fetchData,
 }) => {
   return (
     <div className="table-options">
@@ -82,6 +83,9 @@ const TableOptions = ({
       </div>
       <button className="ui  button" onClick={backupData}>
         Back Up
+      </button>
+      <button className="ui button" onClick={() => fetchData(true)}>
+        Reload
       </button>
     </div>
   );
