@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from "react";
+import { React, useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { getWalletTokens } from "../api/Contract.js";
 import Button from "@mui/material/Button";
@@ -15,7 +15,7 @@ const WalletTokens = () => {
   const [selectedTokens, setSelectedTokens] = useState([]);
   const [isError, setIsError] = useState(false);
 
-  const fetchTokens = async () => {
+  const fetchTokens = useCallback(async () => {
     try {
       setIsError(false);
       setLoading(true);
@@ -26,11 +26,11 @@ const WalletTokens = () => {
       setLoading(false);
       setIsError(true);
     }
-  };
+  }, [account]);
 
   useEffect(() => {
     fetchTokens();
-  }, [account]);
+  }, [account, fetchTokens]);
 
   const updateTokenList = async (e) => {
     const { checked } = e.target;

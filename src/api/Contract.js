@@ -20,19 +20,21 @@ import RESERVOIR_CONTRACT from "../configs/reservoir_contract.json";
 import LRU from "lru-cache";
 import axios from "axios";
 
+const DRIP_API = "https://drip.herokuapp.com";
+
 //const DMWDAPI = "https://api.drip-mw-dashboard.com";
-//const DMWDAPI = "https://drip-mw-dashboard-api.glitch.me";
+const DMWDAPI = "https://drip-mw-dashboard-api.glitch.me";
 
 const BSCSCAN_URL = "https://api.bscscan.com";
 export const RPC_URL =
   // list of rpcs
-  //"https://blissful-frequent-asphalt.bsc.quiknode.pro/bbb0a627b2e3e833221d1b083ef0c84c48e1c84f/"
+  //"https://blissful-frequent-asphalt.bsc.quiknode.pro/bbb0a627b2e3e833221d1b083ef0c84c48e1c84f/";
   //"https://proportionate-late-market.bsc.quiknode.pro/ec5804f94e01a2e6d2f463ef5943cd1c5adfb1da/";
   //"https://bscrpc.com";
   //"https://rpc.ankr.com/bsc";
   //"https://bsc-mainnet.public.blastapi.io";
   //"https://nd-545-991-262.p2pify.com/26d4d56490e1d55a2a05b198dbca102d";
-  //"https://bsc-mainnet-rpc.allthatnode.com";
+  // "https://bsc-mainnet-rpc.allthatnode.com";
   //"https://bsc-dataseed1.defibit.io";
   //"https://knowing-west-stingray.glitch.me/https://bsc-rpc.gateway.pokt.network";
   "https://bsc-dataseed.binance.org/";
@@ -75,16 +77,16 @@ export const web3 = new Web3(RPC_URL);
 let faucetContract = new web3.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
 let fountainContract = new web3.eth.Contract(FOUNTAIN_ABI, FOUNTAIN_ADDR);
 
-const setWssContracts = () => {
-  console.log("switching to wss");
-  faucetContract = new web3wss.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
-  fountainContract = new web3wss.eth.Contract(FOUNTAIN_ABI, FOUNTAIN_ADDR);
-};
-const setBscContracts = () => {
-  console.log("switching to default bsc");
-  faucetContract = new web3.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
-  fountainContract = new web3.eth.Contract(FOUNTAIN_ABI, FOUNTAIN_ADDR);
-};
+// const setWssContracts = () => {
+//   console.log("switching to wss");
+//   faucetContract = new web3wss.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
+//   fountainContract = new web3wss.eth.Contract(FOUNTAIN_ABI, FOUNTAIN_ADDR);
+// };
+// const setBscContracts = () => {
+//   console.log("switching to default bsc");
+//   faucetContract = new web3.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
+//   fountainContract = new web3.eth.Contract(FOUNTAIN_ABI, FOUNTAIN_ADDR);
+// };
 
 //let startBlock;
 
@@ -274,14 +276,11 @@ export const getDownline = async (account) => {
   //   return downlineCache.get(account);
   // }
   try {
-    const downline = await axios.get(
-      `https://api.drip.community/org/${account}`,
-      {
-        timeout: 2000,
-        retry: 1,
-        retryDelay: 500,
-      }
-    );
+    const downline = await axios.get(`${DRIP_API}/org/bsc/${account}`, {
+      timeout: 2000,
+      retry: 1,
+      retryDelay: 500,
+    });
     downlineCache.set(account, downline.data);
     return { downline: downline.data };
   } catch (err) {
@@ -452,10 +451,11 @@ export const getBigBuysFromAWS = async () => {
 
 export const getBigBuysFromGlitch = async () => {
   try {
-    const bigBuys = await axios.get(
-      "https://drip-mw-dashboard-api.glitch.me/bigBuys",
-      { timeout: 5000, retry: 2, retryDelay: 1000 }
-    );
+    const bigBuys = await axios.get(`${DMWDAPI}/bigBuys`, {
+      timeout: 5000,
+      retry: 2,
+      retryDelay: 1000,
+    });
     return bigBuys.data;
   } catch (err) {
     console.log(`error getting big buys from glitch: ${err.message}`);
@@ -463,10 +463,10 @@ export const getBigBuysFromGlitch = async () => {
 };
 
 export const getDripPriceData = async () => {
-  const dripPriceData = await axios.get(
-    "https://drip-mw-dashboard-api.glitch.me/prices",
-    { retry: 2, retryDelay: 1000 }
-  );
+  const dripPriceData = await axios.get(`${DMWDAPI}/prices`, {
+    retry: 2,
+    retryDelay: 1000,
+  });
   return { ...dripPriceData.data };
 };
 
