@@ -19,7 +19,7 @@ function getObjectDepth(obj) {
 
   const depthOfKeys = keys.map((key) => (key.match(/children/g) || []).length);
 
-  return Math.max(...depthOfKeys);
+  return Math.max(...depthOfKeys) - 1;
 }
 
 const Downline = () => {

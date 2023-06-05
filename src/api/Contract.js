@@ -330,7 +330,7 @@ export const getDownlineDepth = async (account) => {
 
   const depthOfKeys = keys.map((key) => (key.match(/children/g) || []).length);
   try {
-    return Math.max(...depthOfKeys);
+    return Math.max(...depthOfKeys) - 1;
   } catch (err) {
     console.log("error getting downline depth: ", err.message);
     return 0;
