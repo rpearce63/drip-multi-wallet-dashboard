@@ -81,6 +81,8 @@ const Dashboard = () => {
   const loadingRef = useRef(loading);
   const timeoutRef = useRef();
 
+  let interval, timerInterval;
+
   const TABLE_HEADERS = [
     { label: "#", id: "index" },
     { label: "Address", id: "address" },
@@ -414,11 +416,11 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(() => {
+    interval = setInterval(() => {
       localStorage.removeItem("dripWalletCache");
       autoRefresh && !loadingRef.current && fetchData();
     }, REFRESH_INTERVAL);
-    const timerInterval = setInterval(() => {
+    timerInterval = setInterval(() => {
       autoRefresh && !loadingRef.current && setTimer((timer) => timer - 1);
     }, 1000);
     return () => {

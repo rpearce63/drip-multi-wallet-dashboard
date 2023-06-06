@@ -31,7 +31,6 @@ export const RPC_URL =
   //"https://blissful-frequent-asphalt.bsc.quiknode.pro/bbb0a627b2e3e833221d1b083ef0c84c48e1c84f/";
   //"https://proportionate-late-market.bsc.quiknode.pro/ec5804f94e01a2e6d2f463ef5943cd1c5adfb1da/";
   //"https://bscrpc.com";
-  //"https://rpc.ankr.com/bsc";
   //"https://bsc-mainnet.public.blastapi.io";
   //"https://nd-545-991-262.p2pify.com/26d4d56490e1d55a2a05b198dbca102d";
   // "https://bsc-mainnet-rpc.allthatnode.com";
@@ -40,6 +39,15 @@ export const RPC_URL =
   "https://bsc-dataseed.binance.org/";
 //"https://fragrant-alien-pine.bsc.discover.quiknode.pro/5ab734bf3a5066d920f3996c8b28ecfdbe3c88bf/";
 
+const RPCs = [
+  "https://bsc-dataseed.binance.org",
+  "https://bsc-dataseed1.defibit.io",
+  "https://bscrpc.com",
+  "https://bsc-dataseed1.ninicoin.io",
+  "https://bsc-dataseed2.defibit.io",
+  "https://binance.nodereal.io",
+  "https://bsc-dataseed1.binance.org",
+];
 const flatten = require("flat").flatten;
 
 const options = {
@@ -73,7 +81,10 @@ export const web3wss = new Web3(
     rpcOptions
   )
 );
-export const web3 = new Web3(RPC_URL);
+const randomRPC = Math.floor(Math.random() * RPCs.length);
+console.log(randomRPC, RPCs[randomRPC]);
+export let web3 = new Web3(RPCs[randomRPC]);
+
 let faucetContract = new web3.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
 let fountainContract = new web3.eth.Contract(FOUNTAIN_ABI, FOUNTAIN_ADDR);
 
@@ -82,11 +93,12 @@ let fountainContract = new web3.eth.Contract(FOUNTAIN_ABI, FOUNTAIN_ADDR);
 //   faucetContract = new web3wss.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
 //   fountainContract = new web3wss.eth.Contract(FOUNTAIN_ABI, FOUNTAIN_ADDR);
 // };
-// const setBscContracts = () => {
-//   console.log("switching to default bsc");
-//   faucetContract = new web3.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
-//   fountainContract = new web3.eth.Contract(FOUNTAIN_ABI, FOUNTAIN_ADDR);
-// };
+const setBscContracts = () => {
+  const randomRPC = Math.floor(Math.random() * RPCs.length);
+  web3 = new Web3(RPCs[randomRPC]);
+  // faucetContract = new web3.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
+  // fountainContract = new web3.eth.Contract(FOUNTAIN_ABI, FOUNTAIN_ADDR);
+};
 
 //let startBlock;
 
@@ -328,9 +340,11 @@ export const getDownlineDepth = async (account) => {
     return 1;
   }
 
-  const depthOfKeys = keys.map((key) => (key.match(/children/g) || []).length);
+  const depthOfKeys = keys.map(
+    (key) => (key.match(/children/g) || []).length - 1
+  );
   try {
-    return Math.max(...depthOfKeys) - 1;
+    return Math.max(...depthOfKeys);
   } catch (err) {
     console.log("error getting downline depth: ", err.message);
     return 0;
@@ -552,6 +566,7 @@ export const chunk = (xs, n) =>
   xs.length <= n ? [[...xs]] : [xs.slice(0, n)].concat(chunk(xs.slice(n), n));
 
 export const getAllWalletData = async (myWallets, index) => {
+  setBscContracts();
   let walletCache = [];
   try {
     walletCache = await Promise.all(
