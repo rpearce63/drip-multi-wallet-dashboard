@@ -330,7 +330,7 @@ export const getBnbprice = async () => {
 export const getDownlineDepth = async (account) => {
   const obj = await getDownline(account);
 
-  if (typeof obj !== "object" || obj === null) {
+  if (typeof obj !== "object" || obj === null || obj.error) {
     return 0;
   }
 
@@ -344,7 +344,7 @@ export const getDownlineDepth = async (account) => {
     (key) => (key.match(/children/g) || []).length - 1
   );
   try {
-    return Math.max(...depthOfKeys);
+    return Math.max(...depthOfKeys, 0);
   } catch (err) {
     console.log("error getting downline depth: ", err.message);
     return 0;
