@@ -150,7 +150,10 @@ const TableRow = ({
       </td>
 
       <td className={highlightStyleFor("pct", wallet)}>
-        {formatPercent(wallet.available / wallet.deposits)}%
+        {formatPercent(
+          wallet.available / (1 - wallet.whaleTax / 100) / wallet.deposits
+        )}
+        %
       </td>
 
       <td>{convertTokenToUSD(wallet.deposits, dripPrice, showDollarValues)}</td>

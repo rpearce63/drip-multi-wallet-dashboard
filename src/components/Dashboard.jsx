@@ -513,7 +513,9 @@ const Dashboard = () => {
         return style;
       case "pct":
         if (flagPct) {
-          percent = parseFloat(wallet.available / wallet.deposits);
+          percent = parseFloat(
+            wallet.available / (1 - wallet.whaleTax / 100) / wallet.deposits
+          );
           style =
             percent >= pctReadyLevel
               ? "hydrate inverted"
