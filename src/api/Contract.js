@@ -95,7 +95,7 @@ let fountainContract = new web3.eth.Contract(FOUNTAIN_ABI, FOUNTAIN_ADDR);
 // };
 const setBscContracts = () => {
   const randomRPC = Math.floor(Math.random() * RPCs.length);
-  web3 = new Web3(RPCs[randomRPC]);
+  web3.setProvider(RPCs[randomRPC]);
   // faucetContract = new web3.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
   // fountainContract = new web3.eth.Contract(FOUNTAIN_ABI, FOUNTAIN_ADDR);
 };
@@ -143,11 +143,12 @@ export const getUserInfo = async (account, isRetry = true) => {
   } catch (err) {
     console.log("Error getting UserInfo: ", err.message);
     if (isRetry) throw new Error("retry failure");
-    await new Promise((resolve) =>
-      setTimeout(() => {
-        resolve(1);
-      }, 1000)
-    );
+    setBscContracts();
+    // await new Promise((resolve) =>
+    //   setTimeout(() => {
+    //     resolve(1);
+    //   }, 1000)
+    // );
     console.log("retrying getUserInfo");
     return getUserInfo(account, true);
   }
@@ -555,7 +556,8 @@ export const fetchWalletData = async (wallet, index, retry = false) => {
     };
   } catch (err) {
     if (!retry) {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setBscContracts();
+      //await new Promise((resolve) => setTimeout(resolve, 1000));
       return await fetchWalletData(wallet, index, true);
     }
     throw err;
