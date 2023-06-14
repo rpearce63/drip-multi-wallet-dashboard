@@ -3,6 +3,7 @@ import {
   convertTokenToUSD,
   formatPercent,
   formatNumber,
+  calculateTime,
 } from "../api/utils";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -157,6 +158,7 @@ const TableRow = ({
       </td>
 
       <td>{convertTokenToUSD(wallet.deposits, dripPrice, showDollarValues)}</td>
+      {showLastAction && <td>{calculateTime(wallet.deposits, 27398, 0.01)}</td>}
       {showLastAction && (
         <td
           onClick={fetchLastAction}

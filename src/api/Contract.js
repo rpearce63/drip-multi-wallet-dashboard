@@ -95,7 +95,7 @@ let fountainContract = new web3.eth.Contract(FOUNTAIN_ABI, FOUNTAIN_ADDR);
 // };
 const setBscContracts = () => {
   const randomRPC = Math.floor(Math.random() * RPCs.length);
-  web3.setProvider(RPCs[randomRPC]);
+  web3 = new Web3(RPCs[randomRPC]);
   // faucetContract = new web3.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
   // fountainContract = new web3.eth.Contract(FOUNTAIN_ABI, FOUNTAIN_ADDR);
 };

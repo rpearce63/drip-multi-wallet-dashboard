@@ -1,4 +1,4 @@
-import { findFibIndex } from "./api/utils";
+import { findFibIndex, calculateTime } from "./api/utils";
 import Web3 from "web3";
 
 const web3 = new Web3("");
@@ -35,3 +35,8 @@ const formatDatestamp = () => {
   const formattedDate = `${date.getFullYear()}_${date.getMonth()}_${date.getDate()}_${date.getTime()}`;
   console.log(formattedDate);
 };
+
+test("should calculate the max wallet days", () => {
+  const result = calculateTime(8053.88, 27398, 0.01);
+  console.log(result);
+});
