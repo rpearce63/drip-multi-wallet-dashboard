@@ -106,3 +106,18 @@ export const sortBy = (col, order) => {
     return (a, b) => (a[col] < b[col] ? 1 : -1);
   }
 };
+
+/**
+ * 
+P represents the principal amount (initial balance).
+A is the desired future value of the investment.
+r denotes the annual interest rate (expressed as a decimal).
+ * @returns 
+ */
+export function calculateTime(P, A, r) {
+  const dailyInterestRate = Math.pow(1 + r, 1 / 365) - 1;
+
+  const time = Math.log(A / P) / (Math.log(1 + dailyInterestRate) * 365);
+
+  return Number(time).toFixed(0);
+}

@@ -98,6 +98,7 @@ const Dashboard = () => {
     },
     { label: "ROI", id: "roi" },
     { label: "Deposits", id: "deposits" },
+    { label: "Days to Max", id: "daysToMax" },
     { label: "Last Action", id: "lastAction" },
     { label: "NDV", id: "ndv" },
     { label: "Claimed", id: "payouts" },
@@ -971,6 +972,7 @@ const Dashboard = () => {
               <th>
                 {convertTokenToUSD(totalDeposits, dripPrice, showDollarValues)}
               </th>
+              {showLastAction && <th>*&nbsp;Hydrate only</th>}
 
               {showLastAction && <th>Click row</th>}
               <th>{formatNumber(totalNDV)}</th>
