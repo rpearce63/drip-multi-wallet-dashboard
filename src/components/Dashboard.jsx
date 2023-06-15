@@ -972,7 +972,7 @@ const Dashboard = () => {
               <th>
                 {convertTokenToUSD(totalDeposits, dripPrice, showDollarValues)}
               </th>
-              {showLastAction && <th>*&nbsp;Hydrate only</th>}
+              {expandedTable && <th>*&nbsp;Hydrate only</th>}
 
               {showLastAction && <th>Click row</th>}
               <th>{formatNumber(totalNDV)}</th>
