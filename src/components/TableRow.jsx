@@ -158,7 +158,7 @@ const TableRow = ({
       </td>
 
       <td>{convertTokenToUSD(wallet.deposits, dripPrice, showDollarValues)}</td>
-      {showLastAction && <td>{calculateTime(wallet.deposits, 27398, 0.01)}</td>}
+      {expandedTable && <td>{calculateTime(wallet.deposits, 27398, 0.01)}</td>}
       {showLastAction && (
         <td
           onClick={fetchLastAction}

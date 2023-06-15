@@ -29,7 +29,7 @@ const BigDripBuys = () => {
           JSON.stringify(bigBuys[0]) !== JSON.stringify(data[0]) // latest transaction is different
         ) {
           //console.log("updating bigBuys");
-          setBigBuys(data);
+          data.length && setBigBuys(data);
         }
         setUpdateTime(new Date().toLocaleString());
       } catch (err) {
