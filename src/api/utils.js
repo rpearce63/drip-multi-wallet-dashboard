@@ -121,3 +121,25 @@ export function calculateTime(P, A, r) {
 
   return Number(time).toFixed(0);
 }
+
+export const calculateDaysToMaxDeposits = (initialDeposits, initialClaimed) => {
+  let deposits = initialDeposits;
+  let claimed = initialClaimed;
+  let days = 0;
+  const MAX_WALLET = 100000 / 3.65;
+
+  while (deposits < MAX_WALLET) {
+    days++;
+    let available = deposits * 0.01;
+    const whaleTier = Math.floor((claimed + available) / 10000);
+    const netAvailable = (1 - 0.05 * whaleTier) * available;
+    claimed += available;
+
+    const compoundAmount = netAvailable * 0.95;
+
+    deposits += compoundAmount;
+    available = 0;
+  }
+
+  return days;
+};
