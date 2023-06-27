@@ -3,7 +3,7 @@ import {
   convertTokenToUSD,
   formatPercent,
   formatNumber,
-  calculateTime,
+  calculateDaysToMaxDeposits,
 } from "../api/utils";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -158,7 +158,9 @@ const TableRow = ({
       </td>
 
       <td>{convertTokenToUSD(wallet.deposits, dripPrice, showDollarValues)}</td>
-      {expandedTable && <td>{calculateTime(wallet.deposits, 27398, 0.01)}</td>}
+      {expandedTable && (
+        <td>{calculateDaysToMaxDeposits(wallet.deposits, wallet.payouts)}</td>
+      )}
       {showLastAction && (
         <td
           onClick={fetchLastAction}
