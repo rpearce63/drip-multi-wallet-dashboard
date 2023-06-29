@@ -1,6 +1,6 @@
 {
   "name": "drip-multi-wallet-dashboard",
-  "version": "1.27.3",
+  "version": "1.27.4",
   "type": "module",
   "private": true,
   "dependencies": {
