@@ -93,9 +93,11 @@ let fountainContract = new web3.eth.Contract(FOUNTAIN_ABI, FOUNTAIN_ADDR);
 //   faucetContract = new web3wss.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
 //   fountainContract = new web3wss.eth.Contract(FOUNTAIN_ABI, FOUNTAIN_ADDR);
 // };
-const setBscContracts = () => {
+const setBscContracts = async () => {
   const randomRPC = Math.floor(Math.random() * RPCs.length);
   web3 = new Web3(RPCs[randomRPC]);
+  //console.log("switched to ", RPCs[randomRPC]);
+  await new Promise((resolve) => setTimeout(resolve, 100));
   // faucetContract = new web3.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
   // fountainContract = new web3.eth.Contract(FOUNTAIN_ABI, FOUNTAIN_ADDR);
 };
@@ -143,7 +145,7 @@ export const getUserInfo = async (account, isRetry = true) => {
   } catch (err) {
     console.log("Error getting UserInfo: ", err.message);
     if (isRetry) throw new Error("retry failure");
-    setBscContracts();
+    await setBscContracts();
     // await new Promise((resolve) =>
     //   setTimeout(() => {
     //     resolve(1);
@@ -486,6 +488,7 @@ export const getDripPriceData = async () => {
 };
 
 export const fetchWalletData = async (wallet, index, retry = false) => {
+  //await setBscContracts();
   //setWssContracts();
   // const web3 = await getConnection();
   try {
@@ -556,7 +559,7 @@ export const fetchWalletData = async (wallet, index, retry = false) => {
     };
   } catch (err) {
     if (!retry) {
-      setBscContracts();
+      //await setBscContracts();
       //await new Promise((resolve) => setTimeout(resolve, 1000));
       return await fetchWalletData(wallet, index, true);
     }
@@ -568,7 +571,7 @@ export const chunk = (xs, n) =>
   xs.length <= n ? [[...xs]] : [xs.slice(0, n)].concat(chunk(xs.slice(n), n));
 
 export const getAllWalletData = async (myWallets, index) => {
-  setBscContracts();
+  await setBscContracts();
   let walletCache = [];
   try {
     walletCache = await Promise.all(

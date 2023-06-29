@@ -295,7 +295,7 @@ const Dashboard = () => {
         try {
           const start = new Date();
           console.log("trying to get all wallet data.");
-          const chunks = chunk(validWallets, 10);
+          const chunks = chunk(validWallets, 5);
           //setWallets([]);
           //setFullList([]);
           let index = 0;
