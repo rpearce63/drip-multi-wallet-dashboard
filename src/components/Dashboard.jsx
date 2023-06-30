@@ -295,7 +295,8 @@ const Dashboard = () => {
         try {
           const start = new Date();
           console.log("trying to get all wallet data.");
-          const chunks = chunk(validWallets, 5);
+          const chunkSize = 5;
+          const chunks = chunk(validWallets, chunkSize);
           //setWallets([]);
           //setFullList([]);
           let index = 0;
@@ -315,7 +316,7 @@ const Dashboard = () => {
               ),
               ...chunkData,
             ]);
-            index += 10;
+            index += chunkSize;
           }
           const end = new Date();
           console.log(`got wallet data in ${(end - start) / 1000} seconds`);
