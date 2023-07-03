@@ -25,7 +25,7 @@ import Web3 from "web3";
 import TableOptions from "./TableOptions";
 import { isUndefined } from "lodash";
 
-const web3 = new Web3(Web3.givenProvider);
+const web3 = new Web3("https://bsc-dataseed.binance.org/");
 
 const Dashboard = () => {
   const [wallets, setWallets] = useState([]);
@@ -927,7 +927,6 @@ const Dashboard = () => {
                 )}
                 {editLabels && <small>autorefresh paused</small>}
               </th>
-              {expandedTable && <th></th>}
               {expandedTable && <th></th>}
               {expandedTable && (
                 <th>{convertTokenToUSD(totalBusd, 1, showDollarValues)}</th>
