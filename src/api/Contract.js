@@ -494,7 +494,7 @@ export const fetchWalletData = async (wallet, index, retry = false) => {
   try {
     //const contract = await getContract(web3);
     const userInfo = await getUserInfo(wallet.addr);
-    if (!userInfo) return;
+    if (!userInfo) return {};
     const available = await claimsAvailable(wallet.addr);
     const dripBalance = await getTokenBalance(wallet.addr, DRIP_TOKEN_ADDR);
     const uplineCount = await getUplineCount(wallet.addr);
