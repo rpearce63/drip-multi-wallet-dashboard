@@ -497,22 +497,23 @@ export const fetchWalletData = async (wallet, index, retry = false) => {
   try {
     //const contract = await getContract(web3);
     const userInfo = await getUserInfo(wallet.addr);
-    if (Number(userInfo.deposits) === 0) {
-      console.log("no deposits");
-      return buildDefaultWallet(wallet, index, userInfo);
-    }
-    const available = await claimsAvailable(wallet.addr);
     const dripBalance = await getTokenBalance(wallet.addr, DRIP_TOKEN_ADDR);
-    const uplineCount = 0; //await getUplineCount(wallet.addr);
-    const br34pBalance = await getBr34pBalance(wallet.addr);
     const bnbBalance = await getBnbBalance(wallet.addr);
-
+    const br34pBalance = await getBr34pBalance(wallet.addr);
     const busdBalance = await getTokenBalance(wallet.addr, BUSD_TOKEN_ADDRESS);
     const dripBusdLpBalance = await getTokenBalance(
       wallet.addr,
       DRIP_BUSD_LP_ADDRESS
     );
+    const dropsBalance = await getReservoirBalance(wallet.addr);
+    const dailyBnb = await getReservoirDailyBnb(wallet.addr);
 
+    // if (Number(userInfo.deposits) === 0) {
+    //   console.log("no deposits");
+    //   return buildDefaultWallet(wallet, index, userInfo);
+    // }
+    const available = await claimsAvailable(wallet.addr);
+    const uplineCount = 0; //await getUplineCount(wallet.addr);
     const coveredDepth = findFibIndex(br34pBalance);
     const teamDepth =
       userInfo.referrals > 0 && (await getDownlineDepth(wallet.addr));
@@ -530,8 +531,7 @@ export const fetchWalletData = async (wallet, index, retry = false) => {
     //const startBlock = await getStartBlock();
     //console.log("startBlock: " + startBlock);
     //const lastAction = await getLastAction(startBlock - 200000, wallet.addr);
-    const dropsBalance = await getReservoirBalance(wallet.addr);
-    const dailyBnb = await getReservoirDailyBnb(wallet.addr);
+
     const whaleTax = calculateWhaleTax(available, userInfo.payouts);
 
     const walletProfile = {

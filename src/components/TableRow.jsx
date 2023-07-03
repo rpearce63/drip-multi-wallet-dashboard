@@ -64,21 +64,21 @@ const TableRow = ({
   // }, [fetchLastAction, wallet.index]);
 
   if (!wallet) return <></>;
-  if (wallet.deposits === 0)
-    return (
-      <tr>
-        <td className="rowIndex" onClick={() => deleteRow(wallet.address)}>
-          <span>{wallet.index + 1}</span>
-        </td>
-        <td
-          className={wallet.valid ? "" : "invalid"}
-          onClick={(e) => navigator.clipboard.writeText(wallet.address)}
-        >
-          {shortenAddress(wallet.address)}
-        </td>
-        <td colSpan={3}>No Deposits in Faucet</td>
-      </tr>
-    );
+  // if (wallet.deposits === 0)
+  //   return (
+  //     <tr>
+  //       <td className="rowIndex" onClick={() => deleteRow(wallet.address)}>
+  //         <span>{wallet.index + 1}</span>
+  //       </td>
+  //       <td
+  //         className={wallet.valid ? "" : "invalid"}
+  //         onClick={(e) => navigator.clipboard.writeText(wallet.address)}
+  //       >
+  //         {shortenAddress(wallet.address)}
+  //       </td>
+  //       <td colSpan={3}>No Deposits in Faucet</td>
+  //     </tr>
+  //   );
   return (
     <tr>
       <td className="rowIndex" onClick={() => deleteRow(wallet.address)}>
@@ -88,32 +88,40 @@ const TableRow = ({
         className={wallet.valid ? "" : "invalid"}
         onClick={(e) => navigator.clipboard.writeText(wallet.address)}
       >
-        <Link to={`/upline/${wallet.address}`}>
-          {shortenAddress(wallet.address)}
-        </Link>
-      </td>
-      <td>
-        {editLabels ? (
-          <>
-            <input
-              size={8}
-              type="text"
-              placeholder="Label"
-              value={wallet.label}
-              onChange={(e) => addLabel(wallet.index, e.target.value)}
-            />
-            <input
-              type="text"
-              size={8}
-              placeholder="Group"
-              value={wallet.group === "none" ? "" : wallet.group}
-              onChange={(e) => addGroup(wallet.index, e.target.value)}
-            />
-          </>
+        {wallet.deposits > 0 ? (
+          <Link to={`/upline/${wallet.address}`}>
+            {shortenAddress(wallet.address)}
+          </Link>
         ) : (
-          wallet.label
+          shortenAddress(wallet.address)
         )}
       </td>
+      {wallet.deposits > 0 ? (
+        <td>
+          {editLabels ? (
+            <>
+              <input
+                size={8}
+                type="text"
+                placeholder="Label"
+                value={wallet.label}
+                onChange={(e) => addLabel(wallet.index, e.target.value)}
+              />
+              <input
+                type="text"
+                size={8}
+                placeholder="Group"
+                value={wallet.group === "none" ? "" : wallet.group}
+                onChange={(e) => addGroup(wallet.index, e.target.value)}
+              />
+            </>
+          ) : (
+            wallet.label
+          )}
+        </td>
+      ) : (
+        <td>No Deposits in Faucet</td>
+      )}
       {expandedTable && <td>{shortenAddress(wallet.upline)}</td>}
       {/* {expandedTable && <td>{wallet.uplineCount}</td>} */}
       {expandedTable && (
@@ -166,15 +174,19 @@ const TableRow = ({
       </td>
 
       <td className={highlightStyleFor("pct", wallet)}>
-        {formatPercent(
-          wallet.available / (1 - wallet.whaleTax / 100) / wallet.deposits
-        )}
+        {wallet.deposits > 0 &&
+          formatPercent(
+            wallet.available / (1 - wallet.whaleTax / 100) / wallet.deposits
+          )}
         %
       </td>
 
       <td>{convertTokenToUSD(wallet.deposits, dripPrice, showDollarValues)}</td>
       {expandedTable && (
-        <td>{calculateDaysToMaxDeposits(wallet.deposits, wallet.payouts)}</td>
+        <td>
+          {wallet.deposits > 0 &&
+            calculateDaysToMaxDeposits(wallet.deposits, wallet.payouts)}
+        </td>
       )}
       {showLastAction && (
         <td
@@ -187,7 +199,9 @@ const TableRow = ({
       )}
       <td
         className={
-          flagLowNdv && wallet.ndv / wallet.deposits <= ndvWarningLevel / 100
+          flagLowNdv &&
+          wallet.deposits > 0 &&
+          wallet.ndv / wallet.deposits <= ndvWarningLevel / 100
             ? "warning inverted"
             : ""
         }
