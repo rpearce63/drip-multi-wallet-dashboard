@@ -86,7 +86,7 @@ const Dashboard = () => {
     { label: "Address", id: "address" },
     { label: "Label", id: "label" },
     { label: "Buddy", id: "upline" },
-    { label: "Uplines", id: "uplineCount" },
+    //{ label: "Uplines", id: "uplineCount" },
     { label: "BUSD", id: "busdBalance" },
     { label: "BR34P / Levels", id: "br34pBalance" },
     { label: "Drip", id: "dripBalance" },

@@ -64,6 +64,21 @@ const TableRow = ({
   // }, [fetchLastAction, wallet.index]);
 
   if (!wallet) return <></>;
+  if (wallet.deposits === 0)
+    return (
+      <tr>
+        <td className="rowIndex" onClick={() => deleteRow(wallet.address)}>
+          <span>{wallet.index + 1}</span>
+        </td>
+        <td
+          className={wallet.valid ? "" : "invalid"}
+          onClick={(e) => navigator.clipboard.writeText(wallet.address)}
+        >
+          {shortenAddress(wallet.address)}
+        </td>
+        <td colSpan={3}>No Deposits in Faucet</td>
+      </tr>
+    );
   return (
     <tr>
       <td className="rowIndex" onClick={() => deleteRow(wallet.address)}>
@@ -100,7 +115,7 @@ const TableRow = ({
         )}
       </td>
       {expandedTable && <td>{shortenAddress(wallet.upline)}</td>}
-      {expandedTable && <td>{wallet.uplineCount}</td>}
+      {/* {expandedTable && <td>{wallet.uplineCount}</td>} */}
       {expandedTable && (
         <td>{convertTokenToUSD(wallet.busdBalance, 1, showDollarValues)}</td>
       )}
