@@ -25,7 +25,7 @@ import Web3 from "web3";
 import TableOptions from "./TableOptions";
 import { isUndefined } from "lodash";
 
-const web3 = new Web3(Web3.givenProvider);
+const web3 = new Web3("https://bsc-dataseed.binance.org/");
 
 const Dashboard = () => {
   const [wallets, setWallets] = useState([]);
@@ -86,7 +86,7 @@ const Dashboard = () => {
     { label: "Address", id: "address" },
     { label: "Label", id: "label" },
     { label: "Buddy", id: "upline" },
-    { label: "Uplines", id: "uplineCount" },
+    //{ label: "Uplines", id: "uplineCount" },
     { label: "BUSD", id: "busdBalance" },
     { label: "BR34P / Levels", id: "br34pBalance" },
     { label: "Drip", id: "dripBalance" },
@@ -295,7 +295,7 @@ const Dashboard = () => {
         try {
           const start = new Date();
           console.log("trying to get all wallet data.");
-          const chunkSize = 5;
+          const chunkSize = 10;
           const chunks = chunk(validWallets, chunkSize);
           //setWallets([]);
           //setFullList([]);
@@ -927,7 +927,6 @@ const Dashboard = () => {
                 )}
                 {editLabels && <small>autorefresh paused</small>}
               </th>
-              {expandedTable && <th></th>}
               {expandedTable && <th></th>}
               {expandedTable && (
                 <th>{convertTokenToUSD(totalBusd, 1, showDollarValues)}</th>

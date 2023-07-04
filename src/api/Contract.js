@@ -141,18 +141,20 @@ export const getAirdrops = async (account) => {
 
 export const getUserInfo = async (account, isRetry = true) => {
   try {
-    return await faucetContract.methods.users(account).call();
+    const userInfo = await faucetContract.methods.users(account).call();
+    return userInfo;
   } catch (err) {
     console.log("Error getting UserInfo: ", err.message);
-    if (isRetry) throw new Error("retry failure");
-    await setBscContracts();
-    // await new Promise((resolve) =>
-    //   setTimeout(() => {
-    //     resolve(1);
-    //   }, 1000)
-    // );
-    console.log("retrying getUserInfo");
-    return getUserInfo(account, true);
+    // if (isRetry) throw new Error("retry failure");
+    // await setBscContracts();
+    // // await new Promise((resolve) =>
+    // //   setTimeout(() => {
+    // //     resolve(1);
+    // //   }, 1000)
+    // // );
+    // console.log("retrying getUserInfo");
+    // return getUserInfo(account, true);
+    return undefined;
   }
 };
 
@@ -255,6 +257,7 @@ export const getDogPrice = async () => {
 };
 
 export const getUplineCount = async (wallet) => {
+  console.log("getting upline count");
   let upline = wallet,
     count = 0,
     stop = false;
@@ -494,19 +497,23 @@ export const fetchWalletData = async (wallet, index, retry = false) => {
   try {
     //const contract = await getContract(web3);
     const userInfo = await getUserInfo(wallet.addr);
-    if (!userInfo) return;
-    const available = await claimsAvailable(wallet.addr);
     const dripBalance = await getTokenBalance(wallet.addr, DRIP_TOKEN_ADDR);
-    const uplineCount = await getUplineCount(wallet.addr);
-    const br34pBalance = await getBr34pBalance(wallet.addr);
     const bnbBalance = await getBnbBalance(wallet.addr);
-
+    const br34pBalance = await getBr34pBalance(wallet.addr);
     const busdBalance = await getTokenBalance(wallet.addr, BUSD_TOKEN_ADDRESS);
     const dripBusdLpBalance = await getTokenBalance(
       wallet.addr,
       DRIP_BUSD_LP_ADDRESS
     );
+    const dropsBalance = await getReservoirBalance(wallet.addr);
+    const dailyBnb = await getReservoirDailyBnb(wallet.addr);
 
+    // if (Number(userInfo.deposits) === 0) {
+    //   console.log("no deposits");
+    //   return buildDefaultWallet(wallet, index, userInfo);
+    // }
+    const available = await claimsAvailable(wallet.addr);
+    const uplineCount = 0; //await getUplineCount(wallet.addr);
     const coveredDepth = findFibIndex(br34pBalance);
     const teamDepth =
       userInfo.referrals > 0 && (await getDownlineDepth(wallet.addr));
@@ -524,11 +531,10 @@ export const fetchWalletData = async (wallet, index, retry = false) => {
     //const startBlock = await getStartBlock();
     //console.log("startBlock: " + startBlock);
     //const lastAction = await getLastAction(startBlock - 200000, wallet.addr);
-    const dropsBalance = await getReservoirBalance(wallet.addr);
-    const dailyBnb = await getReservoirDailyBnb(wallet.addr);
+
     const whaleTax = calculateWhaleTax(available, userInfo.payouts);
 
-    return {
+    const walletProfile = {
       index,
       ...userInfo,
       deposits: userInfo.deposits / 10e17,
@@ -557,14 +563,48 @@ export const fetchWalletData = async (wallet, index, retry = false) => {
       referrals: parseInt(userInfo.referrals),
       whaleTax,
     };
+    return walletProfile;
   } catch (err) {
     if (!retry) {
       //await setBscContracts();
       //await new Promise((resolve) => setTimeout(resolve, 1000));
+      console.log("fetchWalletData again");
       return await fetchWalletData(wallet, index, true);
     }
     throw err;
   }
+};
+
+const buildDefaultWallet = (wallet, index, userInfo) => {
+  const defaultWallet = {
+    index,
+    ...userInfo,
+    deposits: 0,
+    available: 0,
+    payouts: 0,
+    maxPayout: 0,
+    direct_bonus: 0,
+    address: wallet.addr,
+    label: wallet.label,
+    group: wallet.group,
+    valid: true,
+    dripBalance: "0",
+    br34pBalance: 0,
+    uplineCount: 0,
+    bnbBalance: 0,
+    coveredDepth: 0,
+    teamDepth: 0,
+    ndv: 0,
+    busdBalance: "0",
+    dripBusdLpBalance: "0",
+    //lastAction,
+    r: 0,
+    dropsBalance: 0,
+    dailyBnb: "0",
+    referrals: 0,
+    whaleTax: 0,
+  };
+  return defaultWallet;
 };
 
 export const chunk = (xs, n) =>
@@ -574,12 +614,11 @@ export const getAllWalletData = async (myWallets, index) => {
   await setBscContracts();
   let walletCache = [];
   try {
-    walletCache = await Promise.all(
-      myWallets.map(async (wallet) => {
-        const walletData = await fetchWalletData(wallet, index++);
-        return walletData;
-      })
-    );
+    const promises = myWallets.map(async (wallet) => {
+      const walletData = await fetchWalletData(wallet, index++);
+      return walletData;
+    });
+    walletCache = await Promise.all(promises);
     return [...new Set(walletCache)];
   } catch (err) {
     // if (retryCount < 2) {
