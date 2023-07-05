@@ -96,32 +96,30 @@ const TableRow = ({
           shortenAddress(wallet.address)
         )}
       </td>
-      {wallet.deposits > 0 ? (
-        <td>
-          {editLabels ? (
-            <>
-              <input
-                size={8}
-                type="text"
-                placeholder="Label"
-                value={wallet.label}
-                onChange={(e) => addLabel(wallet.index, e.target.value)}
-              />
-              <input
-                type="text"
-                size={8}
-                placeholder="Group"
-                value={wallet.group === "none" ? "" : wallet.group}
-                onChange={(e) => addGroup(wallet.index, e.target.value)}
-              />
-            </>
-          ) : (
-            wallet.label
-          )}
-        </td>
-      ) : (
-        <td>No Deposits in Faucet</td>
-      )}
+
+      <td>
+        {editLabels ? (
+          <>
+            <input
+              size={8}
+              type="text"
+              placeholder="Label"
+              value={wallet.label}
+              onChange={(e) => addLabel(wallet.index, e.target.value)}
+            />
+            <input
+              type="text"
+              size={8}
+              placeholder="Group"
+              value={wallet.group === "none" ? "" : wallet.group}
+              onChange={(e) => addGroup(wallet.index, e.target.value)}
+            />
+          </>
+        ) : (
+          wallet.label
+        )}
+      </td>
+
       {expandedTable && <td>{shortenAddress(wallet.upline)}</td>}
       {/* {expandedTable && <td>{wallet.uplineCount}</td>} */}
       {expandedTable && (
