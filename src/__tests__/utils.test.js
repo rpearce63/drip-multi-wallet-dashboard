@@ -1,4 +1,4 @@
-import { findFibIndex, calculateTime } from "./api/utils";
+import { findFibIndex, calculateTime } from "../api/utils";
 import Web3 from "web3";
 
 const web3 = new Web3("");

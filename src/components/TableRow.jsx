@@ -218,6 +218,9 @@ const TableRow = ({
       {expandedTable && (
         <>
           <td>{convertTokenToUSD(wallet.r, dripPrice, showDollarValues)}</td>
+          <td>
+            {convertTokenToUSD(wallet.payouts - wallet.r, showDollarValues)}
+          </td>
         </>
       )}
 
