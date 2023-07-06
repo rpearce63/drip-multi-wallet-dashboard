@@ -44,6 +44,7 @@ const Dashboard = () => {
   const [totalNDV, setTotalNDV] = useState(0);
   const [totalMax, setTotalMax] = useState(0);
   const [totalDrops, setTotalDrops] = useState(0);
+  const [totalPaidOut, setTotalPaidOut] = useState(0);
   const [sortCol, setSortCol] = useState("index");
   const [sortOrder, setSortOrder] = useState("asc");
   const [badAddresses, setBadAddresses] = useState([]);
@@ -104,6 +105,7 @@ const Dashboard = () => {
     { label: "Claimed", id: "payouts" },
     { label: "Whale Tax", id: "whaleTax" },
     { label: "Hydrated", id: "r" },
+    { label: "Paid Out", id: "paidOut" },
     { label: "Rewarded", id: "direct_bonus" },
     { label: "Max Payout", id: "maxPayout" },
     { label: "Team", id: "referrals" },
@@ -409,6 +411,12 @@ const Dashboard = () => {
     setTotalDrops(() =>
       validWallets.reduce(
         (total, wallet) => total + parseFloat(wallet.dropsBalance),
+        0
+      )
+    );
+    setTotalPaidOut(() =>
+      validWallets.reduce(
+        (total, wallet) => total + parseFloat(wallet.payouts - wallet.r),
         0
       )
     );
@@ -981,13 +989,16 @@ const Dashboard = () => {
               </th>
               {expandedTable && <th></th>}
               {expandedTable && (
-                <th>
-                  {convertTokenToUSD(
-                    totalHydrated,
-                    dripPrice,
-                    showDollarValues
-                  )}
-                </th>
+                <>
+                  <th>
+                    {convertTokenToUSD(
+                      totalHydrated,
+                      dripPrice,
+                      showDollarValues
+                    )}
+                  </th>
+                  <th>{formatNumber(totalPaidOut)}</th>
+                </>
               )}
               <th>
                 {convertTokenToUSD(
