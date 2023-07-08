@@ -30,11 +30,11 @@ export const convertTokenToUSD = (tokenAmt, tokenPrice, showDollarValues) => {
   return value;
 };
 
-export const formatCurrency = (amt) => {
+export const formatCurrency = (amt, decimals = 2) => {
   return (
     "$" +
     parseFloat(Math.round(amt * 1000) / 1000)
-      .toFixed(2)
+      .toFixed(decimals)
       .toString()
       .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
   );
