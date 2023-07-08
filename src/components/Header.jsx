@@ -274,7 +274,7 @@ const DripPrices = ({ dripPcsPrice, BUY_SPREAD, dripPrice, hidePrices }) => {
           >
             DEX:
           </a>
-          {formatCurrency(convertDrip(dripPrice))}
+          {formatCurrency(convertDrip(dripPrice), 3)}
         </div>
         <div
           className={`drip-pcs ${
@@ -288,7 +288,7 @@ const DripPrices = ({ dripPcsPrice, BUY_SPREAD, dripPrice, hidePrices }) => {
           >
             PCS:
           </a>
-          {formatCurrency(dripPcsPrice)}
+          {formatCurrency(dripPcsPrice, 3)}
         </div>
       </div>
     </div>
