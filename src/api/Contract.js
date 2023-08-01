@@ -577,37 +577,37 @@ export const fetchWalletData = async (wallet, index, retry = false) => {
   }
 };
 
-const buildDefaultWallet = (wallet, index, userInfo) => {
-  const defaultWallet = {
-    index,
-    ...userInfo,
-    deposits: 0,
-    available: 0,
-    payouts: 0,
-    maxPayout: 0,
-    direct_bonus: 0,
-    address: wallet.addr,
-    label: wallet.label,
-    group: wallet.group,
-    valid: true,
-    dripBalance: "0",
-    br34pBalance: 0,
-    uplineCount: 0,
-    bnbBalance: 0,
-    coveredDepth: 0,
-    teamDepth: 0,
-    ndv: 0,
-    busdBalance: "0",
-    dripBusdLpBalance: "0",
-    //lastAction,
-    r: 0,
-    dropsBalance: 0,
-    dailyBnb: "0",
-    referrals: 0,
-    whaleTax: 0,
-  };
-  return defaultWallet;
-};
+// const buildDefaultWallet = (wallet, index, userInfo) => {
+//   const defaultWallet = {
+//     index,
+//     ...userInfo,
+//     deposits: 0,
+//     available: 0,
+//     payouts: 0,
+//     maxPayout: 0,
+//     direct_bonus: 0,
+//     address: wallet.addr,
+//     label: wallet.label,
+//     group: wallet.group,
+//     valid: true,
+//     dripBalance: "0",
+//     br34pBalance: 0,
+//     uplineCount: 0,
+//     bnbBalance: 0,
+//     coveredDepth: 0,
+//     teamDepth: 0,
+//     ndv: 0,
+//     busdBalance: "0",
+//     dripBusdLpBalance: "0",
+//     //lastAction,
+//     r: 0,
+//     dropsBalance: 0,
+//     dailyBnb: "0",
+//     referrals: 0,
+//     whaleTax: 0,
+//   };
+//   return defaultWallet;
+// };
 
 export const chunk = (xs, n) =>
   xs.length <= n ? [[...xs]] : [xs.slice(0, n)].concat(chunk(xs.slice(n), n));
