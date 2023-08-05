@@ -543,6 +543,7 @@ table {
   width: min-content;
   margin: 2em;
   background-color: white;
+  flex-direction: row;
 }
 
 .file-input-wrapper {
