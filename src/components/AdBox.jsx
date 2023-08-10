@@ -10,7 +10,7 @@ const AdBox = () => {
             src="https://drip-mw-dashboard.s3.amazonaws.com/ads/dashboard-ad1.jpg"
             onError={() => setImageLoaded(false)}
             alt="StuffTheRez"
-            width="500px"
+            width="300px"
           />
         </a>
       </div>
@@ -20,7 +20,7 @@ const AdBox = () => {
             src="https://drip-mw-dashboard.s3.amazonaws.com/ads/dashboard-ad.jpg"
             onError={() => setImageLoaded(false)}
             alt="StuffTheRez"
-            width="500px"
+            width="300px"
           />
         </a>
       </div>
