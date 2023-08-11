@@ -5,21 +5,15 @@ const AdBox = () => {
   return (
     <div className={`drip-ads card ${imageLoaded || "hide"}`}>
       <div className="card-body">
-        <a href="https://t.me/dripreservoir" target="_blank" rel="noreferrer">
+        <a
+          href="https://dripnetwork.io/dapp/ddd"
+          target="_blank"
+          rel="noreferrer"
+        >
           <img
             src="https://drip-mw-dashboard.s3.amazonaws.com/ads/dashboard-ad1.jpg"
             onError={() => setImageLoaded(false)}
-            alt="StuffTheRez"
-            width="300px"
-          />
-        </a>
-      </div>
-      <div className="card-body">
-        <a href="https://t.me/dripreservoir" target="_blank" rel="noreferrer">
-          <img
-            src="https://drip-mw-dashboard.s3.amazonaws.com/ads/dashboard-ad.jpg"
-            onError={() => setImageLoaded(false)}
-            alt="StuffTheRez"
+            alt="DDD"
             width="300px"
           />
         </a>
