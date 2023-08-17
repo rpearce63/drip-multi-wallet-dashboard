@@ -464,7 +464,11 @@ table {
 
 .buy-pcs,
 .buy-dex {
-  color: lightgreen;
+  color: lightgreen !important;
+}
+.buy-pcs::after,
+.buy-dex::after {
+  content: " *";
 }
 
 .drip-prices {
@@ -803,4 +807,13 @@ input {
   background-color: var(--btn-primary-bg);
   border-color: var(--btn-primary-bg);
   color: #eee;
+}
+
+.arb {
+  border: 1px solid green;
+  padding: 0 5px;
+}
+
+.arb::after {
+  content: " arb";
 }

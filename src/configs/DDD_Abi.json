@@ -133,106 +133,57 @@
     "type": "event"
   },
   {
-    "inputs": [],
-    "name": "BIGGEST_DEPOSITOR_CAP",
-    "outputs": [
+    "anonymous": false,
+    "inputs": [
       {
+        "indexed": false,
         "internalType": "uint256",
-        "name": "",
+        "name": "round",
         "type": "uint256"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
+    "name": "WinnersSelected",
+    "type": "event"
   },
   {
     "inputs": [],
     "name": "BNBorBUSDMultiplier",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "DEFAULT_ADMIN_ROLE",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
+    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
-    "name": "PRIZE_CAP",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "name": "PRIZE_POOL_CAP",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "RANDOMNUMBERGENERATOR_ROLE",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "RUNNER_UP_CAP",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "biggestDepositorWithSacPrizePercentage",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "biggestDepositorWithoutSacPrizePercentage",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -240,11 +191,7 @@
     "inputs": [],
     "name": "broker",
     "outputs": [
-      {
-        "internalType": "contract IBroker",
-        "name": "",
-        "type": "address"
-      }
+      { "internalType": "contract IBroker", "name": "", "type": "address" }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -253,32 +200,16 @@
     "inputs": [],
     "name": "buddy",
     "outputs": [
-      {
-        "internalType": "contract IBuddy",
-        "name": "",
-        "type": "address"
-      }
+      { "internalType": "contract IBuddy", "name": "", "type": "address" }
     ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "player",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "referral",
-        "type": "address"
-      },
-      {
-        "internalType": "bool",
-        "name": "sacrificed",
-        "type": "bool"
-      },
+      { "internalType": "address", "name": "player", "type": "address" },
+      { "internalType": "address", "name": "referral", "type": "address" },
+      { "internalType": "bool", "name": "sacrificed", "type": "bool" },
       {
         "internalType": "uint256",
         "name": "minAmountAllowedDrip",
@@ -292,26 +223,10 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "player",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "referral",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bool",
-        "name": "sacrificed",
-        "type": "bool"
-      },
+      { "internalType": "address", "name": "player", "type": "address" },
+      { "internalType": "address", "name": "referral", "type": "address" },
+      { "internalType": "uint256", "name": "amount", "type": "uint256" },
+      { "internalType": "bool", "name": "sacrificed", "type": "bool" },
       {
         "internalType": "uint256",
         "name": "minAmountAllowedDrip",
@@ -325,26 +240,10 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "player",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "referral",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bool",
-        "name": "sacrificed",
-        "type": "bool"
-      }
+      { "internalType": "address", "name": "player", "type": "address" },
+      { "internalType": "address", "name": "referral", "type": "address" },
+      { "internalType": "uint256", "name": "amount", "type": "uint256" },
+      { "internalType": "bool", "name": "sacrificed", "type": "bool" }
     ],
     "name": "buyTicketsWithDRIP",
     "outputs": [],
@@ -352,20 +251,22 @@
     "type": "function"
   },
   {
+    "inputs": [{ "internalType": "bytes", "name": "", "type": "bytes" }],
+    "name": "checkUpkeep",
+    "outputs": [
+      { "internalType": "bool", "name": "upkeepNeeded", "type": "bool" },
+      { "internalType": "bytes", "name": "", "type": "bytes" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_player",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "_player", "type": "address" }
     ],
     "name": "claimableTickets",
     "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "claimable",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "claimable", "type": "uint256" }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -373,13 +274,7 @@
   {
     "inputs": [],
     "name": "clusterMaxSize",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -387,11 +282,7 @@
     "inputs": [],
     "name": "currentRound",
     "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "_value",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "_value", "type": "uint256" }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -399,62 +290,24 @@
   {
     "inputs": [],
     "name": "dripTax",
-    "outputs": [
-      {
-        "internalType": "uint8",
-        "name": "",
-        "type": "uint8"
-      }
-    ],
+    "outputs": [{ "internalType": "uint8", "name": "", "type": "uint8" }],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256[]",
-        "name": "randomWords",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "uint256",
-        "name": "requestId",
-        "type": "uint256"
-      }
-    ],
-    "name": "endRound",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "eth",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_player",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "_player", "type": "address" }
     ],
     "name": "expiringTickets",
     "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "expiring",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "expiring", "type": "uint256" }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -463,11 +316,7 @@
     "inputs": [],
     "name": "faucet",
     "outputs": [
-      {
-        "internalType": "contract IFaucet",
-        "name": "",
-        "type": "address"
-      }
+      { "internalType": "contract IFaucet", "name": "", "type": "address" }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -475,13 +324,7 @@
   {
     "inputs": [],
     "name": "firstPrizePercentage",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -489,11 +332,7 @@
     "inputs": [],
     "name": "fountain",
     "outputs": [
-      {
-        "internalType": "contract IFountain",
-        "name": "",
-        "type": "address"
-      }
+      { "internalType": "contract IFountain", "name": "", "type": "address" }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -501,13 +340,7 @@
   {
     "inputs": [],
     "name": "freeTicketCooldown",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -515,11 +348,7 @@
     "inputs": [],
     "name": "getCurrentPrizePool",
     "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "_jackpot",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "_prizePool", "type": "uint256" }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -528,16 +357,8 @@
     "inputs": [],
     "name": "getCurrentPrizes",
     "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "firstPrize",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "runnerUpPrize",
-        "type": "uint256"
-      },
+      { "internalType": "uint256", "name": "firstPrize", "type": "uint256" },
+      { "internalType": "uint256", "name": "runnerUpPrize", "type": "uint256" },
       {
         "internalType": "uint256",
         "name": "biggestDepositorWithSacrificePrize",
@@ -555,49 +376,25 @@
   {
     "inputs": [],
     "name": "getDripPriceInUSDFromFountain",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "getDripPriceInUSDFromTwap",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "round",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "round", "type": "uint256" }
     ],
     "name": "getPastPrizes",
     "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "firstPrize",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "runnerUpPrize",
-        "type": "uint256"
-      },
+      { "internalType": "uint256", "name": "firstPrize", "type": "uint256" },
+      { "internalType": "uint256", "name": "runnerUpPrize", "type": "uint256" },
       {
         "internalType": "uint256",
         "name": "biggestDepositorWithSacrificePrize",
@@ -614,39 +411,21 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_player",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "_player", "type": "address" }
     ],
     "name": "getPlayersCurrentTotalTickets",
     "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "totalTickets",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "totalTickets", "type": "uint256" }
     ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
-      }
+      { "internalType": "bytes32", "name": "role", "type": "bytes32" }
     ],
     "name": "getRoleAdmin",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
+    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -654,22 +433,14 @@
     "inputs": [],
     "name": "getRoundTimeRemaining",
     "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "timeRemaining",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "timeRemaining", "type": "uint256" }
     ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "round",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "round", "type": "uint256" }
     ],
     "name": "getRoundWinners",
     "outputs": [
@@ -699,16 +470,8 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "bnbAmount",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint8",
-        "name": "percent",
-        "type": "uint8"
-      }
+      { "internalType": "uint256", "name": "bnbAmount", "type": "uint256" },
+      { "internalType": "uint8", "name": "percent", "type": "uint8" }
     ],
     "name": "getSlippageAmountFromBnb",
     "outputs": [
@@ -723,16 +486,8 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "busdAmount",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint8",
-        "name": "percent",
-        "type": "uint8"
-      }
+      { "internalType": "uint256", "name": "busdAmount", "type": "uint256" },
+      { "internalType": "uint8", "name": "percent", "type": "uint8" }
     ],
     "name": "getSlippageAmountFromBusd",
     "outputs": [
@@ -747,45 +502,14 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_player",
-        "type": "address"
-      }
-    ],
-    "name": "getUpline",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "upline",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_player",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "_player", "type": "address" }
     ],
     "name": "getUserStakes",
     "outputs": [
       {
         "components": [
-          {
-            "internalType": "uint256",
-            "name": "amount",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "round",
-            "type": "uint256"
-          }
+          { "internalType": "uint256", "name": "amount", "type": "uint256" },
+          { "internalType": "uint256", "name": "round", "type": "uint256" }
         ],
         "internalType": "struct DripDropDraw.Stake[]",
         "name": "",
@@ -797,16 +521,8 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
+      { "internalType": "bytes32", "name": "role", "type": "bytes32" },
+      { "internalType": "address", "name": "account", "type": "address" }
     ],
     "name": "grantRole",
     "outputs": [],
@@ -817,36 +533,18 @@
     "inputs": [],
     "name": "group",
     "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "_value",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "_value", "type": "uint256" }
     ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
+      { "internalType": "bytes32", "name": "role", "type": "bytes32" },
+      { "internalType": "address", "name": "account", "type": "address" }
     ],
     "name": "hasRole",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -859,20 +557,10 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_player",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "_player", "type": "address" }
     ],
     "name": "isValidPlayer",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "isValid",
-        "type": "bool"
-      }
-    ],
+    "outputs": [{ "internalType": "bool", "name": "isValid", "type": "bool" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -895,16 +583,8 @@
         "name": "totalFreeTicketsClaimed",
         "type": "uint256"
       },
-      {
-        "internalType": "uint256",
-        "name": "totalTickets",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "totalPrizes",
-        "type": "uint256"
-      },
+      { "internalType": "uint256", "name": "totalTickets", "type": "uint256" },
+      { "internalType": "uint256", "name": "totalPrizes", "type": "uint256" },
       {
         "internalType": "uint256",
         "name": "totalSentToVault",
@@ -922,39 +602,21 @@
   {
     "inputs": [],
     "name": "marketingPercentage",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "notSacrificedJackpotPercentage",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "owner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -968,24 +630,32 @@
   {
     "inputs": [],
     "name": "paused",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
+        "internalType": "uint256[]",
+        "name": "_randomWords",
+        "type": "uint256[]"
       }
     ],
+    "name": "payoutWinners",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "bytes", "name": "", "type": "bytes" }],
+    "name": "performUpkeep",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "name": "playersStats",
     "outputs": [
       {
@@ -1003,16 +673,8 @@
         "name": "totalFreeTicketsClaimed",
         "type": "uint256"
       },
-      {
-        "internalType": "uint256",
-        "name": "totalTickets",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "totalPrizes",
-        "type": "uint256"
-      },
+      { "internalType": "uint256", "name": "totalTickets", "type": "uint256" },
+      { "internalType": "uint256", "name": "totalPrizes", "type": "uint256" },
       {
         "internalType": "uint256",
         "name": "totalLotteryParticipations",
@@ -1032,11 +694,7 @@
     ],
     "name": "quoteBNBFromTickets",
     "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "quote",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "quote", "type": "uint256" }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -1051,11 +709,7 @@
     ],
     "name": "quoteBUSDFromTickets",
     "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "quote",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "quote", "type": "uint256" }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -1070,22 +724,14 @@
     ],
     "name": "quoteDRIPFromTickets",
     "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "quote",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "quote", "type": "uint256" }
     ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "bnbAmount",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "bnbAmount", "type": "uint256" }
     ],
     "name": "quoteTicketsFromBNB",
     "outputs": [
@@ -1100,11 +746,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "busdAmount",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "busdAmount", "type": "uint256" }
     ],
     "name": "quoteTicketsFromBUSD",
     "outputs": [
@@ -1119,11 +761,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "dripAmount",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "dripAmount", "type": "uint256" }
     ],
     "name": "quoteTicketsFromDRIP",
     "outputs": [
@@ -1152,13 +790,7 @@
   {
     "inputs": [],
     "name": "refPercentage",
-    "outputs": [
-      {
-        "internalType": "uint8",
-        "name": "",
-        "type": "uint8"
-      }
-    ],
+    "outputs": [{ "internalType": "uint8", "name": "", "type": "uint8" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -1171,16 +803,8 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
+      { "internalType": "bytes32", "name": "role", "type": "bytes32" },
+      { "internalType": "address", "name": "account", "type": "address" }
     ],
     "name": "renounceRole",
     "outputs": [],
@@ -1196,16 +820,8 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
+      { "internalType": "bytes32", "name": "role", "type": "bytes32" },
+      { "internalType": "address", "name": "account", "type": "address" }
     ],
     "name": "revokeRole",
     "outputs": [],
@@ -1215,51 +831,21 @@
   {
     "inputs": [],
     "name": "rolloverPercentage",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
+      { "internalType": "uint256", "name": "", "type": "uint256" },
+      { "internalType": "address", "name": "", "type": "address" }
     ],
     "name": "roundPlayerDetails",
     "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "paidQuantity",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "totalQuantity",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bool",
-        "name": "firstPrizeWinner",
-        "type": "bool"
-      },
-      {
-        "internalType": "bool",
-        "name": "runUpPrizeWinner",
-        "type": "bool"
-      },
+      { "internalType": "uint256", "name": "paidQuantity", "type": "uint256" },
+      { "internalType": "uint256", "name": "totalQuantity", "type": "uint256" },
+      { "internalType": "bool", "name": "firstPrizeWinner", "type": "bool" },
+      { "internalType": "bool", "name": "runUpPrizeWinner", "type": "bool" },
       {
         "internalType": "bool",
         "name": "biggestDepositorWithSacrificeWinner",
@@ -1270,11 +856,7 @@
         "name": "biggestDepositorWithoutSacrificeWinner",
         "type": "bool"
       },
-      {
-        "internalType": "uint256",
-        "name": "winAmount",
-        "type": "uint256"
-      },
+      { "internalType": "uint256", "name": "winAmount", "type": "uint256" },
       {
         "internalType": "uint256",
         "name": "freeTicketsClaimed",
@@ -1292,31 +874,15 @@
   {
     "inputs": [],
     "name": "roundTime",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "name": "roundsInfo",
     "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "roundId",
-        "type": "uint256"
-      },
+      { "internalType": "uint256", "name": "roundId", "type": "uint256" },
       {
         "internalType": "uint256",
         "name": "startingTimestamp",
@@ -1342,16 +908,8 @@
         "name": "totalFreeTicketsClaimed",
         "type": "uint256"
       },
-      {
-        "internalType": "uint256",
-        "name": "totalTickets",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "totalPlayers",
-        "type": "uint256"
-      },
+      { "internalType": "uint256", "name": "totalTickets", "type": "uint256" },
+      { "internalType": "uint256", "name": "totalPlayers", "type": "uint256" },
       {
         "internalType": "uint256",
         "name": "totalPrizePool",
@@ -1416,16 +974,8 @@
         "name": "winnings",
         "type": "tuple"
       },
-      {
-        "internalType": "bool",
-        "name": "active",
-        "type": "bool"
-      },
-      {
-        "internalType": "uint256",
-        "name": "requestId",
-        "type": "uint256"
-      }
+      { "internalType": "bool", "name": "active", "type": "bool" },
+      { "internalType": "uint256", "name": "requestId", "type": "uint256" }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -1446,49 +996,27 @@
   {
     "inputs": [],
     "name": "runnerUpPrizePercentage",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "sacrificedJackpotPercentage",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "sacrificedMultiplier",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_broker",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "_broker", "type": "address" }
     ],
     "name": "setBroker",
     "outputs": [],
@@ -1497,72 +1025,9 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_freeTicketCooldown",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "_clusterSize", "type": "uint256" }
     ],
-    "name": "setFreeTicketCooldown",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_firstPrizePercentage",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_runnerUpPercentage",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_biggestDepositorWithSacPercentage",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_biggestDepositorWithoutSacPercentage",
-        "type": "uint256"
-      }
-    ],
-    "name": "setJackpotPercentages",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_marketingPercentage",
-        "type": "uint256"
-      }
-    ],
-    "name": "setMarketingPercentage",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_sacrificeMultiplier",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_BNBorBUSDMultiplier",
-        "type": "uint256"
-      }
-    ],
-    "name": "setMultipliers",
+    "name": "setClusterSize",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1582,63 +1047,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "uint8",
-        "name": "_refPercentage",
-        "type": "uint8"
-      }
-    ],
-    "name": "setRefPercentage",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_rolloverPercentage",
-        "type": "uint256"
-      }
-    ],
-    "name": "setRollOverPercentage",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_roundTime",
-        "type": "uint256"
-      }
-    ],
-    "name": "setRoundTime",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_ticketPrice",
-        "type": "uint256"
-      }
-    ],
-    "name": "setTicketPrice",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_twap",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "_twap", "type": "address" }
     ],
     "name": "setTwap",
     "outputs": [],
@@ -1647,53 +1056,27 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "bytes4",
-        "name": "interfaceId",
-        "type": "bytes4"
-      }
+      { "internalType": "bytes4", "name": "interfaceId", "type": "bytes4" }
     ],
     "name": "supportsInterface",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "ticketPrice",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "name": "transactions",
     "outputs": [
       {
         "components": [
-          {
-            "internalType": "uint256",
-            "name": "_value",
-            "type": "uint256"
-          }
+          { "internalType": "uint256", "name": "_value", "type": "uint256" }
         ],
         "internalType": "struct Counters.Counter",
         "name": "group",
@@ -1705,11 +1088,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "newOwner", "type": "address" }
     ],
     "name": "transferOwnership",
     "outputs": [],
@@ -1720,11 +1099,7 @@
     "inputs": [],
     "name": "twap",
     "outputs": [
-      {
-        "internalType": "contract TWAP",
-        "name": "",
-        "type": "address"
-      }
+      { "internalType": "contract TWAP", "name": "", "type": "address" }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -1739,36 +1114,19 @@
   {
     "inputs": [],
     "name": "vault",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_tokenAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_amount",
-        "type": "uint256"
-      }
+      { "internalType": "address", "name": "_tokenAddress", "type": "address" },
+      { "internalType": "uint256", "name": "_amount", "type": "uint256" }
     ],
     "name": "withdraw",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
-  {
-    "stateMutability": "payable",
-    "type": "receive"
-  }
+  { "stateMutability": "payable", "type": "receive" }
 ]
