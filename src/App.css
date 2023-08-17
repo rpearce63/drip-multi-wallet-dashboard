@@ -817,3 +817,9 @@ input {
 .arb::after {
   content: " arb";
 }
+
+.note {
+  font-size: x-small;
+  color: lightgreen;
+  margin-left: 10px;
+}
