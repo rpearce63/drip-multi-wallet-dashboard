@@ -47,6 +47,7 @@ const RPCs = [
   "https://bsc-dataseed2.defibit.io",
   "https://binance.nodereal.io",
   "https://bsc-dataseed1.binance.org",
+  "https://rpc.ankr.com/bsc",
 ];
 const flatten = require("flat").flatten;
 
@@ -94,8 +95,9 @@ let fountainContract = new web3.eth.Contract(FOUNTAIN_ABI, FOUNTAIN_ADDR);
 //   fountainContract = new web3wss.eth.Contract(FOUNTAIN_ABI, FOUNTAIN_ADDR);
 // };
 const setBscContracts = async () => {
-  const randomRPC = Math.floor(Math.random() * RPCs.length);
-  web3 = new Web3(RPCs[randomRPC]);
+  const randomRPC = RPCs[Math.floor(Math.random() * RPCs.length)];
+  console.log("setting rpc to ", randomRPC);
+  web3 = new Web3(randomRPC);
   //console.log("switched to ", RPCs[randomRPC]);
   await new Promise((resolve) => setTimeout(resolve, 100));
   // faucetContract = new web3.eth.Contract(FAUCET_ABI, FAUCET_ADDR);

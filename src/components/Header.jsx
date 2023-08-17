@@ -20,6 +20,7 @@ const Header = () => {
   const [taxVaultBalance, setTaxVaultBalance] = useState(0);
   const [tvDir, setTvDir] = useState(0);
   const [totalSupply, setTotalSupply] = useState(0);
+  const [pcsPoolSupply, setPcsPoolSupply] = useState(0);
   const BUY_SPREAD = 1.1;
 
   const getVersion = async () => {
@@ -43,6 +44,7 @@ const Header = () => {
       dogsPrice,
       taxVaultBalance: nTaxVaultBalance,
       totalSupply,
+      pcsPoolSupply,
     } = await getDripPriceData();
 
     const currentDripPrice = dripBnbRatio * bnbPrice;
@@ -56,6 +58,7 @@ const Header = () => {
     afpPrice > 0 && setPigPrice(() => afpPrice);
     dogsPrice > 0 && setDogsPrice(() => dogsPrice);
     totalSupply > 0 && setTotalSupply(totalSupply);
+    pcsPoolSupply > 0 && setPcsPoolSupply(pcsPoolSupply);
 
     setTaxVaultBalance((prevState) => {
       //   console.log(`
@@ -160,8 +163,8 @@ const Header = () => {
               <div className="stack">
                 <span className="tooltip-help">
                   <Popup
-                    content="Circulating Supply: The amount available to buy from the Fountain."
-                    trigger={<label>CS: </label>}
+                    content="The amount available to buy from the BNB pool in the Fountain."
+                    trigger={<label>DEX: </label>}
                     style={{ marginRight: "1em" }}
                   />
 
@@ -169,8 +172,17 @@ const Header = () => {
                 </span>
                 <span className="tooltip-help">
                   <Popup
-                    content="Total Supply: The total Drip minted."
-                    trigger={<label>TS: </label>}
+                    content="The amount available to buy from the BUSD pool in PCS."
+                    trigger={<label>PCS: </label>}
+                    style={{ marginRight: "1em" }}
+                  />
+
+                  {convertDrip(pcsPoolSupply)}
+                </span>
+                <span className="tooltip-help">
+                  <Popup
+                    content="The total Drip minted."
+                    trigger={<label>Minted: </label>}
                   />
 
                   {convertDrip(totalSupply)}
@@ -253,45 +265,68 @@ const Header = () => {
 
 const DripPrices = ({ dripPcsPrice, BUY_SPREAD, dripPrice, hidePrices }) => {
   return (
-    <div className="price drip-price">
-      <a
-        href="https://bscscan.com/token/0x20f663cea80face82acdfa3aae6862d246ce0333"
-        target="_blank"
-        rel="noreferrer"
-      >
-        Drip:
-      </a>
-      <div className={`stack ${hidePrices && "stack-collapsed"}`}>
-        <div
-          className={`drip-dex ${
-            dripPcsPrice * BUY_SPREAD >= convertDrip(dripPrice) ? "buy-dex" : ""
-          } ${hidePrices && "drip-dex-collapsed"}`}
+    <>
+      <div className="price drip-price">
+        <a
+          href="https://bscscan.com/token/0x20f663cea80face82acdfa3aae6862d246ce0333"
+          target="_blank"
+          rel="noreferrer"
         >
-          <a
-            href="https://drip.community/fountain"
-            target="_blank"
-            rel="noreferrer"
+          Drip:
+        </a>
+        <div className={`stack ${hidePrices && "stack-collapsed"}`}>
+          <div
+            className={`drip-dex ${
+              dripPcsPrice * BUY_SPREAD >= convertDrip(dripPrice)
+                ? "buy-dex"
+                : ""
+            } ${hidePrices ? "drip-dex-collapsed" : ""}`}
           >
-            DEX:
-          </a>
-          {formatCurrency(convertDrip(dripPrice), 3)}
-        </div>
-        <div
-          className={`drip-pcs ${
-            dripPcsPrice * BUY_SPREAD < convertDrip(dripPrice) ? "buy-pcs" : ""
-          }`}
-        >
-          <a
-            href="https://pancakeswap.finance/swap?outputCurrency=0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56&inputCurrency=0x20f663CEa80FaCE82ACDFA3aAE6862d246cE0333"
-            target="_blank"
-            rel="noreferrer"
+            <a
+              href="https://drip.community/fountain"
+              target="_blank"
+              rel="noreferrer"
+            >
+              DEX:
+            </a>
+            {formatCurrency(convertDrip(dripPrice), 3)}
+          </div>
+          <div
+            className={`drip-pcs ${
+              dripPcsPrice * BUY_SPREAD < convertDrip(dripPrice)
+                ? "buy-pcs"
+                : ""
+            } `}
           >
-            PCS:
-          </a>
-          {formatCurrency(dripPcsPrice, 3)}
+            <a
+              href="https://pancakeswap.finance/swap?outputCurrency=0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56&inputCurrency=0x20f663CEa80FaCE82ACDFA3aAE6862d246cE0333"
+              target="_blank"
+              rel="noreferrer"
+            >
+              PCS:
+            </a>
+            {(1 / dripPcsPrice) * 0.81 * (dripPrice / 10e17) > 1 ? (
+              <span className="tooltip-help">
+                <Popup
+                  content={`The price gap may present an opportunity to profit from arbitration. 
+                Buy on PCS with a 10% tax, then sell on the DEX with a 10% tax, 
+                but still net a profit. Take gas fees into account, tho.`}
+                  trigger={
+                    <label className="buy-pcs arb">
+                      {formatCurrency(dripPcsPrice, 3)}
+                    </label>
+                  }
+                  style={{ marginRight: "1em" }}
+                />
+              </span>
+            ) : (
+              formatCurrency(dripPcsPrice, 3)
+            )}
+          </div>
+          <div className="note">(* - best price)</div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
