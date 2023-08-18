@@ -308,7 +308,7 @@ const DripPrices = ({ dripPcsPrice, BUY_SPREAD, dripPrice, hidePrices }) => {
             {(1 / dripPcsPrice) * 0.81 * (dripPrice / 10e17) > 1 ? (
               <span className="tooltip-help">
                 <Popup
-                  content={`The price gap may present an opportunity to profit from arbitration. 
+                  content={`The price gap may present an opportunity to profit from arbitrage. 
                 Buy on PCS with a 10% tax, then sell on the DEX with a 10% tax, 
                 but still net a profit. Take gas fees into account, tho.`}
                   trigger={
