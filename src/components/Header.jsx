@@ -144,7 +144,7 @@ const Header = () => {
               dripPrice={dripPrice}
             />
             <div className="price stack">
-              <label>BNB/DRIP:</label> {parseFloat(dripBnbPrice).toFixed(5)}
+              <label>BNB/DRIP:</label> {parseFloat(dripBnbPrice).toFixed(6)}
             </div>
             <div className="price stack">
               <a
