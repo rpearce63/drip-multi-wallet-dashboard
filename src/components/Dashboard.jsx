@@ -86,41 +86,26 @@ const Dashboard = () => {
     { label: "#", id: "index" },
     { label: "Address", id: "address" },
     { label: "Label", id: "label" },
-    { label: "Buddy", id: "upline" },
+    { label: "Buddy", id: "upline", expanded: true },
     //{ label: "Uplines", id: "uplineCount" },
-    { label: "BUSD", id: "busdBalance" },
-    { label: "BR34P / Levels", id: "br34pBalance" },
-    { label: "Drip", id: "dripBalance" },
-    { label: "BNB", id: "bnbBalance" },
-    { label: "DROPS / Daily BNB", id: "dropsBalance" },
+    { label: "BUSD", id: "busdBalance", expanded: true },
+    { label: "BR34P / Levels", id: "br34pBalance", expanded: true },
+    { label: "Drip", id: "dripBalance", expanded: true },
+    { label: "BNB", id: "bnbBalance", expanded: true },
+    { label: "DROPS / Daily BNB", id: "dropsBalance", expanded: true },
     {
       label: `Available`,
       id: "available",
     },
     { label: "ROI", id: "roi" },
     { label: "Deposits", id: "deposits" },
-    { label: "Days to Max", id: "daysToMax" },
+    { label: "Days to Max", id: "daysToMax", expanded: true },
     { label: "Last Action", id: "lastAction" },
     { label: "NDV", id: "ndv" },
     { label: "Claimed", id: "payouts" },
-    { label: "Whale Tax", id: "whaleTax" },
-    { label: "Hydrated", id: "r" },
-    { label: "Paid Out", id: "paidOut" },
-    { label: "Rewarded", id: "direct_bonus" },
-    { label: "Max Payout", id: "maxPayout" },
-    { label: "Team", id: "referrals" },
-    { label: "Ref Pos", id: "ref_claim_pos" },
-  ];
-  const BASE_HEADERS = [
-    { label: "#", id: "index" },
-    { label: "Address", id: "address" },
-    { label: "Label", id: "label" },
-    { label: "Available", id: "available" },
-    { label: "ROI", id: "roi" },
-    { label: "Deposits", id: "deposits" },
-    { label: "Last Action", id: "lastAction" },
-    { label: "NDV", id: "ndv" },
-    { label: "Claimed", id: "payouts" },
+    { label: "Whale Tax", id: "whaleTax", expanded: true },
+    { label: "Hydrated", id: "r", expanded: true },
+    { label: "Paid Out", id: "paidOut", expanded: true },
     { label: "Rewarded", id: "direct_bonus" },
     { label: "Max Payout", id: "maxPayout" },
     { label: "Team", id: "referrals" },
@@ -876,41 +861,25 @@ const Dashboard = () => {
         <table className="table">
           <thead className="table-light">
             <tr>
-              {expandedTable
-                ? TABLE_HEADERS.filter(
-                    (h) =>
-                      (h.label === "Last Action" && showLastAction) ||
-                      h.label !== "Last Action"
-                  ).map((h) => (
-                    <th
-                      className={`table-sort-${
-                        sortCol === h.id ? sortOrder : "none"
-                      }`}
-                      key={h.id}
-                      onClick={() =>
-                        setSortBy(h.id, sortOrder === "asc" ? "desc" : "asc")
-                      }
-                    >
-                      {h.label}
-                    </th>
-                  ))
-                : BASE_HEADERS.filter(
-                    (h) =>
-                      (h.label === "Last Action" && showLastAction) ||
-                      h.label !== "Last Action"
-                  ).map((h) => (
-                    <th
-                      className={`table-sort-${
-                        sortCol === h.id ? sortOrder : "none"
-                      }`}
-                      key={h.id}
-                      onClick={() =>
-                        setSortBy(h.id, sortOrder === "asc" ? "desc" : "asc")
-                      }
-                    >
-                      {h.label}
-                    </th>
-                  ))}
+              {TABLE_HEADERS.filter((h) => expandedTable || !h.expanded)
+                .filter(
+                  (h) =>
+                    (h.id === "lastAction" && showLastAction) ||
+                    h.id !== "lastAction"
+                )
+                .map((h) => (
+                  <th
+                    className={`table-sort-${
+                      sortCol === h.id ? sortOrder : "none"
+                    }`}
+                    key={h.id}
+                    onClick={() =>
+                      setSortBy(h.id, sortOrder === "asc" ? "desc" : "asc")
+                    }
+                  >
+                    {h.label}
+                  </th>
+                ))}
             </tr>
             <tr className="table-success">
               <th className="red">X</th>
