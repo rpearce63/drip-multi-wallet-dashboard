@@ -107,7 +107,7 @@ const Dashboard = () => {
     { label: "Hydrated", id: "r", expanded: true },
     { label: "Paid Out", id: "paidOut", expanded: true },
     { label: "Rewarded", id: "direct_bonus" },
-    { label: "Max Payout", id: "maxPayout" },
+    { label: "Max Claimable", id: "maxPayout" },
     { label: "Team", id: "referrals" },
     { label: "Ref Pos", id: "ref_claim_pos" },
   ];
@@ -389,7 +389,11 @@ const Dashboard = () => {
     );
     setTotalMax(() =>
       validWallets.reduce(
-        (total, wallet) => total + parseFloat(wallet.maxPayout),
+        (total, wallet) =>
+          total +
+          parseFloat(
+            wallet.deposits + wallet.available - (wallet.payouts - wallet.r)
+          ),
         0
       )
     );

@@ -565,6 +565,9 @@ export const fetchWalletData = async (wallet, index, retry = false) => {
       referrals: parseInt(userInfo.referrals),
       whaleTax,
     };
+    // console.log(
+    //   `deposits: ${walletProfile.deposits}, available: ${walletProfile.available}, payouts: ${walletProfile.payouts}, rolls: ${walletProfile.r}`
+    // );
     return walletProfile;
   } catch (err) {
     if (!retry) {

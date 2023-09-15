@@ -234,7 +234,11 @@ const TableRow = ({
                     )} */}
       </td>
       <td>
-        {convertTokenToUSD(wallet.maxPayout, dripPrice, showDollarValues)}
+        {convertTokenToUSD(
+          wallet.deposits + wallet.available - (wallet.payouts - wallet.r),
+          dripPrice,
+          showDollarValues
+        )}
       </td>
       <td>
         {wallet.referrals > 0 && (
