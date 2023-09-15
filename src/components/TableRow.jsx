@@ -4,6 +4,7 @@ import {
   formatPercent,
   formatNumber,
   calculateDaysToMaxDeposits,
+  negativeToZero,
 } from "../api/utils";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -235,7 +236,9 @@ const TableRow = ({
       </td>
       <td>
         {convertTokenToUSD(
-          wallet.deposits + wallet.available - (wallet.payouts - wallet.r),
+          negativeToZero(
+            wallet.deposits + wallet.available - (wallet.payouts - wallet.r)
+          ),
           dripPrice,
           showDollarValues
         )}

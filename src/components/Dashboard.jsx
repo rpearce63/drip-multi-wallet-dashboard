@@ -17,6 +17,7 @@ import {
   backupData,
   formatNumber,
   sortBy,
+  negativeToZero,
 } from "../api/utils";
 
 import TableRow from "./TableRow";
@@ -392,7 +393,9 @@ const Dashboard = () => {
         (total, wallet) =>
           total +
           parseFloat(
-            wallet.deposits + wallet.available - (wallet.payouts - wallet.r)
+            negativeToZero(
+              wallet.deposits + wallet.available - (wallet.payouts - wallet.r)
+            )
           ),
         0
       )
