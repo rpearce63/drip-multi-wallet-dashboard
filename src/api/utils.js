@@ -143,3 +143,5 @@ export const calculateDaysToMaxDeposits = (initialDeposits, initialClaimed) => {
 
   return days;
 };
+
+export const negativeToZero = (amount) => (amount < 0 ? 0 : amount);
