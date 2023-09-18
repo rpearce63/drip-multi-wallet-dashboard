@@ -560,6 +560,7 @@ export const fetchWalletData = async (wallet, index, retry = false) => {
       dripBusdLpBalance,
       //lastAction,
       r,
+      hydrates: r,
       dropsBalance,
       dailyBnb,
       referrals: parseInt(userInfo.referrals),
