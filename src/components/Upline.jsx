@@ -152,7 +152,9 @@ const Upline = () => {
       setUplineData(upline);
       setLoading(false);
       const baseStats = await getPlayerStats(buddyId);
-      const extendedStats = await getIndividualStats(buddyId);
+      const extendedStats = {
+        actualClaim: baseStats.deposits - baseStats.rolls,
+      }; //await getIndividualStats(buddyId);
       const stats = { ...baseStats, ...extendedStats };
       setUserStats(getMainStats(stats));
 
@@ -178,13 +180,14 @@ const Upline = () => {
       </div>
       <div className="wallet-stats">
         {userStats.map(({ label, value }, index) => {
-          return (
-            <div className="card" key={index}>
-              <div className="card-body">
-                {label}: {value}
+          if (value)
+            return (
+              <div className="card" key={index}>
+                <div className="card-body">
+                  {label}: {value}
+                </div>
               </div>
-            </div>
-          );
+            );
         })}
       </div>
       {/* <div>
