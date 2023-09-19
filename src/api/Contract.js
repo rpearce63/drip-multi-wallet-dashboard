@@ -485,7 +485,7 @@ export const getBigBuysFromGlitch = async () => {
 };
 
 export const getDripPriceData = async () => {
-  const dripPriceData = await axios.get(`${DMWDAPI}/prices`, {
+  const dripPriceData = await axios.get(`https://dmwd-api.glitch.me/prices`, {
     retry: 2,
     retryDelay: 1000,
   });
