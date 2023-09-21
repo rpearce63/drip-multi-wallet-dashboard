@@ -25,6 +25,8 @@ import AdBox from "./AdBox";
 import Web3 from "web3";
 import TableOptions from "./TableOptions";
 import { isUndefined } from "lodash";
+import { Popup } from "semantic-ui-react";
+import PopupHelp from "./PopupHelp";
 
 const web3 = new Web3("https://bsc-dataseed.binance.org/");
 
@@ -122,7 +124,7 @@ const Dashboard = () => {
       flagLowBnb = true,
       flagPct = true,
       bnbThreshold = 0.05,
-      expandedTable = false,
+      expandedTable = true,
       hideTableControls = false,
       showLastAction = true,
       ndvWarningLevel = 25,
@@ -884,7 +886,17 @@ const Dashboard = () => {
                       setSortBy(h.id, sortOrder === "asc" ? "desc" : "asc")
                     }
                   >
-                    {h.label}
+                    {h.id === "maxPayout" ? (
+                      <PopupHelp
+                        message="Max claimable after Faucet reset. Based on available information, the calculation will be 
+                        (Deposits + Available + Hydrates - Claimed). Subject to change."
+                        trigger={
+                          <span style={{ color: "red" }}>{h.label}</span>
+                        }
+                      />
+                    ) : (
+                      h.label
+                    )}
                   </th>
                 ))}
             </tr>
