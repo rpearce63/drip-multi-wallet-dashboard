@@ -16,9 +16,12 @@ import ERC20_ABI from "../configs/erc20_abi.json";
 import faucetReaderAbi from "../configs/faucet-reader-abi";
 import { findFibIndex } from "./utils";
 import RESERVOIR_CONTRACT from "../configs/reservoir_contract.json";
+import SNAPSHOT_CONTRACT from "../configs/claim_snapshot_abi.json";
 
 import LRU from "lru-cache";
 import axios from "axios";
+
+const SNAPSHOT_ADDR = "0xaD884ef84856707a7903E71936bdae7617FA59A5";
 
 const DRIP_API = "https://drip.herokuapp.com";
 
@@ -47,7 +50,7 @@ const RPCs = [
   "https://bsc-dataseed2.defibit.io",
   "https://binance.nodereal.io",
   "https://bsc-dataseed1.binance.org",
-  "https://rpc.ankr.com/bsc",
+  // "https://rpc.ankr.com/bsc",
 ];
 const flatten = require("flat").flatten;
 
@@ -88,7 +91,10 @@ export let web3 = new Web3(RPCs[randomRPC]);
 
 let faucetContract = new web3.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
 let fountainContract = new web3.eth.Contract(FOUNTAIN_ABI, FOUNTAIN_ADDR);
-
+const snapshotContract = new web3.eth.Contract(
+  SNAPSHOT_CONTRACT,
+  SNAPSHOT_ADDR
+);
 // const setWssContracts = () => {
 //   console.log("switching to wss");
 //   faucetContract = new web3wss.eth.Contract(FAUCET_ABI, FAUCET_ADDR);
@@ -158,6 +164,12 @@ export const getUserInfo = async (account, isRetry = true) => {
     // return getUserInfo(account, true);
     return undefined;
   }
+};
+
+export const getNetPayout = async (address) => {
+  const balance = await snapshotContract.methods.getBalance(address).call();
+
+  return web3.utils.fromWei(balance);
 };
 
 export const getBr34pBalance = async (account) => {
@@ -515,6 +527,7 @@ export const fetchWalletData = async (wallet, index, retry = false) => {
     //   return buildDefaultWallet(wallet, index, userInfo);
     // }
     const available = await claimsAvailable(wallet.addr);
+    const netPayout = await getNetPayout(wallet.addr);
     const uplineCount = 0; //await getUplineCount(wallet.addr);
     const coveredDepth = findFibIndex(br34pBalance);
     const teamDepth =
@@ -540,7 +553,7 @@ export const fetchWalletData = async (wallet, index, retry = false) => {
       index,
       ...userInfo,
       deposits: userInfo.deposits / 10e17,
-      available: available / 10e17,
+      available: netPayout > 0 ? Number(netPayout) : available / 10e17,
       payouts: userInfo.payouts / 10e17,
       maxPayout: Math.min((userInfo.deposits * 3.65) / 10e17, 100000),
       direct_bonus: referral_bonus / 10e17,
