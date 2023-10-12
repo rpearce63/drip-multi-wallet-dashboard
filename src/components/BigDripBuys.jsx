@@ -30,6 +30,7 @@ const BigDripBuys = () => {
         ) {
           //console.log("updating bigBuys");
           data.length && setBigBuys(data);
+          data.length > 10 && setSpeed(5);
         }
         setUpdateTime(new Date().toLocaleString());
       } catch (err) {
