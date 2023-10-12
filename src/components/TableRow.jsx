@@ -127,20 +127,13 @@ const TableRow = ({
         <td>{convertTokenToUSD(wallet.busdBalance, 1, showDollarValues)}</td>
       )}
       {expandedTable && (
-        <td
-          className={
-            wallet.coveredDepth < wallet.teamDepth
-              ? "buy-more-br34p inverted"
-              : "good-br34p"
-          }
-        >
-          {(wallet.br34pBalance > 0 || wallet.teamDepth > 0) &&
-            `${convertTokenToUSD(
+        <td>
+          {wallet.br34pBalance > 0 &&
+            convertTokenToUSD(
               wallet.br34pBalance,
               br34pPrice,
               showDollarValues
             )}
-                      / ${wallet.coveredDepth}`}
         </td>
       )}
       {expandedTable && (
@@ -184,18 +177,16 @@ const TableRow = ({
       {expandedTable && (
         <td>
           {wallet.deposits > 0 &&
-            calculateDaysToMaxDeposits(wallet.deposits, wallet.payouts)}
+            // calculateDaysToMaxDeposits(wallet.deposits, wallet.payouts)
+            Number(
+              negativeToZero(
+                wallet.deposits + wallet.available + wallet.r - wallet.payouts
+              ) /
+                (wallet.deposits * 0.01)
+            ).toFixed(0)}
         </td>
       )}
-      {showLastAction && (
-        <td
-          onClick={fetchLastAction}
-          style={{ cursor: "pointer", textAlign: "center" }}
-          className={loading ? "dotloading" : ""}
-        >
-          {lastAction}
-        </td>
-      )}
+
       <td
         className={
           flagLowNdv &&
@@ -244,14 +235,8 @@ const TableRow = ({
         )}
       </td>
       <td>
-        {wallet.referrals > 0 && (
-          <Link to={`/downline/${wallet.address}`}>
-            {wallet.referrals} / {wallet.total_structure} / {wallet.teamDepth}
-          </Link>
-        )}
-      </td>
-      <td className={wallet.ref_claim_pos === "0" ? "hydrate inverted" : ""}>
-        {wallet.ref_claim_pos}
+        {wallet.referrals > 0 &&
+          `${wallet.referrals} / ${wallet.total_structure}`}
       </td>
     </tr>
   );
