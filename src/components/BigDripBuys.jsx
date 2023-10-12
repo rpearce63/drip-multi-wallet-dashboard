@@ -9,7 +9,7 @@ import { getBigBuysFromGlitch } from "../api/Contract";
 const BigDripBuys = () => {
   const [bigBuys, setBigBuys] = useState([]);
   const [updateTime, setUpdateTime] = useState("");
-  const [speed, setSpeed] = useState(30);
+  const [speed, setSpeed] = useState(50);
   const [anchorEl, setAnchorEl] = useState(null);
   const marks = Array.from({ length: 13 }, (_, i) => ({
     value: i * 5,
@@ -30,7 +30,7 @@ const BigDripBuys = () => {
         ) {
           //console.log("updating bigBuys");
           data.length && setBigBuys(data);
-          data.length > 10 && setSpeed(5);
+          //data.length > 10 && setSpeed(5);
         }
         setUpdateTime(new Date().toLocaleString());
       } catch (err) {
