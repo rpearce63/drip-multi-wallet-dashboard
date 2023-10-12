@@ -530,8 +530,8 @@ export const fetchWalletData = async (wallet, index, retry = false) => {
     const netPayout = await getNetPayout(wallet.addr);
     const uplineCount = 0; //await getUplineCount(wallet.addr);
     const coveredDepth = findFibIndex(br34pBalance);
-    const teamDepth =
-      userInfo.referrals > 0 && (await getDownlineDepth(wallet.addr));
+    const teamDepth = 0;
+    //userInfo.referrals > 0 && (await getDownlineDepth(wallet.addr));
 
     const { airdrops } = await getAirdrops(wallet.addr);
     const a = parseFloat(web3.utils.fromWei(airdrops));

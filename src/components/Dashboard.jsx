@@ -92,7 +92,7 @@ const Dashboard = () => {
     { label: "Buddy", id: "upline", expanded: true },
     //{ label: "Uplines", id: "uplineCount" },
     { label: "BUSD", id: "busdBalance", expanded: true },
-    { label: "BR34P / Levels", id: "br34pBalance", expanded: true },
+    { label: "BR34P", id: "br34pBalance", expanded: true },
     { label: "Drip", id: "dripBalance", expanded: true },
     { label: "BNB", id: "bnbBalance", expanded: true },
     { label: "DROPS / Daily BNB", id: "dropsBalance", expanded: true },
@@ -102,8 +102,8 @@ const Dashboard = () => {
     },
     { label: "ROI", id: "roi" },
     { label: "Deposits", id: "deposits" },
-    { label: "Days to Max", id: "daysToMax", expanded: true },
-    { label: "Last Action", id: "lastAction" },
+    { label: "Days to Max Payout", id: "daysToMax", expanded: true },
+    //{ label: "Last Action", id: "lastAction" },
     { label: "NDV", id: "ndv" },
     { label: "Claimed", id: "payouts" },
     { label: "Whale Tax", id: "whaleTax", expanded: true },
@@ -112,7 +112,7 @@ const Dashboard = () => {
     { label: "Rewarded", id: "direct_bonus" },
     { label: "Max Claimable", id: "maxPayout" },
     { label: "Team", id: "referrals" },
-    { label: "Ref Pos", id: "ref_claim_pos" },
+    //{ label: "Ref Pos", id: "ref_claim_pos" },
   ];
 
   const REFRESH_INTERVAL = 120000;
@@ -870,13 +870,8 @@ const Dashboard = () => {
         <table className="table">
           <thead className="table-light">
             <tr>
-              {TABLE_HEADERS.filter((h) => expandedTable || !h.expanded)
-                .filter(
-                  (h) =>
-                    (h.id === "lastAction" && showLastAction) ||
-                    h.id !== "lastAction"
-                )
-                .map((h) => (
+              {TABLE_HEADERS.filter((h) => expandedTable || !h.expanded).map(
+                (h) => (
                   <th
                     className={`table-sort-${
                       sortCol === h.id ? sortOrder : "none"
@@ -898,7 +893,8 @@ const Dashboard = () => {
                       h.label
                     )}
                   </th>
-                ))}
+                )
+              )}
             </tr>
             <tr className="table-success">
               <th className="red">X</th>
@@ -968,9 +964,8 @@ const Dashboard = () => {
               <th>
                 {convertTokenToUSD(totalDeposits, dripPrice, showDollarValues)}
               </th>
-              {expandedTable && <th>*&nbsp;Hydrate only</th>}
+              {expandedTable && <th>*&nbsp;Claim only</th>}
 
-              {showLastAction && <th>Click row</th>}
               <th>{formatNumber(totalNDV)}</th>
               <th>
                 {convertTokenToUSD(totalClaimed, dripPrice, showDollarValues)}
@@ -1000,7 +995,6 @@ const Dashboard = () => {
                 {convertTokenToUSD(totalMax, dripPrice, showDollarValues)}
               </th>
               <th>Directs: {totalTeam}</th>
-              <th></th>
             </tr>
           </thead>
           <tbody>
