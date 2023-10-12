@@ -9,7 +9,7 @@ import { getBigBuysFromGlitch } from "../api/Contract";
 const BigDripBuys = () => {
   const [bigBuys, setBigBuys] = useState([]);
   const [updateTime, setUpdateTime] = useState("");
-  const [speed, setSpeed] = useState(30);
+  const [speed, setSpeed] = useState(50);
   const [anchorEl, setAnchorEl] = useState(null);
   const marks = Array.from({ length: 13 }, (_, i) => ({
     value: i * 5,
