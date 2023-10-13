@@ -110,7 +110,8 @@ const Dashboard = () => {
     { label: "Hydrated", id: "r", expanded: true },
     { label: "Paid Out", id: "paidOut", expanded: true },
     { label: "Rewarded", id: "direct_bonus" },
-    { label: "Max Claimable", id: "maxPayout" },
+    { label: "Max Payout", id: "maxPayout" },
+    { label: "Max Claimable", id: "maxClaim" },
     { label: "Team", id: "referrals" },
     //{ label: "Ref Pos", id: "ref_claim_pos" },
   ];
@@ -392,13 +393,7 @@ const Dashboard = () => {
     );
     setTotalMax(() =>
       validWallets.reduce(
-        (total, wallet) =>
-          total +
-          parseFloat(
-            negativeToZero(
-              wallet.deposits + wallet.available - (wallet.payouts - wallet.r)
-            )
-          ),
+        (total, wallet) => total + parseFloat(negativeToZero(wallet.maxClaim)),
         0
       )
     );
@@ -881,7 +876,7 @@ const Dashboard = () => {
                       setSortBy(h.id, sortOrder === "asc" ? "desc" : "asc")
                     }
                   >
-                    {h.id === "maxPayout" ? (
+                    {h.id === "maxClaim" ? (
                       <PopupHelp
                         message="Max claimable after Faucet reset. Based on available information, the calculation will be 
                         (Deposits + Available + Hydrates - Claimed). Subject to change."
@@ -991,6 +986,7 @@ const Dashboard = () => {
                 )}
                 {/* /{convertTokenToUSD(totalMatch, dripPrice, showDollarValues)} */}
               </th>
+              <th></th>
               <th>
                 {convertTokenToUSD(totalMax, dripPrice, showDollarValues)}
               </th>
