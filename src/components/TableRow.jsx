@@ -179,9 +179,7 @@ const TableRow = ({
           {wallet.deposits > 0 &&
             // calculateDaysToMaxDeposits(wallet.deposits, wallet.payouts)
             Number(
-              negativeToZero(
-                wallet.deposits + wallet.available + wallet.r - wallet.payouts
-              ) /
+              negativeToZero(wallet.deposits + wallet.r - wallet.payouts) /
                 (wallet.deposits * 0.01)
             ).toFixed(0)}
         </td>
@@ -211,6 +209,7 @@ const TableRow = ({
         <>
           <td>{convertTokenToUSD(wallet.r, dripPrice, showDollarValues)}</td>
           <td>
+            {/* Claimed out: Claimed - Hydrates(rolls) */}
             {convertTokenToUSD(wallet.payouts - wallet.r, showDollarValues)}
           </td>
         </>
@@ -227,9 +226,7 @@ const TableRow = ({
       </td>
       <td>
         {convertTokenToUSD(
-          negativeToZero(
-            wallet.deposits + wallet.available - (wallet.payouts - wallet.r)
-          ),
+          negativeToZero(wallet.deposits + wallet.r - wallet.payouts),
           dripPrice,
           showDollarValues
         )}
