@@ -48,7 +48,6 @@ const Header = () => {
     } = await getDripPriceData();
 
     const currentDripPrice = dripBnbRatio * bnbPrice;
-
     currentDripPrice > 0 && setDripPrice(() => currentDripPrice);
     bnbPrice > 0 && setBnbPrice(() => bnbPrice);
     tokenBalance > 0 && setTokenBalance(() => tokenBalance);
@@ -289,7 +288,7 @@ const DripPrices = ({ dripPcsPrice, BUY_SPREAD, dripPrice, hidePrices }) => {
             >
               DEX:
             </a>
-            {formatCurrency(convertDrip(dripPrice), 3)}
+            {formatCurrency(dripPrice / 1e18, 4)}
           </div>
           <div
             className={`drip-pcs ${
@@ -305,7 +304,7 @@ const DripPrices = ({ dripPcsPrice, BUY_SPREAD, dripPrice, hidePrices }) => {
             >
               PCS:
             </a>
-            {(1 / dripPcsPrice) * 0.81 * (dripPrice / 10e17) > 1 ? (
+            {(1 / dripPcsPrice) * 0.81 * (dripPrice / 1e18) > 1 ? (
               <span className="tooltip-help">
                 <Popup
                   content={`The price gap may present an opportunity to profit from arbitrage. 
@@ -313,14 +312,14 @@ const DripPrices = ({ dripPcsPrice, BUY_SPREAD, dripPrice, hidePrices }) => {
                 but still net a profit. Take gas fees into account, tho.`}
                   trigger={
                     <label className="buy-pcs arb">
-                      {formatCurrency(dripPcsPrice, 3)}
+                      {formatCurrency(dripPcsPrice, 4)}
                     </label>
                   }
                   style={{ marginRight: "1em" }}
                 />
               </span>
             ) : (
-              formatCurrency(dripPcsPrice, 3)
+              formatCurrency(dripPcsPrice, 4)
             )}
           </div>
           <div className="note">(* - best price)</div>
