@@ -3,11 +3,10 @@ import axios from "axios";
 export const convertDrip = (drip, dripPrice, showDollarValues) => {
   const priceOfDrip = dripPrice || 1;
   const converted = formatNumber(
-    //new Web3().utils.fromWei(`${drip}`)
-    (Math.round((drip / Math.pow(10, 18)) * 1000) / 1000) *
+    (Math.round((drip / Math.pow(10, 18)) * 10000) / 10000) *
       (showDollarValues ? priceOfDrip : 1)
   );
-  return showDollarValues ? formatCurrency(converted) : converted;
+  return showDollarValues ? formatCurrency(converted, 4) : converted;
 };
 
 export const convertBnb = (bnbAmt, bnbPrice, showDollarValues) => {
@@ -31,13 +30,7 @@ export const convertTokenToUSD = (tokenAmt, tokenPrice, showDollarValues) => {
 };
 
 export const formatCurrency = (amt, decimals = 2) => {
-  return (
-    "$" +
-    parseFloat(Math.round(amt * 1000) / 1000)
-      .toFixed(decimals)
-      .toString()
-      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-  );
+  return "$" + Number(amt).toFixed(decimals).toLocaleString();
 };
 
 export const formatPercent = (amt) => {
