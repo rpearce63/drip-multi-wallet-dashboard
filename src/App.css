@@ -823,3 +823,7 @@ input {
   color: lightgreen;
   margin-left: 10px;
 }
+
+.footer-links>a{
+  margin: 0 2px;
+}

@@ -46,13 +46,44 @@ const Footer = () => {
     <footer id="footer" className="page-footer font-small blue inverted">
       <div className="footer-content text-center py-3">
         <span className="copyright">
-          <span>© 2022 - </span>
+          <span>© 2023 - </span>
           <span>@rpearce63</span>
           &nbsp;
           <a href="https://t.me/drip_mw_dashboard" target="_blank no_referrer">
             <TelegramIcon fontSize="large" />
           </a>
         </span>
+        <div className="footer-links">
+          Check out my other dashboards for
+          <a
+            href="https://elephant-mw-dashboard.glitch.me"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Elephant Money
+          </a>
+          <a
+            href="https://arkfi-mw-dashboard.glitch.me"
+            target="_blank"
+            rel="noreferrer"
+          >
+            ArkFi
+          </a>
+          <a
+            href="https://furio-mw-dashboard.glitch.me"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Furio
+          </a>
+          <a
+            href="https://ddd-mw-dashboard.glitch.me"
+            target="_blank"
+            rel="noreferrer"
+          >
+            DripDropDraw
+          </a>
+        </div>
         <div>
           <a
             href="https://github.com/rpearce63/drip-multi-wallet-dashboard/releases"
