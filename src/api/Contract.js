@@ -548,22 +548,17 @@ export const fetchWalletData = async (wallet, index, retry = false) => {
     //const lastAction = await getLastAction(startBlock - 200000, wallet.addr);
 
     const whaleTax = calculateWhaleTax(available, userInfo.payouts);
-
+    const { max_payout } = await faucetContract.methods
+      .payoutOf(wallet.addr)
+      .call();
     const walletProfile = {
       index,
       ...userInfo,
       deposits: userInfo.deposits / 10e17,
       available: netPayout > 0 ? Number(netPayout) : available / 10e17,
       payouts: userInfo.payouts / 10e17,
-      maxPayout: Math.min(
-        (Number(userInfo.deposits) + Number(userInfo.rolls)) / 10e17,
-        100000
-      ),
-      maxClaim:
-        (Number(userInfo.deposits) +
-          Number(userInfo.rolls) -
-          Number(userInfo.payouts)) /
-        10e17,
+      maxPayout: Number(max_payout) / 1e18,
+      maxClaim: (Number(max_payout) - Number(userInfo.payouts)) / 10e17,
       direct_bonus: referral_bonus / 10e17,
 
       address: wallet.addr,
