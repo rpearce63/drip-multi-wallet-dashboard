@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import {
-  getUplineTree,
-  getPlayerStats,
-  getIndividualStats,
-} from "../api/Contract";
+import { getUplineTree, getPlayerStats } from "../api/Contract";
 
 const getMainStats = (detail) => [
   {
@@ -180,19 +176,18 @@ const Upline = () => {
       </div>
       <div className="wallet-stats">
         {userStats.map(({ label, value }, index) => {
-          if (value)
-            return (
-              <div className="card" key={index}>
-                <div className="card-body">
-                  {label}: {value}
-                </div>
+          return value ? (
+            <div className="card" key={index}>
+              <div className="card-body">
+                {label}: {value}
               </div>
-            );
+            </div>
+          ) : (
+            <></>
+          );
         })}
       </div>
-      {/* <div>
-        <Link to={`/tokens/${buddyId}`}>Tokens</Link>
-      </div> */}
+
       <div className="upline-table">
         {loading ? (
           <div className="loading" />

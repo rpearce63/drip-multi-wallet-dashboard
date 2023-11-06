@@ -3,13 +3,10 @@ import {
   convertTokenToUSD,
   formatPercent,
   formatNumber,
-  calculateDaysToMaxDeposits,
   negativeToZero,
 } from "../api/utils";
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { getLastAction, getStartBlock } from "../api/Contract";
-//import { useCallback } from "react";
+
 const TableRow = ({
   index,
   wallet,
@@ -27,59 +24,8 @@ const TableRow = ({
   flagLowNdv,
   ndvWarningLevel,
 }) => {
-  const [lastAction, setLastAction] = useState();
-  const [loading, setLoading] = useState(false);
-
-  const fetchLastAction = async () => {
-    setLoading(true);
-    //setLastAction(" ");
-    // await new Promise((resolve) =>
-    //   setTimeout(() => {
-    //     resolve(true);
-    //   }, 5000)
-    // );
-    const startBlock = await getStartBlock();
-    const response = await getLastAction(startBlock - 200000, wallet.address);
-    if (response === "error") {
-      await new Promise((resolve) =>
-        setTimeout(() => {
-          resolve(true);
-        }, 1000)
-      );
-      await fetchLastAction();
-    } else {
-      setLastAction(response);
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    setLastAction("-");
-  }, [wallet.address]);
-
-  // useEffect(() => {
-  //   setLastAction("-");
-  //   setTimeout(() => {
-  //     fetchLastAction();
-  //   }, 500 * index);
-  // }, [fetchLastAction, wallet.index]);
-
   if (!wallet) return <></>;
-  // if (wallet.deposits === 0)
-  //   return (
-  //     <tr>
-  //       <td className="rowIndex" onClick={() => deleteRow(wallet.address)}>
-  //         <span>{wallet.index + 1}</span>
-  //       </td>
-  //       <td
-  //         className={wallet.valid ? "" : "invalid"}
-  //         onClick={(e) => navigator.clipboard.writeText(wallet.address)}
-  //       >
-  //         {shortenAddress(wallet.address)}
-  //       </td>
-  //       <td colSpan={3}>No Deposits in Faucet</td>
-  //     </tr>
-  //   );
+
   return (
     <tr>
       <td className="rowIndex" onClick={() => deleteRow(wallet.address)}>
@@ -122,7 +68,6 @@ const TableRow = ({
       </td>
 
       {expandedTable && <td>{shortenAddress(wallet.upline)}</td>}
-      {/* {expandedTable && <td>{wallet.uplineCount}</td>} */}
       {expandedTable && (
         <td>{convertTokenToUSD(wallet.busdBalance, 1, showDollarValues)}</td>
       )}
