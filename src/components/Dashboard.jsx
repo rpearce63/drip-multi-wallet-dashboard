@@ -25,7 +25,6 @@ import AdBox from "./AdBox";
 import Web3 from "web3";
 import TableOptions from "./TableOptions";
 import { isUndefined } from "lodash";
-import { Popup } from "semantic-ui-react";
 import PopupHelp from "./PopupHelp";
 
 const web3 = new Web3("https://bsc-dataseed.binance.org/");
@@ -879,7 +878,7 @@ const Dashboard = () => {
                     {h.id === "maxClaim" ? (
                       <PopupHelp
                         message="Remaining max claimable after Faucet reset. 
-                        (Max Payout(Deposits + Hydrates) - Claimed)"
+                        (Max Payout(Deposits + Hydrates) - Claimed - Whale Tax)"
                         trigger={
                           <span style={{ color: "red" }}>{h.label}</span>
                         }
