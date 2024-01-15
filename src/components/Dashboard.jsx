@@ -878,7 +878,7 @@ const Dashboard = () => {
                     {h.id === "maxClaim" ? (
                       <PopupHelp
                         message="Remaining max claimable after Faucet reset. 
-                        (Max Payout(Deposits + Hydrates) - Claimed)"
+                        (Max Payout(Deposits + Hydrates) - Claimed - Whale Tax)"
                         trigger={
                           <span style={{ color: "red" }}>{h.label}</span>
                         }

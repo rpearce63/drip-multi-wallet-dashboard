@@ -171,7 +171,7 @@ const TableRow = ({
       </td>
       <td>
         {convertTokenToUSD(
-          negativeToZero(wallet.maxClaim),
+          negativeToZero(wallet.maxClaim * (1 - wallet.whaleTax / 100)),
           dripPrice,
           showDollarValues
         )}
