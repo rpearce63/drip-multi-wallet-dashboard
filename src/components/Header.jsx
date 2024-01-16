@@ -70,7 +70,8 @@ const Header = () => {
     });
     currentDripPrice &&
       (document.title = `${formatCurrency(
-        convertDrip(currentDripPrice)
+        convertDrip(currentDripPrice),
+        3
       )} - Drip Multi-Wallet Dashboard`);
   }, []);
 
