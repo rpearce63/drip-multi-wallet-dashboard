@@ -94,9 +94,21 @@ export const getLatestVersion = async () => {
 
 export const sortBy = (col, order) => {
   if (order === "asc") {
-    return (a, b) => (a[col] > b[col] ? 1 : -1);
+    return (a, b) => {
+      if (isNumber(a[col] || isNumber(b[col]))) {
+        return a[col] - b[col];
+      } else {
+        return a[col] > b[col] ? 1 : -1;
+      }
+    };
   } else {
-    return (a, b) => (a[col] < b[col] ? 1 : -1);
+    return (a, b) => {
+      if (isNumber(a[col] || isNumber(b[col]))) {
+        return b[col] - a[col];
+      } else {
+        return a[col] < b[col] ? 1 : -1;
+      }
+    };
   }
 };
 
@@ -138,3 +150,10 @@ export const calculateDaysToMaxDeposits = (initialDeposits, initialClaimed) => {
 };
 
 export const negativeToZero = (amount) => (amount < 0 ? 0 : amount);
+
+export function isNumber(value) {
+  if (typeof value === "number") return true;
+  const numVal = Number(value);
+  if (Number.isNaN(numVal)) return false;
+  return true;
+}
