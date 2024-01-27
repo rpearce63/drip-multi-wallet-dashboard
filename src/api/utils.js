@@ -92,24 +92,23 @@ export const getLatestVersion = async () => {
   return version.replace("v", "");
 };
 
-export const sortBy = (col, order) => {
-  if (order === "asc") {
-    return (a, b) => {
-      if (isNumber(a[col] || isNumber(b[col]))) {
-        return a[col] - b[col];
-      } else {
-        return a[col] > b[col] ? 1 : -1;
-      }
-    };
-  } else {
-    return (a, b) => {
-      if (isNumber(a[col] || isNumber(b[col]))) {
-        return b[col] - a[col];
-      } else {
-        return a[col] < b[col] ? 1 : -1;
-      }
-    };
-  }
+export const sortBy = (columnKey, sortOrder) => {
+  return (a, b) => {
+    const valueA = a[columnKey];
+    const valueB = b[columnKey];
+
+    const isNumeric = !isNaN(valueA) && !isNaN(valueB);
+
+    if (isNumeric) {
+      // If the values are numeric, convert them to numbers for comparison
+      const numericComparison = Number(valueA) - Number(valueB);
+      return sortOrder === "asc" ? numericComparison : -numericComparison;
+    } else {
+      // If the values are strings, use localeCompare for string comparison
+      const stringComparison = String(valueA).localeCompare(String(valueB));
+      return sortOrder === "asc" ? stringComparison : -stringComparison;
+    }
+  };
 };
 
 /**
