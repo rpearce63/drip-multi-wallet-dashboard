@@ -283,7 +283,7 @@ const DripPrices = ({ dripPcsPrice, BUY_SPREAD, dripPrice, hidePrices }) => {
             } ${hidePrices ? "drip-dex-collapsed" : ""}`}
           >
             <a
-              href="https://drip.community/fountain"
+              href="https://dripnetwork.io/dapp/swap"
               target="_blank"
               rel="noreferrer"
             >
