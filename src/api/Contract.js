@@ -510,24 +510,31 @@ export const fetchWalletData = async (wallet, index, retry = false) => {
   // const web3 = await getConnection();
   try {
     //const contract = await getContract(web3);
-    const userInfo = await getUserInfo(wallet.addr);
-    const dripBalance = await getTokenBalance(wallet.addr, DRIP_TOKEN_ADDR);
-    const bnbBalance = await getBnbBalance(wallet.addr);
-    const br34pBalance = await getBr34pBalance(wallet.addr);
-    const busdBalance = await getTokenBalance(wallet.addr, BUSD_TOKEN_ADDRESS);
-    const dripBusdLpBalance = await getTokenBalance(
-      wallet.addr,
-      DRIP_BUSD_LP_ADDRESS
-    );
-    const dropsBalance = await getReservoirBalance(wallet.addr);
-    const dailyBnb = await getReservoirDailyBnb(wallet.addr);
-
-    // if (Number(userInfo.deposits) === 0) {
-    //   console.log("no deposits");
-    //   return buildDefaultWallet(wallet, index, userInfo);
-    // }
-    const available = await claimsAvailable(wallet.addr);
-    const netPayout = await getNetPayout(wallet.addr);
+    const [
+      userInfo,
+      dripBalance,
+      bnbBalance,
+      br34pBalance,
+      busdBalance,
+      dripBusdLpBalance,
+      dropsBalance,
+      dailyBnb,
+      available,
+      netPayout,
+      { max_payout },
+    ] = await Promise.all([
+      getUserInfo(wallet.addr),
+      getTokenBalance(wallet.addr, DRIP_TOKEN_ADDR),
+      getBnbBalance(wallet.addr),
+      getBr34pBalance(wallet.addr),
+      getTokenBalance(wallet.addr, BUSD_TOKEN_ADDRESS),
+      getTokenBalance(wallet.addr, DRIP_BUSD_LP_ADDRESS),
+      getReservoirBalance(wallet.addr),
+      getReservoirDailyBnb(wallet.addr),
+      claimsAvailable(wallet.addr),
+      getNetPayout(wallet.addr),
+      faucetContract.methods.payoutOf(wallet.addr).call(),
+    ]);
     const uplineCount = 0; //await getUplineCount(wallet.addr);
     const coveredDepth = findFibIndex(br34pBalance);
     const teamDepth = 0;
@@ -548,9 +555,7 @@ export const fetchWalletData = async (wallet, index, retry = false) => {
     //const lastAction = await getLastAction(startBlock - 200000, wallet.addr);
 
     const whaleTax = calculateWhaleTax(available, userInfo.payouts);
-    const { max_payout } = await faucetContract.methods
-      .payoutOf(wallet.addr)
-      .call();
+
     const walletProfile = {
       index,
       ...userInfo,
@@ -596,38 +601,6 @@ export const fetchWalletData = async (wallet, index, retry = false) => {
     throw err;
   }
 };
-
-// const buildDefaultWallet = (wallet, index, userInfo) => {
-//   const defaultWallet = {
-//     index,
-//     ...userInfo,
-//     deposits: 0,
-//     available: 0,
-//     payouts: 0,
-//     maxPayout: 0,
-//     direct_bonus: 0,
-//     address: wallet.addr,
-//     label: wallet.label,
-//     group: wallet.group,
-//     valid: true,
-//     dripBalance: "0",
-//     br34pBalance: 0,
-//     uplineCount: 0,
-//     bnbBalance: 0,
-//     coveredDepth: 0,
-//     teamDepth: 0,
-//     ndv: 0,
-//     busdBalance: "0",
-//     dripBusdLpBalance: "0",
-//     //lastAction,
-//     r: 0,
-//     dropsBalance: 0,
-//     dailyBnb: "0",
-//     referrals: 0,
-//     whaleTax: 0,
-//   };
-//   return defaultWallet;
-// };
 
 export const chunk = (xs, n) =>
   xs.length <= n ? [[...xs]] : [xs.slice(0, n)].concat(chunk(xs.slice(n), n));
